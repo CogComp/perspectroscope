@@ -1,10 +1,34 @@
-
-
-
+import logging
+import sys
+import math
+import numpy as np
 
 from pulp import LpVariable, LpProblem, LpMaximize, LpStatus, value, os
-from experiment.run_bert_on_perspectrum import BertBaseline
+from model.run_bert_on_perspectrum import BertBaseline
 
+from django.shortcuts import render, redirect
+from sklearn.cluster import DBSCAN
+
+from search.query_elasticsearch import get_perspective_from_pool
+
+
+no_cuda = False if os.environ.get('CUDA_VISIBLE_DEVICES') else True
+
+### loading the BERT solvers
+bb_relevance = BertBaseline(task_name="perspectrum_relevance",
+                            saved_model="data/model/relevance/perspectrum_relevance_lr2e-05_bs32_epoch-0.pth",
+                            no_cuda=no_cuda)
+bb_stance = BertBaseline(task_name="perspectrum_stance",
+                         saved_model="data/model/stance/perspectrum_stance_lr2e-05_bs16_epoch-4.pth",
+                         no_cuda=no_cuda)
+bb_equivalence = BertBaseline(task_name="perspectrum_equivalence",
+                              saved_model="data/model/equivalence/perspectrum_equivalence_lr3e-05_bs32_epoch-2.pth",
+                              no_cuda=no_cuda)
+
+logging.disable(sys.maxsize)  # Python 3
+
+def _normalize(num):
+    return math.floor(num * 100) / 100.0
 
 def perspectrum_solver(request, claim_text="", vis_type=""):
     """
@@ -31,8 +55,8 @@ def perspectrum_solver(request, claim_text="", vis_type=""):
         perspective_stance_score = bb_stance.predict_batch(
             [(claim, p_text) for (p_text, pId, _) in perspective_given_claim])
 
-        perspectives_sorted = [(p_text, pId, normalize(luceneScore), normalize(perspective_relevance_score[i]),
-                                normalize(perspective_stance_score[i])) for i, (p_text, pId, luceneScore) in
+        perspectives_sorted = [(p_text, pId, _normalize(luceneScore), _normalize(perspective_relevance_score[i]),
+                                _normalize(perspective_stance_score[i])) for i, (p_text, pId, luceneScore) in
                                enumerate(perspective_given_claim)]
 
         perspectives_sorted = sorted(perspectives_sorted, key=lambda x: -x[3])

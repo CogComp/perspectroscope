@@ -19,8 +19,7 @@ from mysite import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', )
-    # baselines
+    path('', views.perspectrum_solver),
     path('baseline/', views.perspectrum_solver),
     path('baseline/<str:claim_text>/<str:vis_type>/', views.perspectrum_solver),
 ]
