@@ -2,9 +2,9 @@
 .ipynb_checkpoints/
 .DS_Store
 data/.DS_Store
-mysite/__pycache__/
-mysite/templatetags/__pycache__/
-mysite/util/__pycache__/
+app/__pycache__/
+app/templatetags/__pycache__/
+app/util/__pycache__/
 db.sqlite3
 *.pyc
 model/
