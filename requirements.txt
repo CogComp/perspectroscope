@@ -9,3 +9,4 @@ pytorch-pretrained-bert>=0.5.0
 elasticsearch
 nltk
 newspaper3k
+google-api-python-client
