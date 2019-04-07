@@ -7,10 +7,13 @@ import json
 
 from model.run_bert_on_perspectrum import BertBaseline
 
-from django.shortcuts import render, redirect
-from django.http import JsonResponse
+
+from django.shortcuts import render
+from django.http import JsonResponse, HttpResponse
 from sklearn.cluster import DBSCAN
 from search.query_elasticsearch import get_perspective_from_pool
+from search.google_custom_search import CustomSearchClient
+from search.news_html_to_text import parse_article
 from nltk import sent_tokenize
 
 file_names = {
