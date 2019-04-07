@@ -141,7 +141,6 @@ def perspectrum_solver(request, claim_text=""):
 
         context = {
             "claim_text": claim_text,
-            "vis_type": vis_type,
             "perspectives_sorted": perspectives_sorted,
             "perspectives_equivalences": perspectives_equivalences,
             "claim_persp_bundled": claim_persp_bundled,
