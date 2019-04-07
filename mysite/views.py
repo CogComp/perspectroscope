@@ -27,6 +27,8 @@ bb_equivalence = BertBaseline(task_name="perspectrum_equivalence",
 
 logging.disable(sys.maxsize)  # Python 3
 
+
+
 def _normalize(num):
     return math.floor(num * 100) / 100.0
 
@@ -39,7 +41,6 @@ def perspectrum_solver(request, claim_text="", vis_type=""):
     :param baseline_name: the solver name (BERT and Lucene).
     :return:
     """
-    print(no_cuda)
     if claim_text != "":
         claim = claim_text  #
 
@@ -88,7 +89,6 @@ def perspectrum_solver(request, claim_text="", vis_type=""):
 
         clustering = DBSCAN(eps=0.3, min_samples=1, metric='precomputed')
         cluster_labels = clustering.fit_predict(distance_scores)
-        print(cluster_labels)
         max_val = max(cluster_labels)
         for i, _ in enumerate(cluster_labels):
             max_val += 1
@@ -126,21 +126,7 @@ def perspectrum_solver(request, claim_text="", vis_type=""):
                 persp_und.append((perspectives, [avg_stance, 0, 0, 0, 0], []))
                 persp_und_flash.extend(persp_flash_tmp)
 
-        # if vis_type == "graphical-viz":
-        #     claim_persp_bundled = [(claim, persp_sup, [])]
-        # else:
-        #     claim_persp_bundled = []
-
         claim_persp_bundled = [(claim, persp_sup_flash, persp_und_flash)]
-
-        # persp_sup = [
-        #     ([(7584, 'It will cause less re-offenders.'), (26958, 'Adequate punishment reduces future offenses.'),
-        #       (26959, 'Just punishment will lead to less criminals re-offending. ')], [3, 0, 0, 0, 0],
-        #      [367, 368, 2628, 2629, 7862, 6549])]
-        # persp_und = [([(7587, 'The onus should not be on punishing the criminal.'),
-        #                (26962, 'Punishment should not be the primary focus.'),
-        #                (26963, 'Our  main goal should not be punishing the criminal. ')], [0, 0, 0, 3, 0],
-        #               [7574, 7872])]
 
         context = {
             "claim_text": claim_text,
@@ -154,9 +140,6 @@ def perspectrum_solver(request, claim_text="", vis_type=""):
             "persp_sup": persp_sup,
             "persp_und": persp_und,
         }
-
-        print(context)
-
     else:
         context = {}
 
