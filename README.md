@@ -21,6 +21,7 @@ pip3.6 install -r requirements.txt
 $ python3.7 manage.py runserver
 ```
 
+
 #### Immigration of Models to DB 
 If starting with fresh DB, you need to create tables corresponding to the models in the DB:  
 ```
@@ -32,7 +33,7 @@ If starting with fresh DB, you need to create tables corresponding to the models
 **Note** if you change the models (add or drop a table), to synch up the models with the DB, run this: 
 ```
 python3.6 manage.py migrate --run-syncdb
-
+```
 The system has two layers: 
 
 ### Informaton Retrieval 
@@ -40,7 +41,7 @@ The system has two layers:
 
 ### Learned models 
 
-```
+
 
 ## Citation 
 Please cite the following work, if you find this useful: 
