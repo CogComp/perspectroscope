@@ -22,4 +22,7 @@ urlpatterns = [
     path('', views.perspectrum_solver),
     path('baseline/', views.perspectrum_solver),
     path('baseline/<str:claim_text>/<str:vis_type>/', views.perspectrum_solver),
+
+    # APIs
+    path('load_claim_text/', views.load_claim_text)
 ]

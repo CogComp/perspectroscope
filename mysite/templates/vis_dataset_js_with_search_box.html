@@ -18,11 +18,14 @@
           integrity="sha256-7bYJaNviFZlH+bKqZlshmYKeyvkp+fXBQuerWp2AXlA=" crossorigin="anonymous"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="stylesheet" href="{% static "css/style.css" %}">
+
     <script type="text/javascript" src="{% static "js/vis.js" %}"></script>
     <link href="{% static "css/vis-network.min.css" %}" rel="stylesheet" type="text/css"/>
 
+    <script type="text/javascript" src="{% static "js/jquery.easy-autocomplete.js" %}"></script>
+    <link href="{% static "css/easy-autocomplete.css" %}" rel="stylesheet" type="text/css"/>
 
-    <title>Perspectrum - Demo</title>
+    <title>Perspectroscope</title>
 </head>
 <body>
 
@@ -336,6 +339,8 @@
         let url = '/baseline/' + claimText + "/" + visualization + "/";
         console.log(url);
         window.location.href = url;
+
+        return true;
     });
 </script>
 <script type="application/javascript">
@@ -362,6 +367,17 @@
         $('#btn-load-example-3').click(function() {
             load_example_3()
         });
+
+        var options = {
+	        url: "/load_claim_text/",
+            list: {
+                match: {
+                    enabled: true
+                }
+	        }
+        };
+
+        $('#claim-box').easyAutocomplete(options);
     });
 </script>
 </body>

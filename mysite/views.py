@@ -2,15 +2,23 @@ import logging
 import sys
 import math
 import numpy as np
+import json
 
 from pulp import LpVariable, LpProblem, LpMaximize, LpStatus, value, os
 from model.run_bert_on_perspectrum import BertBaseline
 
 from django.shortcuts import render, redirect
+from django.http import JsonResponse
+
 from sklearn.cluster import DBSCAN
 
 from search.query_elasticsearch import get_perspective_from_pool
 
+file_names = {
+    'evidence': 'data/perspectrum/evidence_pool_v0.2.json',
+    'perspective': 'data/perspectrum/perspective_pool_v0.2.json',
+    'claim_annotation': 'data/perspectrum/perspectrum_with_answers_v0.2.json'
+}
 
 no_cuda = False if os.environ.get('CUDA_VISIBLE_DEVICES') else True
 
@@ -28,9 +36,15 @@ bb_equivalence = BertBaseline(task_name="perspectrum_equivalence",
 logging.disable(sys.maxsize)  # Python 3
 
 
+def load_claim_text(request):
+    with open(file_names["claim_annotation"], encoding='utf-8') as data_file:
+        data = json.loads(data_file.read())
+        return JsonResponse([c['text'] for c in data], safe=False)
+
 
 def _normalize(num):
     return math.floor(num * 100) / 100.0
+
 
 def perspectrum_solver(request, claim_text="", vis_type=""):
     """
@@ -48,7 +62,7 @@ def perspectrum_solver(request, claim_text="", vis_type=""):
 
         # given a claim, extract perspectives
         perspective_given_claim = [(p_text, pId, pScore / len(p_text.split(" "))) for p_text, pId, pScore in
-                                   get_perspective_from_pool(claim, 10)]
+                                   get_perspective_from_pool(claim, 30)]
 
         perspective_relevance_score = bb_relevance.predict_batch(
             [(claim, p_text) for (p_text, pId, _) in perspective_given_claim])
@@ -138,7 +152,7 @@ def perspectrum_solver(request, claim_text="", vis_type=""):
             # "claim": "",
             # "claim_id": claim_id,
             "persp_sup": persp_sup,
-            "persp_und": persp_und,
+            "persp_und": persp_und
         }
     else:
         context = {}
