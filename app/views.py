@@ -7,13 +7,13 @@ import json
 
 from model.run_bert_on_perspectrum import BertBaseline
 
-from django.shortcuts import render, redirect
+from django.shortcuts import render
 from django.http import JsonResponse, HttpResponse
-from nltk import sent_tokenize
 from sklearn.cluster import DBSCAN
+from search.query_elasticsearch import get_perspective_from_pool
 from search.google_custom_search import CustomSearchClient
 from search.news_html_to_text import parse_article
-from search.query_elasticsearch import get_perspective_from_pool
+from nltk import sent_tokenize
 
 file_names = {
     'evidence': 'data/perspectrum/evidence_pool_v0.2.json',
@@ -35,6 +35,10 @@ bb_equivalence = BertBaseline(task_name="perspectrum_equivalence",
                               no_cuda=no_cuda)
 
 logging.disable(sys.maxsize)  # Python 3
+
+### Load config JSON object
+config = json.load(open("config/config.json"))
+
 
 def load_claim_text(request):
     with open(file_names["claim_annotation"], encoding='utf-8') as data_file:
@@ -60,7 +64,7 @@ def perspectrum_solver(request, claim_text="", vis_type=""):
 
         # given a claim, extract perspectives
         perspective_given_claim = [(p_text, pId, pScore / len(p_text.split(" "))) for p_text, pId, pScore in
-                                   get_perspective_from_pool(claim, 6)]
+                                   get_perspective_from_pool(claim, 30)]
 
         perspective_relevance_score = bb_relevance.predict_batch(
             [(claim, p_text) for (p_text, pId, _) in perspective_given_claim])
@@ -151,11 +155,7 @@ def perspectrum_solver(request, claim_text="", vis_type=""):
     return render(request, "vis_dataset_js_with_search_box.html", context)
 
 
-
 def api_get_perspectives_from_cse(request):
-    ### Load config JSON object
-    config = json.load(open("config/config.json"))
-
     if request.method != 'POST':
         return HttpResponse("This api only support POST request", status=403)
 
@@ -164,7 +164,7 @@ def api_get_perspectives_from_cse(request):
     csc = CustomSearchClient(key=config["custom_search_api_key"], cx=config["custom_search_engine_id"])
 
     r = csc.query(claim_text)
-    urls = [_r["link"] for _r in r][:5] # Only doing three for now for
+    urls = [_r["link"] for _r in r][:5]  # Only doing three for now for
 
     first_sents = []
 
