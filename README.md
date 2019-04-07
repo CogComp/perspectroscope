@@ -38,9 +38,10 @@ The system has two layers:
 
 ### Informaton Retrieval 
 
+TODO
 
 ### Learned models 
-
+TODO
 
 
 ## Citation 
