@@ -24,12 +24,12 @@
         {{ claim.title }}
     </h4>
     <div class="row">
-        <div class="col persps-container tile">
+        <div class="col persps-container tile" style="background-color: rgba(0,0,0,0.03)">
             <h6>
                 Perspectives For
             </h6>
             {% for cluster in persp_sup %}
-                <div class="persp-title btn-block btn-lg  palette-turquoise">
+                <div class="persp-title btn-block btn-lg" style="background-color: #d9eaff">
                     <div class="row">
                         <div class="col-11">
                             {% for p in cluster.0 %}
@@ -57,7 +57,7 @@
                 Perspectives Against
             </h6>
             {% for cluster in persp_und %}
-                <div class="persp-title btn-block btn-lg  palette-carrot">
+                <div class="persp-title btn-block btn-lg" style="background-color: #ffdcdf">
                     <div class="row">
                         <div class="col-11">
                             {% for p in cluster.0 %}

@@ -7,7 +7,6 @@ import json
 
 from model.run_bert_on_perspectrum import BertBaseline
 
-
 from django.shortcuts import render
 from django.http import JsonResponse, HttpResponse
 from sklearn.cluster import DBSCAN
@@ -36,7 +35,6 @@ bb_equivalence = BertBaseline(task_name="perspectrum_equivalence",
                               no_cuda=no_cuda)
 
 logging.disable(sys.maxsize)  # Python 3
-
 
 ### Load config JSON object
 config = json.load(open("config/config.json"))
@@ -157,7 +155,6 @@ def perspectrum_solver(request, claim_text="", vis_type=""):
     return render(request, "vis_dataset_js_with_search_box.html", context)
 
 
-
 def api_get_perspectives_from_cse(request):
     if request.method != 'POST':
         return HttpResponse("This api only support POST request", status=403)
@@ -167,7 +164,7 @@ def api_get_perspectives_from_cse(request):
     csc = CustomSearchClient(key=config["custom_search_api_key"], cx=config["custom_search_engine_id"])
 
     r = csc.query(claim_text)
-    urls = [_r["link"] for _r in r][:5] # Only doing three for now for
+    urls = [_r["link"] for _r in r][:5]  # Only doing three for now for
 
     first_sents = []
 
