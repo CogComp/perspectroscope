@@ -19,13 +19,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="stylesheet" href="{% static "css/style.css" %}">
 
-    <script type="text/javascript" src="{% static "js/vis.js" %}"></script>
-    <link href="{% static "css/vis-network.min.css" %}" rel="stylesheet" type="text/css"/>
+{#    <script type="text/javascript" src="{% static "js/vis.js" %}"></script>#}
+{#    <link href="{% static "css/vis-network.min.css" %}" rel="stylesheet" type="text/css"/>#}
 
     <script type="text/javascript" src="{% static "js/jquery.easy-autocomplete.js" %}"></script>
     <link href="{% static "css/easy-autocomplete.css" %}" rel="stylesheet" type="text/css"/>
 
-    <title>Perspectroscope</title>
+    <title>PerspectroScope</title>
 </head>
 <body>
 
@@ -46,8 +46,8 @@
     <div class="container">
         <div class="row">
             <div class="col-sm">
-                <h1 class="display-4">Perspectrum</h1>
-                <p class="lead">Discovering diverse perspectives about claims.</p>
+                <h1 class="display-4"><a href="/">PerspectroScope</a></h1>
+                <p class="lead">A Window to the World of Differing Perspectives.</p>
             </div>
         </div>
     </div>
@@ -65,7 +65,8 @@
     <div class="row">
         <div class="col-6">
             <div class="btn-group">
-                <button data-toggle="dropdown" class="btn btn-info dropdown-toggle" type="button" aria-expanded="false">
+                <button data-toggle="dropdown" class="btn btn-primary dropdown-toggle" type="button"
+                        aria-expanded="false">
                     Load Pre-defined Examples
                 </button>
                 <ul role="menu" class="dropdown-menu" x-placement="bottom-start"
@@ -79,15 +80,8 @@
         <div class="col-6">
             {#            <a href="#fakelink" class="btn btn-block btn-lg btn-primary">Demo!</a>#}
             <div class="input-group-prepend">
-                <button id="search-claim" type="button" class="btn btn-block btn-lg btn-primary">Search</button>
+                <button id="search-claim" type="button" class="btn btn-block btn-lg btn-primary ">Search</button>
             </div>
-            {#            <div class="input-group mb-3" style="margin-top: 5%; margin-left: 30%; text-align: center">#}
-            {#                <div class="input-group-prepend">#}
-            {#                    <button id="search-claim" type="button" class="btn btn-primary">Search</button>#}
-            {#                </div>#}
-            {#                <input id="claim-box" type="text" class="form-control"#}
-            {#                       aria-label="Text input with segmented dropdown button">#}
-            {#            </div>#}
         </div>
     </div>
     <div class="col-md-7" style="margin: 20px">
@@ -105,64 +99,79 @@
             Graphical visualization
         </label>
     </div>
-    <hr>
 
     {% if claim_text %}
-        <div class="row" style="width: 100%; align-content: center; ">
-            {% include "persp.html" %}
-        </div>
-
-        <div class="row" style="width: 100%;">
-            <div id="mynetwork" style="width: 1400px; height: 700px"></div>
-        </div>
         <hr>
-        <div class="demo_result">
-            <div class="row">
-                <h6>Perspective relevance to the claim: </h6>
-            </div>
-            <table class="table table-sm">
-                <thead>
-                <tr>
-                    <th scope="col">pId</th>
-                    <th scope="col">Perspective</th>
-                    <th scope="col">Relevance score (Lucene, Bert)</th>
-                    <th scope="col">Stance (Support)</th>
-                </tr>
-                </thead>
-                <tbody>
-                {% for item in perspectives_sorted %}
-                    <tr>
-                        <th scope="row">{{ item.1 }}</th>
-                        <td>{{ item.0 }}</td>
-                        <td>({{ item.2 }}, {{ item.3 }})</td>
-                        <td>{{ item.4 }}</td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
-            <br>
-            <div class="row">
-                <div class="col-8">
-                    <h6>Perspective equivalences</h6>
-                </div>
-                <table class="table table-sm">
-                    <thead>
-                    <tr>
-                        <th scope="col">Perspective 1</th>
-                        <th scope="col">Perspective 2</th>
-                        <th scope="col">score (Bert)</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {% for item in perspectives_equivalences %}
+        <div class="row" style="width: 100%; align-content: center; ">
+            {% include "two_column.html" %}
+        </div>
+    {% endif %}
+
+{#    <div class="row" style="width: 100%; {% if not claim_text %} display: none {% endif %}">#}
+{#        <div id="mynetwork" style="width: 1400px; height: 700px"></div>#}
+{#    </div>#}
+
+
+{% if claim_text %}
+    <p>
+        <button class="btn btn-primary btn-sm" type="button" data-toggle="collapse" data-target="#collapseExample"
+                aria-expanded="false" aria-controls="collapseExample">
+            Show details
+        </button>
+    </p>
+        <div class="collapse" id="collapseExample">
+            <div class="card card-body">
+
+                <hr>
+                <div class="demo_result">
+                    <div class="row">
+                        <h6>Perspective relevance to the claim: </h6>
+                    </div>
+                    <table class="table table-sm">
+                        <thead>
                         <tr>
-                            <td>{{ item.0 }}</td>
-                            <td>{{ item.1 }}</td>
-                            <td>({{ item.2 }}, {{ item.3 }})</td>
+                            <th scope="col">pId</th>
+                            <th scope="col">Perspective</th>
+                            <th scope="col">Relevance score (Lucene, Bert)</th>
+                            <th scope="col">Stance (Support)</th>
                         </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                        {% for item in perspectives_sorted %}
+                            <tr>
+                                <th scope="row">{{ item.1 }}</th>
+                                <td>{{ item.0 }}</td>
+                                <td>({{ item.2 }}, {{ item.3 }})</td>
+                                <td>{{ item.4 }}</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                    <br>
+                    <div class="row">
+                        <div class="col-8">
+                            <h6>Perspective equivalences</h6>
+                        </div>
+                        <table class="table table-sm">
+                            <thead>
+                            <tr>
+                                <th scope="col">Perspective 1</th>
+                                <th scope="col">Perspective 2</th>
+                                <th scope="col">score (Bert)</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for item in perspectives_equivalences %}
+                                <tr>
+                                    <td>{{ item.0 }}</td>
+                                    <td>{{ item.1 }}</td>
+                                    <td>({{ item.2 }}, {{ item.3 }})</td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
     {% endif %}
@@ -345,36 +354,36 @@
 </script>
 <script type="application/javascript">
 
-    function load_example_1(){
+    function load_example_1() {
         $('#claim-box').val("Animal testing for medical research should be allowed.")
     }
 
-    function load_example_2(){
+    function load_example_2() {
         $('#claim-box').val("University education should be free.")
     }
 
-    function load_example_3(){
+    function load_example_3() {
         $('#claim-box').val("The drinking age should be lowered from 21.")
     }
 
-    $('document').ready(function() {
-        $('#btn-load-example-1').click(function() {
+    $('document').ready(function () {
+        $('#btn-load-example-1').click(function () {
             load_example_1()
         });
-        $('#btn-load-example-2').click(function() {
+        $('#btn-load-example-2').click(function () {
             load_example_2()
         });
-        $('#btn-load-example-3').click(function() {
+        $('#btn-load-example-3').click(function () {
             load_example_3()
         });
 
         var options = {
-	        url: "/load_claim_text/",
+            url: "/load_claim_text/",
             list: {
                 match: {
                     enabled: true
                 }
-	        }
+            }
         };
 
         $('#claim-box').easyAutocomplete(options);

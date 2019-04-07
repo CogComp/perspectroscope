@@ -1,18 +1,17 @@
 import logging
+import os
 import sys
 import math
 import numpy as np
 import json
 
-from pulp import LpVariable, LpProblem, LpMaximize, LpStatus, value, os
 from model.run_bert_on_perspectrum import BertBaseline
+from search.query_elasticsearch import get_perspective_from_pool
+from search.query_elasticsearch import get_evidence_from_pool
 
 from django.shortcuts import render, redirect
 from django.http import JsonResponse
-
 from sklearn.cluster import DBSCAN
-
-from search.query_elasticsearch import get_perspective_from_pool
 
 file_names = {
     'evidence': 'data/perspectrum/evidence_pool_v0.2.json',
@@ -56,13 +55,11 @@ def perspectrum_solver(request, claim_text="", vis_type=""):
     :return:
     """
     if claim_text != "":
-        claim = claim_text  #
-
-        prob = LpProblem("perspectiveOptimization", LpMaximize)
+        claim = claim_text
 
         # given a claim, extract perspectives
         perspective_given_claim = [(p_text, pId, pScore / len(p_text.split(" "))) for p_text, pId, pScore in
-                                   get_perspective_from_pool(claim, 30)]
+                                   get_perspective_from_pool(claim, 3)]
 
         perspective_relevance_score = bb_relevance.predict_batch(
             [(claim, p_text) for (p_text, pId, _) in perspective_given_claim])
@@ -80,14 +77,10 @@ def perspectrum_solver(request, claim_text="", vis_type=""):
         perspectives_equivalences = []
         for i, (p_text1, _, _) in enumerate(perspective_given_claim):
             list1 = []
-            # list2 = []
             for j, (p_text2, _, _) in enumerate(perspective_given_claim):
-                # if i != j:
                 list1.append((claim + " . " + p_text1, p_text2))
-                # list2.append((claim + " . " + p_text2, p_text1))
 
             predictions1 = bb_equivalence.predict_batch(list1)
-            # predictions2 = bb_equivalence.predict_batch(list2)
 
             for j, (p_text2, _, _) in enumerate(perspective_given_claim):
                 if i != j:
@@ -130,7 +123,6 @@ def perspectrum_solver(request, claim_text="", vis_type=""):
                 stance_list.append(stance_score)
                 perspectives.append((pId, p_text))
                 persp_flash_tmp.append((p_text, pId, cluster_id + 1, [], stance_score))
-                # persp_sup.append((p[0], p[1], 1, [evidences], pScore))
 
             avg_stance = sum(stance_list) / len(stance_list)
             if avg_stance > 0.0:
@@ -149,8 +141,6 @@ def perspectrum_solver(request, claim_text="", vis_type=""):
             "perspectives_equivalences": perspectives_equivalences,
             "claim_persp_bundled": claim_persp_bundled,
             "used_evidences_and_texts": [],  # used_evidences_and_texts,
-            # "claim": "",
-            # "claim_id": claim_id,
             "persp_sup": persp_sup,
             "persp_und": persp_und
         }
