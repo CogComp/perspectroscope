@@ -67,9 +67,9 @@
                 </button>
                 <ul role="menu" class="dropdown-menu" x-placement="bottom-start"
                     style="position: absolute; transform: translate3d(0px, 41px, 0px); top: 0px; left: 0px; will-change: transform;">
-                    <li><a href="JavaScript:load_example_1()">Example #1</a></li>
-                    <li><a href="JavaScript:load_example_2()">Example #2</a></li>
-                    <li><a href="JavaScript:load_example_3()">Example #3</a></li>
+                    <li><a id="btn-load-example-1" href="JavaScript:void(0)">Example #1</a></li>
+                    <li><a id="btn-load-example-2" href="JavaScript:void(0)">Example #2</a></li>
+                    <li><a id="btn-load-example-3" href="JavaScript:void(0)">Example #3</a></li>
                 </ul>
             </div>
         </div>
@@ -339,6 +339,7 @@
     });
 </script>
 <script type="application/javascript">
+
     function load_example_1(){
         $('#claim-box').val("Animal testing for medical research should be allowed.")
     }
@@ -350,6 +351,18 @@
     function load_example_3(){
         $('#claim-box').val("The drinking age should be lowered from 21.")
     }
+
+    $('document').ready(function() {
+        $('#btn-load-example-1').click(function() {
+            load_example_1()
+        });
+        $('#btn-load-example-2').click(function() {
+            load_example_2()
+        });
+        $('#btn-load-example-3').click(function() {
+            load_example_3()
+        });
+    });
 </script>
 </body>
 </html>
