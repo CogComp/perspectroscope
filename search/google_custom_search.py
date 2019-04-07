@@ -1,3 +1,5 @@
+import requests
+
 entry_url = "https://www.googleapis.com/customsearch/v1/siterestrict"
 
 class CustomSearchClient:
@@ -12,7 +14,10 @@ class CustomSearchClient:
         self._cx = cx
 
     def query(self, q):
-        pass
+        r = requests.post(entry_url,
+                          data={
+                              ''
+                          })
 
 
 if __name__ == '__main__':
