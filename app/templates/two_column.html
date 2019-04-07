@@ -2,38 +2,38 @@
 
 <!DOCTYPE html>
 <html lang="en">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js"
-            integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh"
-            crossorigin="anonymous"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js"
-            integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ"
-            crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css"
-          integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flat-ui/2.3.0/css/flat-ui.min.css"
-          integrity="sha256-7bYJaNviFZlH+bKqZlshmYKeyvkp+fXBQuerWp2AXlA=" crossorigin="anonymous" />
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css"
-          integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
-    <link rel="stylesheet" href="{% static "css/style.css" %}">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Perspective Annotation Interface</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js"
+        integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh"
+        crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js"
+        integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ"
+        crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css"
+      integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flat-ui/2.3.0/css/flat-ui.min.css"
+      integrity="sha256-7bYJaNviFZlH+bKqZlshmYKeyvkp+fXBQuerWp2AXlA=" crossorigin="anonymous"/>
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css"
+      integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+<link rel="stylesheet" href="{% static "css/style.css" %}">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>Perspective Annotation Interface</title>
 </head>
 <body>
-    <div class="container-fluid">
-        <h4 class="persp-claim-title pallete pallete-peter-river">
-            {{ claim.title }}
-        </h4>
-        <div class="row">
-            <div class="col persps-container tile">
-                <h6>
-                    Perspectives For
-                </h6>
-                {% for cluster in persp_sup %}
+<div class="container-fluid">
+    <h4 class="persp-claim-title pallete pallete-peter-river">
+        {{ claim.title }}
+    </h4>
+    <div class="row">
+        <div class="col persps-container tile">
+            <h6>
+                Perspectives For
+            </h6>
+            {% for cluster in persp_sup %}
                 <div class="persp-title btn-block btn-lg  palette-turquoise">
                     <div class="row">
                         <div class="col-11">
                             {% for p in cluster.0 %}
-                            <div>{{ p.1 }}</div>
+                                <div>{{ p.1 }}</div>
                             {% endfor %}
                         </div>
                         <div class="col-1">
@@ -50,18 +50,18 @@
                         </div>
                     </div>
                 </div>
-                {% endfor %}
-            </div>
-            <div class="col persps-container tile">
-                <h6>
-                    Perspectives Against
-                </h6>
-                {% for cluster in persp_und %}
+            {% endfor %}
+        </div>
+        <div class="col persps-container tile">
+            <h6>
+                Perspectives Against
+            </h6>
+            {% for cluster in persp_und %}
                 <div class="persp-title btn-block btn-lg  palette-carrot">
                     <div class="row">
                         <div class="col-11">
                             {% for p in cluster.0 %}
-                            <div>{{ p.1 }}</div>
+                                <div>{{ p.1 }}</div>
                             {% endfor %}
                         </div>
                         <div class="col-1">
@@ -78,17 +78,17 @@
                         </div>
                     </div>
                 </div>
-                {% endfor %}
-            </div>
+            {% endfor %}
         </div>
     </div>
+</div>
 
 
 </body>
 <script>
-$(document).ready(function(){
-    $('[data-toggle="popover"]').popover();
-});
+    $(document).ready(function () {
+        $('[data-toggle="popover"]').popover();
+    });
 </script>
 
 </html>
