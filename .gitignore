@@ -7,5 +7,5 @@ mysite/templatetags/__pycache__/
 mysite/util/__pycache__/
 db.sqlite3
 *.pyc
-model/
+data/model/
 script/
