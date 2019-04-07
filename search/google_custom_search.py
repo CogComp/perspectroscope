@@ -1,4 +1,4 @@
-import requests
+from googleapiclient.discovery import build
 
 entry_url = "https://www.googleapis.com/customsearch/v1/siterestrict"
 
@@ -7,17 +7,16 @@ class CustomSearchClient:
         """
 
         :param key: API key
-        :param cx:
-        :param q:
+        :param cx: custom search engine id
+        :param q: query
         """
-        self._key = key
         self._cx = cx
 
-    def query(self, q):
-        r = requests.post(entry_url,
-                          data={
-                              ''
-                          })
+        self._service = build("customsearch", "v1", developerKey=key)
+
+    def query(self, q, **kwargs):
+        res = self._service.cse().list(q=q, cx=self._cx, **kwargs).execute()
+        return res['items']
 
 
 if __name__ == '__main__':
@@ -26,4 +25,6 @@ if __name__ == '__main__':
         print("Usage: python google_custom_search.py [api-key] [cx] [query]")
         exit(1)
     cli = CustomSearchClient(argv[1], argv[2])
-    print(cli.query(argv[3]))
+    r = cli.query(argv[3])
+    print(len(r))
+    print([c["link"] for c in r])

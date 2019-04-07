@@ -7,3 +7,5 @@ matplotlib
 sklearn
 pytorch-pretrained-bert>=0.5.0
 elasticsearch
+nltk
+newspaper
