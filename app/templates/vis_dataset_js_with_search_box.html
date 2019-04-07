@@ -18,10 +18,8 @@
           integrity="sha256-7bYJaNviFZlH+bKqZlshmYKeyvkp+fXBQuerWp2AXlA=" crossorigin="anonymous"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="stylesheet" href="{% static "css/style.css" %}">
-
-{#    <script type="text/javascript" src="{% static "js/vis.js" %}"></script>#}
-{#    <link href="{% static "css/vis-network.min.css" %}" rel="stylesheet" type="text/css"/>#}
-
+    <script type="text/javascript" src="{% static "js/vis.js" %}"></script>
+    <link href="{% static "css/vis-network.min.css" %}" rel="stylesheet" type="text/css"/>
     <script type="text/javascript" src="{% static "js/jquery.easy-autocomplete.js" %}"></script>
     <link href="{% static "css/easy-autocomplete.css" %}" rel="stylesheet" type="text/css"/>
 
@@ -83,21 +81,6 @@
                 <button id="search-claim" type="button" class="btn btn-block btn-lg btn-primary ">Search</button>
             </div>
         </div>
-    </div>
-    <div class="col-md-7" style="margin: 20px">
-        Visualizations to include:
-        <label class="checkbox" for="checkbox1">
-            <input type="checkbox" value="" id="checkbox1" checked="checked" data-toggle="checkbox"
-                   class="custom-checkbox"><span class="icons"><span class="icon-unchecked"></span><span
-                class="icon-checked"></span></span>
-            Simple visualization
-        </label>
-        <label class="checkbox" for="checkbox2">
-            <input type="checkbox" value="" id="checkbox2" data-toggle="checkbox"
-                   class="custom-checkbox"><span class="icons"><span class="icon-unchecked"></span><span
-                class="icon-checked"></span></span>
-            Graphical visualization
-        </label>
     </div>
 
     {% if claim_text %}
@@ -332,20 +315,8 @@
     $('#search-claim').click(function () {
         var claimText = $("#claim-box").val();
 
-        /*
-        var visualization = 'graphical-viz';
-        if (document.getElementById('option-simple-viz').checked) {
-            visualization = 'simple-viz'
-        }
 
-        var solver = 'lucene-solver';
-        if (document.getElementById('option-bert').checked) {
-            solver = 'bert-solver'
-        }*/
-        solver = " ";
-        visualization = " ";
-
-        let url = '/baseline/' + claimText + "/" + visualization + "/";
+        let url = '/baseline/' + claimText + "/";
         console.log(url);
         window.location.href = url;
 

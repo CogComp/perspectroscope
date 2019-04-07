@@ -50,7 +50,7 @@ def _normalize(num):
     return math.floor(num * 100) / 100.0
 
 
-def perspectrum_solver(request, claim_text="", vis_type=""):
+def perspectrum_solver(request, claim_text=""):
     """
     solves a given instances with one of the baselines.
     :param request: the default request argument.
