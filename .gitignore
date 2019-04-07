@@ -7,5 +7,5 @@ app/templatetags/__pycache__/
 app/util/__pycache__/
 db.sqlite3
 *.pyc
-model/
+data/model/
 script/
