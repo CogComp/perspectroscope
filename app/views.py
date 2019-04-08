@@ -65,7 +65,7 @@ def perspectrum_solver(request, claim_text=""):
 
         # given a claim, extract perspectives
         perspective_given_claim = [(p_text, pId, pScore / len(p_text.split(" "))) for p_text, pId, pScore in
-                                   get_perspective_from_pool(claim, 3)]
+                                   get_perspective_from_pool(claim, 30)]
 
         perspective_relevance_score = bb_relevance.predict_batch(
             [(claim, p_text) for (p_text, pId, _) in perspective_given_claim])
@@ -165,27 +165,32 @@ def api_get_perspectives_from_cse(request):
     csc = CustomSearchClient(key=config["custom_search_api_key"], cx=config["custom_search_engine_id"])
 
     r = csc.query(claim_text)
-    urls = [_r["link"] for _r in r][:1]
+    urls = [_r["link"] for _r in r]
 
-    first_sents = []
+    sents = []
 
     for url in urls:
         article = parse_article(url)
         paragraphs = [p for p in article.text.splitlines() if p]
-        first_sents += [sent_tokenize(p)[0] for p in paragraphs]
+        sents += [sent_tokenize(p)[0] for p in paragraphs]
+        # sents += [_s for p in paragraphs for _s in sent_tokenize(p)]
 
     perspective_relevance_score = bb_relevance.predict_batch([
-        (claim_text, sent) for sent in first_sents
+        (claim_text, sent) for sent in sents
     ])
 
     perspective_relevance_score = [float(x) for x in perspective_relevance_score]
 
     perspective_stance_score = bb_stance.predict_batch([
-        (claim_text, sent) for sent in first_sents
+        (claim_text, sent) for sent in sents
     ])
 
     perspective_stance_score = [float(x) for x in perspective_stance_score]
 
-    results = list(zip(first_sents, perspective_relevance_score, perspective_stance_score))
+    results = list(zip(sents, perspective_relevance_score, perspective_stance_score))
+    # results = list(zip(sents, perspective_relevance_score))
+
+    print(urls)
+    print(json.dumps(results))
 
     return JsonResponse(results, safe=False)
