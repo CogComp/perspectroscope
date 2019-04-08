@@ -5,12 +5,11 @@ import math
 import numpy as np
 import json
 
-from model.run_bert_on_perspectrum import BertBaseline
-
 from django.shortcuts import render
 from django.http import JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from sklearn.cluster import DBSCAN
+from model.run_bert_on_perspectrum import BertBaseline
 from search.query_elasticsearch import get_perspective_from_pool
 from search.google_custom_search import CustomSearchClient
 from search.news_html_to_text import parse_article
@@ -51,7 +50,7 @@ def _normalize(num):
     return math.floor(num * 100) / 100.0
 
 
-def perspectrum_solver(request, claim_text=""):
+def perspectrum_solver(request, claim_text="", withWiki=""):
     """
     solves a given instances with one of the baselines.
     :param request: the default request argument.
