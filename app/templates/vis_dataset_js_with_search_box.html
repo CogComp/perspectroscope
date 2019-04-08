@@ -31,7 +31,7 @@
     #mynetwork {
         width: 100%;
         height: 100%;
-        {#border: 2px solid lightgray;#}
+    {#border: 2px solid lightgray;#}
     }
 
     code {
@@ -61,24 +61,25 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-6">
+
+        <div class="col-4"></div>
+        <div class="col-5">
             <div class="btn-group">
-                <button data-toggle="dropdown" class="btn btn-primary dropdown-toggle" type="button"
-                        aria-expanded="false">
-                    Load Pre-defined Examples
-                </button>
-                <ul role="menu" class="dropdown-menu" x-placement="bottom-start"
-                    style="position: absolute; transform: translate3d(0px, 41px, 0px); top: 0px; left: 0px; will-change: transform;">
-                    <li><a id="btn-load-example-1" href="JavaScript:void(0)">Example #1</a></li>
-                    <li><a id="btn-load-example-2" href="JavaScript:void(0)">Example #2</a></li>
-                    <li><a id="btn-load-example-3" href="JavaScript:void(0)">Example #3</a></li>
-                </ul>
-            </div>
-        </div>
-        <div class="col-6">
-            {#            <a href="#fakelink" class="btn btn-block btn-lg btn-primary">Demo!</a>#}
-            <div class="input-group-prepend">
-                <button id="search-claim" type="button" class="btn btn-block btn-lg btn-primary ">Search</button>
+                <button id="search-claim" type="button" class="btn btn-primary ">Search</button>
+                <button id="wiki" type="button" class="btn btn-primary ">Use Wikipedia</button>
+                <div class="btn-group">
+                    <button data-toggle="dropdown" class="btn btn-primary dropdown-toggle btn-sm" type="button"
+                            aria-expanded="false">
+                        Load Pre-defined Examples
+                    </button>
+                    <ul role="menu" class="dropdown-menu" x-placement="bottom-start"
+                        style="position: absolute; transform: translate3d(0px, 41px, 0px); top: 0px; left: 0px; will-change: transform;">
+                        <li><a id="btn-load-example-1" href="JavaScript:void(0)">Example #1</a></li>
+                        <li><a id="btn-load-example-2" href="JavaScript:void(0)">Example #2</a></li>
+                        <li><a id="btn-load-example-3" href="JavaScript:void(0)">Example #3</a></li>
+                        <li><a id="btn-load-example-4" href="JavaScript:void(0)">Example #4</a></li>
+                    </ul>
+                </div>
             </div>
         </div>
     </div>
@@ -319,13 +320,24 @@
 <script type="application/javascript">
     $('#search-claim').click(function () {
         var claimText = $("#claim-box").val();
+        withWiki = "noWiki";
+        if ($('#wiki').hasClass('active')) {
+            withWiki = "withWiki";
+        }
 
-
-        let url = '/baseline/' + claimText + "/";
+        let url = '/baseline/' + claimText + "/" + withWiki + "/";
         console.log(url);
         window.location.href = url;
 
         return true;
+    });
+
+    $('#wiki').click(function () {
+        if ($('#wiki').hasClass('active')) {
+            $('#wiki').removeClass('active');
+        } else {
+            $('#wiki').addClass('active');
+        }
     });
 </script>
 <script type="application/javascript">
@@ -342,6 +354,10 @@
         $('#claim-box').val("The drinking age should be lowered from 21.")
     }
 
+    function load_example_4() {
+        $('#claim-box').val("Social media (like facebook or twitter) have had very positive effects in our life style. ")
+    }
+
     $('document').ready(function () {
         $('#btn-load-example-1').click(function () {
             load_example_1()
@@ -351,6 +367,9 @@
         });
         $('#btn-load-example-3').click(function () {
             load_example_3()
+        });
+        $('#btn-load-example-4').click(function () {
+            load_example_4()
         });
 
         var options = {

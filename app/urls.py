@@ -21,7 +21,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.perspectrum_solver),
     path('baseline/', views.perspectrum_solver),
-    path('baseline/<str:claim_text>/', views.perspectrum_solver),
+    path('baseline/<str:claim_text>/<str:withWiki>/', views.perspectrum_solver),
 
     # APIs
     path('load_claim_text/', views.load_claim_text)
