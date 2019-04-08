@@ -51,7 +51,7 @@ def _normalize(num):
     return math.floor(num * 100) / 100.0
 
 
-def perspectrum_solver(request, claim_text="", vis_type=""):
+def perspectrum_solver(request, claim_text=""):
     """
     solves a given instances with one of the baselines.
     :param request: the default request argument.
@@ -142,7 +142,6 @@ def perspectrum_solver(request, claim_text="", vis_type=""):
 
         context = {
             "claim_text": claim_text,
-            "vis_type": vis_type,
             "perspectives_sorted": perspectives_sorted,
             "perspectives_equivalences": perspectives_equivalences,
             "claim_persp_bundled": claim_persp_bundled,
