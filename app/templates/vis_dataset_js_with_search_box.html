@@ -26,6 +26,7 @@
     <link href="{% static "css/easy-autocomplete.css" %}" rel="stylesheet" type="text/css"/>
 
     <title>PerspectroScope</title>
+    {% csrf_token %}
 </head>
 <body>
 
@@ -387,6 +388,15 @@
         };
 
         $('#claim-box').easyAutocomplete(options);
+
+
+        {% if claim_text %}
+        $.post("/api_get_perspectives_from_cse", {
+            "claim": "{{ claim_text }}",
+        }, function(res) {
+            console.log(res);
+        });
+        {% endif %}
     });
 </script>
 </body>

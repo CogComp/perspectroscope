@@ -9,6 +9,7 @@ from model.run_bert_on_perspectrum import BertBaseline
 
 from django.shortcuts import render
 from django.http import JsonResponse, HttpResponse
+from django.views.decorators.csrf import csrf_exempt
 from sklearn.cluster import DBSCAN
 from search.query_elasticsearch import get_perspective_from_pool
 from search.google_custom_search import CustomSearchClient
@@ -34,7 +35,7 @@ bb_equivalence = BertBaseline(task_name="perspectrum_equivalence",
                               saved_model="data/model/equivalence/perspectrum_equivalence_lr3e-05_bs32_epoch-2.pth",
                               no_cuda=no_cuda)
 
-logging.disable(sys.maxsize)  # Python 3
+# logging.disable(sys.maxsize)  # Python 3
 
 ### Load config JSON object
 config = json.load(open("config/config.json"))
@@ -64,7 +65,7 @@ def perspectrum_solver(request, claim_text="", vis_type=""):
 
         # given a claim, extract perspectives
         perspective_given_claim = [(p_text, pId, pScore / len(p_text.split(" "))) for p_text, pId, pScore in
-                                   get_perspective_from_pool(claim, 30)]
+                                   get_perspective_from_pool(claim, 3)]
 
         perspective_relevance_score = bb_relevance.predict_batch(
             [(claim, p_text) for (p_text, pId, _) in perspective_given_claim])
@@ -155,16 +156,17 @@ def perspectrum_solver(request, claim_text="", vis_type=""):
     return render(request, "vis_dataset_js_with_search_box.html", context)
 
 
+@csrf_exempt
 def api_get_perspectives_from_cse(request):
     if request.method != 'POST':
         return HttpResponse("This api only support POST request", status=403)
 
-    claim_text = request['claim']
+    claim_text = request.POST.get('claim')
 
     csc = CustomSearchClient(key=config["custom_search_api_key"], cx=config["custom_search_engine_id"])
 
     r = csc.query(claim_text)
-    urls = [_r["link"] for _r in r][:5]  # Only doing three for now for
+    urls = [_r["link"] for _r in r][:1]
 
     first_sents = []
 
@@ -177,4 +179,14 @@ def api_get_perspectives_from_cse(request):
         (claim_text, sent) for sent in first_sents
     ])
 
-    return zip(first_sents, perspective_relevance_score)
+    perspective_relevance_score = [float(x) for x in perspective_relevance_score]
+
+    perspective_stance_score = bb_stance.predict_batch([
+        (claim_text, sent) for sent in first_sents
+    ])
+
+    perspective_stance_score = [float(x) for x in perspective_stance_score]
+
+    results = list(zip(first_sents, perspective_relevance_score, perspective_stance_score))
+
+    return JsonResponse(results, safe=False)

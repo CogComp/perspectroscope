@@ -24,5 +24,6 @@ urlpatterns = [
     path('baseline/<str:claim_text>/<str:vis_type>/', views.perspectrum_solver),
 
     # APIs
-    path('load_claim_text/', views.load_claim_text)
+    path('load_claim_text/', views.load_claim_text),
+    path('api_get_perspectives_from_cse', views.api_get_perspectives_from_cse)
 ]
