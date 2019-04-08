@@ -339,7 +339,16 @@
         } else {
             $('#wiki').addClass('active');
         }
+
+        // Loading the
+        $.post("/api_get_perspectives_from_cse", {
+            "claim": "{{ claim_text }}",
+        }, function(res) {
+            console.log(res);
+        });
     });
+
+
 </script>
 <script type="application/javascript">
 
@@ -360,6 +369,9 @@
     }
 
     $('document').ready(function () {
+
+        var wikipedia_searched = false;
+
         $('#btn-load-example-1').click(function () {
             load_example_1()
         });
@@ -384,14 +396,6 @@
 
         $('#claim-box').easyAutocomplete(options);
 
-
-        {% if claim_text %}
-        $.post("/api_get_perspectives_from_cse", {
-            "claim": "{{ claim_text }}",
-        }, function(res) {
-            console.log(res);
-        });
-        {% endif %}
     });
 </script>
 </body>

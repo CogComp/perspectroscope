@@ -187,9 +187,14 @@ def api_get_perspectives_from_cse(request):
     perspective_stance_score = [float(x) for x in perspective_stance_score]
 
     results = list(zip(sents, perspective_relevance_score, perspective_stance_score))
+
+    ## Filter results based on a threshold on relevance score
+    _REL_SCORE_TH = 1.5
+    results = [res for res in results if res[1] > _REL_SCORE_TH]
+    
     # results = list(zip(sents, perspective_relevance_score))
 
-    print(urls)
-    print(json.dumps(results))
+    # print(urls)
+    # print(json.dumps(results))
 
     return JsonResponse(results, safe=False)
