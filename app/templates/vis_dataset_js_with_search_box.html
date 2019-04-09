@@ -67,7 +67,7 @@
         <div class="col-5">
             <div class="btn-group">
                 <button id="search-claim" type="button" class="btn btn-primary ">Search</button>
-                <button id="wiki" type="button" class="btn btn-primary ">Use Wikipedia</button>
+                <button id="wiki" type="button" class="btn btn-default ">Ask Wikipedia - Off</button>
                 <div class="btn-group">
                     <button data-toggle="dropdown" class="btn btn-primary dropdown-toggle btn-sm" type="button"
                             aria-expanded="false">
@@ -346,8 +346,14 @@
     $('#wiki').click(function () {
         if ($('#wiki').hasClass('active')) {
             $('#wiki').removeClass('active');
+            $('#wiki').removeClass('btn-success');
+            $('#wiki').addClass('btn-default');
+            $('#wiki').html('Ask Wikipedia - Off');
         } else {
             $('#wiki').addClass('active');
+            $('#wiki').removeClass('btn-default');
+            $('#wiki').addClass('btn-success');
+            $('#wiki').html('Ask Wikipedia - On');
         }
     });
 
