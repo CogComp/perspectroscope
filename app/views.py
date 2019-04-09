@@ -59,6 +59,8 @@ def perspectrum_solver(request, claim_text="", withWiki=""):
     :param baseline_name: the solver name (BERT and Lucene).
     :return:
     """
+    context = {}
+
     if claim_text != "":
         claim = claim_text
 
@@ -118,48 +120,66 @@ def perspectrum_solver(request, claim_text="", withWiki=""):
                 id = cluster_labels[i]
                 if id not in perspective_clusters:
                     perspective_clusters[id] = []
-                perspective_clusters[id].append((p_text, pId, stance_score))
+                perspective_clusters[id].append((p_text, pId, stance_score, relevance_score))
 
         for cluster_id in perspective_clusters.keys():
             stance_list = []
+            relevance_list = []
             perspectives = []
             persp_flash_tmp = []
-            for (p_text, pId, stance_score) in perspective_clusters[cluster_id]:
+            for (p_text, pId, stance_score, relevance_score) in perspective_clusters[cluster_id]:
                 stance_list.append(stance_score)
-                perspectives.append((pId, p_text))
+                relevance_list.append(relevance_score)
+                perspectives.append(p_text)
                 persp_flash_tmp.append((p_text, pId, cluster_id + 1, [], stance_score))
 
             avg_stance = sum(stance_list) / len(stance_list)
+            avg_relevance = sum(relevance_list) / len(relevance_list)
             if avg_stance > 0.0:
-                persp_sup.append((perspectives, [avg_stance, 0, 0, 0, 0], []))
+                persp_sup.append((perspectives, [avg_stance, avg_relevance], []))
                 persp_sup_flash.extend(persp_flash_tmp)
             else:
-                persp_und.append((perspectives, [avg_stance, 0, 0, 0, 0], []))
+                persp_und.append((perspectives, [avg_stance, avg_relevance], []))
                 persp_und_flash.extend(persp_flash_tmp)
 
         claim_persp_bundled = [(claim, persp_sup_flash, persp_und_flash)]
 
-        context = {
-            "claim_text": claim_text,
-            "perspectives_sorted": perspectives_sorted,
-            "perspectives_equivalences": perspectives_equivalences,
-            "claim_persp_bundled": claim_persp_bundled,
-            "used_evidences_and_texts": [],  # used_evidences_and_texts,
-            "persp_sup": persp_sup,
-            "persp_und": persp_und
-        }
-    else:
-        context = {}
+        context["claim_text"] =  claim_text
+        context["perspectives_sorted"] = perspectives_sorted
+        context["perspectives_equivalences"] = perspectives_equivalences
+        context["claim_persp_bundled"] = claim_persp_bundled
+        context["used_evidences_and_texts"] = []  # used_evidences_and_texts,
+        context["persp_sup"] = persp_sup
+        context["persp_und"] =  persp_und
+
+        if withWiki == "withWiki":
+            web_persps = api_get_perspectives_from_cse(claim_text)
+
+            wiki_persp_sup = []
+            wiki_persp_und = []
+
+            for persp, _rel_score, _stance_score in web_persps:
+                print(persp, type(persp))
+                if _stance_score > 0:
+                    wiki_persp_sup.append(([persp], [_stance_score, _rel_score], []))
+                else:
+                    wiki_persp_und.append(([persp], [_stance_score, _rel_score], []))
+
+
+            context["wiki_persp_und"] = wiki_persp_und
+            context["wiki_persp_sup"] = wiki_persp_sup
 
     return render(request, "vis_dataset_js_with_search_box.html", context)
 
 
-@csrf_exempt
-def api_get_perspectives_from_cse(request):
-    if request.method != 'POST':
-        return HttpResponse("This api only support POST request", status=403)
 
-    claim_text = request.POST.get('claim')
+# def api_get_perspectives_from_cse(request):
+#     if request.method != 'POST':
+#         return HttpResponse("This api only support POST request", status=403)
+#
+#     claim_text = request.POST.get('claim')
+
+def api_get_perspectives_from_cse(claim_text):
 
     csc = CustomSearchClient(key=config["custom_search_api_key"], cx=config["custom_search_engine_id"])
 
@@ -191,10 +211,11 @@ def api_get_perspectives_from_cse(request):
     ## Filter results based on a threshold on relevance score
     _REL_SCORE_TH = 1.5
     results = [res for res in results if res[1] > _REL_SCORE_TH]
-    
+    results = sorted(results, key=lambda x: x[1], reverse=True)
     # results = list(zip(sents, perspective_relevance_score))
 
     # print(urls)
     # print(json.dumps(results))
 
-    return JsonResponse(results, safe=False)
+    return results
+    # return JsonResponse(results, safe=False)
