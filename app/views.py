@@ -7,7 +7,6 @@ import json
 
 from django.shortcuts import render
 from django.http import JsonResponse, HttpResponse
-from django.views.decorators.csrf import csrf_exempt
 from sklearn.cluster import DBSCAN
 from model.run_bert_on_perspectrum import BertBaseline
 from search.query_elasticsearch import get_perspective_from_pool
@@ -34,7 +33,7 @@ bb_equivalence = BertBaseline(task_name="perspectrum_equivalence",
                               saved_model="data/model/equivalence/perspectrum_equivalence_lr3e-05_bs32_epoch-2.pth",
                               no_cuda=no_cuda)
 
-# logging.disable(sys.maxsize)  # Python 3
+logging.disable(sys.maxsize)  # Python 3
 
 ### Load config JSON object
 config = json.load(open("config/config.json"))
@@ -46,8 +45,27 @@ def load_claim_text(request):
         return JsonResponse([c['text'] for c in data], safe=False)
 
 
-def _normalize(num):
+def _keep_two_decimal(num):
     return math.floor(num * 100) / 100.0
+
+def _normalize(float_val, old_range, new_range):
+    """
+    Normalize float_val from [old_range[0], old_range[1]] to [new_range[0], new_range[1]]
+    """
+    normalized = (float_val - old_range[0]) / (old_range[1] - old_range[0]) * (new_range[1] - new_range[0]) + new_range[0]
+    if normalized > new_range[1]:
+            normalized = new_range[1]
+    elif normalized < new_range[0]:
+        normalized = new_range[0]
+
+    return normalized
+
+def _normalize_relevance_score(bert_logit):
+    return _normalize(bert_logit, old_range=[0, 3], new_range=[0, 1])
+
+
+def _normalize_stance_score(bert_logit):
+    return _normalize(bert_logit, old_range=[-4, 4], new_range=[-1, 1])
 
 
 def perspectrum_solver(request, claim_text="", withWiki=""):
@@ -74,8 +92,8 @@ def perspectrum_solver(request, claim_text="", withWiki=""):
         perspective_stance_score = bb_stance.predict_batch(
             [(claim, p_text) for (p_text, pId, _) in perspective_given_claim])
 
-        perspectives_sorted = [(p_text, pId, _normalize(luceneScore), _normalize(perspective_relevance_score[i]),
-                                _normalize(perspective_stance_score[i])) for i, (p_text, pId, luceneScore) in
+        perspectives_sorted = [(p_text, pId, _keep_two_decimal(luceneScore), _keep_two_decimal(perspective_relevance_score[i]),
+                                _keep_two_decimal(perspective_stance_score[i])) for i, (p_text, pId, luceneScore) in
                                enumerate(perspective_given_claim)]
 
         perspectives_sorted = sorted(perspectives_sorted, key=lambda x: -x[3])
@@ -133,8 +151,8 @@ def perspectrum_solver(request, claim_text="", withWiki=""):
                 perspectives.append(p_text)
                 persp_flash_tmp.append((p_text, pId, cluster_id + 1, [], stance_score))
 
-            avg_stance = sum(stance_list) / len(stance_list)
-            avg_relevance = sum(relevance_list) / len(relevance_list)
+            avg_stance = _normalize_stance_score(sum(stance_list) / len(stance_list))
+            avg_relevance = _normalize_relevance_score(sum(relevance_list) / len(relevance_list))
             if avg_stance > 0.0:
                 persp_sup.append((perspectives, [avg_stance, avg_relevance], []))
                 persp_sup_flash.extend(persp_flash_tmp)
@@ -155,11 +173,19 @@ def perspectrum_solver(request, claim_text="", withWiki=""):
         if withWiki == "withWiki":
             web_persps = api_get_perspectives_from_cse(claim_text)
 
+            ## Filter results based on a threshold on relevance score
+            _REL_SCORE_TH = 1.5
+            web_persps = [(_s, _normalize_relevance_score(_rel_score), _normalize_stance_score(_stance_score))
+                          for _s, _rel_score, _stance_score in web_persps if _rel_score > _REL_SCORE_TH]
+            web_persps = sorted(web_persps, key=lambda x: x[1], reverse=True)
+
+
+            ## Normalize the relevance score
             wiki_persp_sup = []
             wiki_persp_und = []
 
             for persp, _rel_score, _stance_score in web_persps:
-                print(persp, type(persp))
+                print(_rel_score, _stance_score)
                 if _stance_score > 0:
                     wiki_persp_sup.append(([persp], [_stance_score, _rel_score], []))
                 else:
@@ -208,14 +234,5 @@ def api_get_perspectives_from_cse(claim_text):
 
     results = list(zip(sents, perspective_relevance_score, perspective_stance_score))
 
-    ## Filter results based on a threshold on relevance score
-    _REL_SCORE_TH = 1.5
-    results = [res for res in results if res[1] > _REL_SCORE_TH]
-    results = sorted(results, key=lambda x: x[1], reverse=True)
-    # results = list(zip(sents, perspective_relevance_score))
-
-    # print(urls)
-    # print(json.dumps(results))
-
     return results
-    # return JsonResponse(results, safe=False)
+

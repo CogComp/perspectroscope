@@ -2,19 +2,9 @@
 
 <!DOCTYPE html>
 <html lang="en">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js"
-        integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh"
-        crossorigin="anonymous"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js"
-        integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ"
-        crossorigin="anonymous"></script>
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css"
-      integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flat-ui/2.3.0/css/flat-ui.min.css"
-      integrity="sha256-7bYJaNviFZlH+bKqZlshmYKeyvkp+fXBQuerWp2AXlA=" crossorigin="anonymous"/>
+
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css"
       integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
-<link rel="stylesheet" href="{% static "css/style.css" %}">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Perspective Annotation Interface</title>
 </head>
@@ -46,8 +36,15 @@
                                              target='_blank'>
                                                 {% for eid in cluster.2 %}{{ eid }} {% endfor %}</a>
                                              ">
-                                <i class="fa fa-lg fa-info-circle" aria-hidden="true"></i>
+                                <i class="fa fa-lg fa-info-circle" style="color: silver" aria-hidden="true"></i>
                             </a>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="progress" style="height: 5px; margin-top: 5px">
+                                <div class="progress-bar" style="width: {% widthratio cluster.1.1 1 100 %}%;"></div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -75,8 +72,15 @@
                                              target='_blank'>
                                                 {% for eid in cluster.2 %}{{ eid }} {% endfor %}</a>
                                              ">
-                                <i class="fa fa-lg fa-info-circle" aria-hidden="true"></i>
+                                <i class="fa fa-lg fa-info-circle" style="color: silver" aria-hidden="true"></i>
                             </a>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="progress" style="height: 5px; margin-top: 5px">
+                                <div class="progress-bar" style="width: {% widthratio cluster.1.1 1 100 %}%;"></div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -84,7 +88,6 @@
         </div>
     </div>
 </div>
-
 
 </body>
 <script>
