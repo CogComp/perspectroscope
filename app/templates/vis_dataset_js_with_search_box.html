@@ -92,6 +92,10 @@
                 Display Relevance/Stance Score &nbsp;
                 <input type="checkbox" data-toggle="switch" name="default-switch" id="switch-display-score" />
             </div>
+            <div class="col">
+                Enable Feedbacks &nbsp;
+                <input type="checkbox" data-toggle="switch" name="default-switch" id="switch-feedback" />
+            </div>
         </div>
         {% include "two_column.html" %}
     {% endif %}
@@ -411,7 +415,7 @@
 
         $('#switch-display-score').change(function() {
             $('.score-collapse').collapse('toggle');
-        })
+        });
 
         {% if wiki_persp_und or wiki_persp_sup %}
             $('#wiki').addClass('active');
@@ -419,6 +423,10 @@
             $('#wiki').addClass('btn-success');
             $('#wiki').html('Ask Wikipedia - On');
         {% endif %}
+
+        $('#switch-feedback').change(function() {
+            $('.btn-feedback').toggle();
+        });
     });
 </script>
 </body>
