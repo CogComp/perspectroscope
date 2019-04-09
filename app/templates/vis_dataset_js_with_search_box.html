@@ -87,9 +87,13 @@
 
     {% if claim_text %}
         <hr>
-        <div class="row" style="width: 100%; align-content: center; ">
-            {% include "two_column.html" %}
+        <div class="row">
+            <div class="col">
+                Display Relevance/Stance Score &nbsp;
+                <input type="checkbox" data-toggle="switch" name="default-switch" id="switch-display-score" />
+            </div>
         </div>
+        {% include "two_column.html" %}
     {% endif %}
 
     {% if claim_text %}
@@ -405,6 +409,16 @@
 
         $('#claim-box').easyAutocomplete(options);
 
+        $('#switch-display-score').change(function() {
+            $('.score-collapse').collapse('toggle');
+        })
+
+        {% if wiki_persp_und or wiki_persp_sup %}
+            $('#wiki').addClass('active');
+            $('#wiki').removeClass('btn-default');
+            $('#wiki').addClass('btn-success');
+            $('#wiki').html('Ask Wikipedia - On');
+        {% endif %}
     });
 </script>
 </body>

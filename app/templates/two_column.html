@@ -12,9 +12,7 @@
 </head>
 <body>
 <div class="container-fluid">
-    <h4 class="persp-claim-title pallete pallete-peter-river">
-        {{ claim.title }}
-    </h4>
+
     <div class="row">
         <div class="col persps-container tile" style="background-color: #f5f5f5">
             <h6>
@@ -42,26 +40,39 @@
                             </a>
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col-12">
-                            <div class="progress" style="height: 5px; margin-top: 5px">
-                                <div class="progress-bar" style="width:1%; background-color: black"></div>
-                                <div class="progress-bar" style="width: {% widthratio cluster.1.1 1 100 %}%; background-color: #d0d0d0"></div>
+                    <div class="collapse score-collapse">
+                        <div class="row stance-bar">
+                            <div class="col-12">
+                                <div class="progress" style="height: 5px; margin-top: 5px">
+                                    <!--<div class="progress-bar" style="width:1%; background-color: black"></div>-->
+                                    <div class="progress-bar" style="width: {% widthratio cluster.1.1 1 100 %}%; background-color: #d0d0d0"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row stance-bar">
+                            <div class="col-12">
+                                <div class="progress" style="height: 5px; margin-top: 5px">
+                                    <div class="progress-bar" style="width: 49%; background-color: rgb(235, 237, 239)"></div>
+                                    <div class="progress-bar" style="width: 1%; background-color: black"></div>
+                                    {% widthratio cluster.1.0 1 50 as stancewidth %}
+                                    {% blocktrans %}
+                                    <div class="progress-bar progress-bar-info" style="width: {{stancewidth}}%;"></div>
+                                    {% endblocktrans %}
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col-12">
-                            <div class="progress" style="height: 5px; margin-top: 5px">
-                                <div class="progress-bar" style="width: 49%; background-color: rgb(235, 237, 239)"></div>
-                                <div class="progress-bar" style="width: 1%; background-color: black"></div>
-                                {% widthratio cluster.1.0 1 50 as stancewidth %}
-                                {% blocktrans %}
-                                <div class="progress-bar progress-bar-info" style="width: {{stancewidth}}%;"></div>
-                                {% endblocktrans %}
-                            </div>
+                    <div class="collapse evidence-collapse">
+                        <hr>
+                        <div class="card">
+                            Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident.
                         </div>
                     </div>
+                    <!--<div class="row">-->
+                        <!--<div class="col-2">-->
+                            <!--<i class="far fa-thumbs-up fa-lg" style="color: silver" aria-hidden="true"></i>-->
+                        <!--</div>-->
+                    <!--</div>-->
                 </div>
             {% endfor %}
         </div>
@@ -91,29 +102,38 @@
                             </a>
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col-12">
-                            <div class="progress" style="height: 5px; margin-top: 5px">
-                                <div class="progress-bar" style="width:1%; background-color: black"></div>
-                                <div class="progress-bar" style="width: {% widthratio cluster.1.1 1 100 %}%; background-color: #d0d0d0""></div>
+
+                    <div class="collapse score-collapse">
+                        <div class="row stance-bar">
+                            <div class="col-12">
+                                <div class="progress" style="height: 5px; margin-top: 5px">
+                                    <!--<div class="progress-bar" style="width:1%; background-color: black"></div>-->
+                                    <div class="progress-bar" style="width: {% widthratio cluster.1.1 1 100 %}%; background-color: #d0d0d0""></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row stance-bar">
+                            <div class="col-12">
+                                <div class="progress" style="height: 5px; margin-top: 5px">
+                                    {% with stanceabs=cluster.1.0|abs_val blankabs=cluster.1.0|blank_abs%}
+                                    {% widthratio stanceabs 1 50 as stancewidth %}
+                                    {% widthratio blankabs 1 50 as blankwidth %}
+                                    {% blocktrans %}
+                                    <div class="progress-bar" style="width: {{ blankwidth }}%; background-color: rgb(235, 237, 239)"></div>
+                                    <div class="progress-bar progress-bar-danger" style="width: {{stancewidth}}%;"></div>
+                                    {% endblocktrans %}
+                                    <div class="progress-bar" style="width: 1%; background-color: black"></div>
+                                    <div class="progress-bar" style="width: 49%; background-color: rgb(235, 237, 239)"></div>
+                                    {% endwith %}
+                                </div>
                             </div>
                         </div>
                     </div>
-
-                    <div class="row">
-                        <div class="col-12">
-                            <div class="progress" style="height: 5px; margin-top: 5px">
-                                {% with stanceabs=cluster.1.0|abs_val blankabs=cluster.1.0|blank_abs%}
-                                {% widthratio stanceabs 1 50 as stancewidth %}
-                                {% widthratio blankabs 1 50 as blankwidth %}
-                                {% blocktrans %}
-                                <div class="progress-bar" style="width: {{ blankwidth }}%; background-color: rgb(235, 237, 239)"></div>
-                                <div class="progress-bar progress-bar-danger" style="width: {{stancewidth}}%;"></div>
-                                {% endblocktrans %}
-                                <div class="progress-bar" style="width: 1%; background-color: black"></div>
-                                <div class="progress-bar" style="width: 49%; background-color: rgb(235, 237, 239)"></div>
-                                {% endwith %}
-                            </div>
+                    <div class="collapse evidence-collapse">
+                        <hr>
+                        <div class="card">
+                            Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident.
                         </div>
                     </div>
                 </div>
@@ -126,6 +146,10 @@
 <script>
     $(document).ready(function () {
         $('[data-toggle="popover"]').popover();
+
+        $('.persp-title').click(function() {
+            $(this).find(".evidence-collapse").collapse('toggle');
+        })
     });
 </script>
 
