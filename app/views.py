@@ -232,6 +232,7 @@ def perspectrum_solver(request, claim_text="", withWiki=""):
 
     return render(request, "vis_dataset_js_with_search_box.html", context)
 
+
 @csrf_exempt
 def api_submit_query_log(request):
     if request.method != 'POST':
@@ -244,12 +245,28 @@ def api_submit_query_log(request):
 
     return HttpResponse(status=200)
 
+
 @csrf_exempt
 def api_submit_feedback(request):
     if request.method != 'POST':
         return HttpResponse("api_submit_feedback api only supports POST method.", status=400)
 
     query_claim = request.POST.get('claim', '')
-    query_claim = request.POST.get('claim', '')
+    perspective = request.POST.get('perspective', '')
+
+    relevance_score = float(request.POST.get('relevance_score', '0.0'))
+    stance_score = float(request.POST.get('stance_score', '0.0'))
+    feedback = request.POST.get('feedback', '')
+
+    if feedback and query_claim:
+        like = True if feedback == 'like' else False
+
+        FeedbackRecord.objects.create(
+            claim=query_claim,
+            perspective=perspective,
+            relevance_score=relevance_score,
+            stance_score=stance_score,
+            feedback=like,
+        )
 
     return HttpResponse(status=200)
