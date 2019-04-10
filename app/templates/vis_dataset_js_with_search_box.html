@@ -448,17 +448,24 @@
 
         {% endif %}
 
-        {% if claim_text %}
         let $el_feedback = $('#btn-switch-feedback');
+        let $el_display = $('#btn-switch-display-score');
+
+        {% if claim_text %}
+
         $el_feedback.show();
         $el_feedback.click(function() {
             $('.btn-feedback').toggle();
         });
-        let $el_display = $('#btn-switch-display-score');
+
         $el_display.show();
         $el_display.click(function() {
             $('.score-collapse').toggle();
         });
+
+        {% else %}
+        $el_feedback.remove();
+        $el_display.remove();
         {% endif %}
 
 

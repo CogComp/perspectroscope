@@ -189,7 +189,7 @@ def perspectrum_solver(request, claim_text="", withWiki=""):
             avg_stance = _normalize_stance_score(sum(stance_list) / len(stance_list))
             avg_relevance = _normalize_relevance_score(sum(relevance_list) / len(relevance_list))
             if avg_stance > 0.0:
-                persp_sup.append((perspectives, [avg_stance, avg_relevance], []))
+                persp_sup.append((perspectives, [avg_stance, avg_relevance], "PERSPECTRUM"))
                 persp_sup_flash.extend(persp_flash_tmp)
             else:
                 persp_und.append((perspectives, [avg_stance, avg_relevance], []))
