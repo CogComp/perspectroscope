@@ -21,7 +21,7 @@
             {% for cluster in persp_sup %}
                 <div class="persp-title btn-lg" style="background-color: #d9eaff">
                     <div class="row">
-                        <div class="col persp-text">
+                        <div class="col persp-text" id="{{ cluster.1.1|floatformat:3 }}_{{ cluster.1.0|floatformat:3 }}" >
                             {% for p in cluster.0 %}
                                 <div>{{ p }}</div>
                             {% endfor %}
@@ -42,7 +42,7 @@
                             <div class="col-12">
                                 <div class="progress" style="height: 5px; margin-top: 5px">
                                     <!--<div class="progress-bar" style="width:1%; background-color: black"></div>-->
-                                    <div class="progress-bar" style="width: {% widthratio cluster.1.1 1 100 %}%; background-color: #d0d0d0"></div>
+                                    <div class="progress-bar" style="width: {% widthratio cluster.1.1 1 100 %}%; background-color: silver"></div>
                                 </div>
                             </div>
                         </div>
@@ -102,7 +102,7 @@
                             <div class="col-12">
                                 <div class="progress" style="height: 5px; margin-top: 5px">
                                     <!--<div class="progress-bar" style="width:1%; background-color: black"></div>-->
-                                    <div class="progress-bar" style="width: {% widthratio cluster.1.1 1 100 %}%; background-color: #d0d0d0">
+                                    <div class="progress-bar" style="width: {% widthratio cluster.1.1 1 100 %}%; background-color: silver">
                                     </div>
                                 </div>
                             </div>
@@ -162,6 +162,35 @@
                 this_btn.css('color', 'slategrey');
                 other_btn.removeClass('active');
                 other_btn.css('color', 'silver');
+
+                let persp_text = "";
+                let persp_text_div = $(this).siblings('.persp-text').first();
+                persp_text_div.find('div').each(function() {
+                    persp_text += $(this).text();
+                    persp_text += " "
+                });
+
+                let pd_id_parts = persp_text_div.prop('id').split("_");
+                let rel_score = parseFloat(pd_id_parts[0]);
+                let stance_score = parseFloat(pd_id_parts[1]);
+
+                let feedback = "";
+                if ($(this).hasClass("btn-feedback-like"))
+                    feedback = "like";
+                else
+                    feedback = "dislike";
+
+                let payload = {
+                    "claim": "{{ claim_text }}",
+                    "perspective": persp_text,
+                    "relevance_score": rel_score,
+                    "stance_score": stance_score,
+                    "feedback": feedback
+                };
+
+                $.post('/api/submit_feedback/', payload, function() {
+                    console.log(payload)
+                })
             }
         })
     });
