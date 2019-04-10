@@ -150,10 +150,19 @@
         });
 
         $('.btn-feedback').click(function() {
-            let this_btn = $(this);
-            let other_btn = this_btn.siblings('.btn-feedback').first();
-            this_btn.prop('color', 'slategray');
-            other_btn.prop('color', 'silver');
+            let this_btn = $(this).find('i');
+            let other_btn = $(this).siblings('.btn-feedback:not(this)').first().find('i');
+
+            if (this_btn.hasClass('active')) {
+                this_btn.removeClass('active');
+                this_btn.css('color', 'silver');
+            }
+            else {
+                this_btn.addClass("active");
+                this_btn.css('color', 'slategrey');
+                other_btn.removeClass('active');
+                other_btn.css('color', 'silver');
+            }
         })
     });
 
