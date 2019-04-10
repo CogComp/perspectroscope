@@ -79,11 +79,13 @@ def _get_perspectives_from_cse(claim_text):
     urls = [_r["link"] for _r in r]
 
     sents = []
+    sent_url = []
 
     for url in urls:
         article = parse_article(url)
         paragraphs = [p for p in article.text.splitlines() if p]
         sents += [sent_tokenize(p)[0] for p in paragraphs]
+        sent_url += [url for _ in paragraphs]
         # sents += [_s for p in paragraphs for _s in sent_tokenize(p)]
 
     perspective_relevance_score = bb_relevance.predict_batch([
@@ -98,7 +100,7 @@ def _get_perspectives_from_cse(claim_text):
 
     perspective_stance_score = [float(x) for x in perspective_stance_score]
 
-    results = list(zip(sents, perspective_relevance_score, perspective_stance_score))
+    results = list(zip(sents, perspective_relevance_score, perspective_stance_score, sent_url))
 
     return results
 
@@ -131,7 +133,8 @@ def perspectrum_solver(request, claim_text="", withWiki=""):
                                 _keep_two_decimal(perspective_stance_score[i])) for i, (p_text, pId, luceneScore) in
                                enumerate(perspective_given_claim)]
 
-        perspectives_sorted = sorted(perspectives_sorted, key=lambda x: -x[3])
+        perspectives_sorted = sorted(perspectives_sorted, key=lambda x: x[3] + 0.2 * math.fabs(x[4]), reverse=True)
+        perspectives_sorted = [p for p in perspectives_sorted if p[3] > 0.7]
 
         similarity_score = np.zeros((len(perspective_given_claim), len(perspective_given_claim)))
         perspectives_equivalences = []
@@ -210,20 +213,22 @@ def perspectrum_solver(request, claim_text="", withWiki=""):
 
             ## Filter results based on a threshold on relevance score
             _REL_SCORE_TH = 1.5
-            web_persps = [(_s, _normalize_relevance_score(_rel_score), _normalize_stance_score(_stance_score))
-                          for _s, _rel_score, _stance_score in web_persps if _rel_score > _REL_SCORE_TH]
-            web_persps = sorted(web_persps, key=lambda x: x[1], reverse=True)
+            web_persps = [(_s, _normalize_relevance_score(_rel_score), _normalize_stance_score(_stance_score), url)
+                          for _s, _rel_score, _stance_score, url in web_persps if _rel_score > _REL_SCORE_TH]
+            web_persps = sorted(web_persps, key=lambda x: x[1] + 0.2*math.fabs(x[2]), reverse=True)
+
+            web_persps = web_persps[:20] # Only keep top 20
 
             ## Normalize the relevance score
             wiki_persp_sup = []
             wiki_persp_und = []
 
-            for persp, _rel_score, _stance_score in web_persps:
+            for persp, _rel_score, _stance_score, url in web_persps:
                 print(_rel_score, _stance_score)
                 if _stance_score > 0:
-                    wiki_persp_sup.append(([persp], [_stance_score, _rel_score], ["Wikipedia", ""]))
+                    wiki_persp_sup.append(([persp], [_stance_score, _rel_score], ["Wikipedia", url]))
                 else:
-                    wiki_persp_und.append(([persp], [_stance_score, _rel_score], ["Wikipedia", ""]))
+                    wiki_persp_und.append(([persp], [_stance_score, _rel_score], ["Wikipedia", url]))
 
 
             context["wiki_persp_und"] = wiki_persp_und
