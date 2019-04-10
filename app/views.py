@@ -4,15 +4,19 @@ import sys
 import math
 import numpy as np
 import json
+import datetime
 
 from django.shortcuts import render
 from django.http import JsonResponse, HttpResponse
+from django.views.decorators.csrf import csrf_exempt
 from sklearn.cluster import DBSCAN
 from model.run_bert_on_perspectrum import BertBaseline
 from search.query_elasticsearch import get_perspective_from_pool
 from search.google_custom_search import CustomSearchClient
 from search.news_html_to_text import parse_article
 from nltk import sent_tokenize
+
+from app.models import QueryLog, FeedbackRecord
 
 file_names = {
     'evidence': 'data/perspectrum/evidence_pool_v0.2.json',
@@ -66,6 +70,37 @@ def _normalize_relevance_score(bert_logit):
 
 def _normalize_stance_score(bert_logit):
     return _normalize(bert_logit, old_range=[-4, 4], new_range=[-1, 1])
+
+def _get_perspectives_from_cse(claim_text):
+
+    csc = CustomSearchClient(key=config["custom_search_api_key"], cx=config["custom_search_engine_id"])
+
+    r = csc.query(claim_text)
+    urls = [_r["link"] for _r in r]
+
+    sents = []
+
+    for url in urls:
+        article = parse_article(url)
+        paragraphs = [p for p in article.text.splitlines() if p]
+        sents += [sent_tokenize(p)[0] for p in paragraphs]
+        # sents += [_s for p in paragraphs for _s in sent_tokenize(p)]
+
+    perspective_relevance_score = bb_relevance.predict_batch([
+        (claim_text, sent) for sent in sents
+    ])
+
+    perspective_relevance_score = [float(x) for x in perspective_relevance_score]
+
+    perspective_stance_score = bb_stance.predict_batch([
+        (claim_text, sent) for sent in sents
+    ])
+
+    perspective_stance_score = [float(x) for x in perspective_stance_score]
+
+    results = list(zip(sents, perspective_relevance_score, perspective_stance_score))
+
+    return results
 
 
 def perspectrum_solver(request, claim_text="", withWiki=""):
@@ -171,7 +206,7 @@ def perspectrum_solver(request, claim_text="", withWiki=""):
         context["persp_und"] =  persp_und
 
         if withWiki == "withWiki":
-            web_persps = api_get_perspectives_from_cse(claim_text)
+            web_persps = _get_perspectives_from_cse(claim_text)
 
             ## Filter results based on a threshold on relevance score
             _REL_SCORE_TH = 1.5
@@ -197,42 +232,24 @@ def perspectrum_solver(request, claim_text="", withWiki=""):
 
     return render(request, "vis_dataset_js_with_search_box.html", context)
 
+@csrf_exempt
+def api_submit_query_log(request):
+    if request.method != 'POST':
+        return HttpResponse("submit_query_log api only supports POST method.", status=400)
 
+    query_claim = request.POST.get('claim', '')
 
-# def api_get_perspectives_from_cse(request):
-#     if request.method != 'POST':
-#         return HttpResponse("This api only support POST request", status=403)
-#
-#     claim_text = request.POST.get('claim')
+    if query_claim:
+        QueryLog.objects.create(query_claim=query_claim, query_time=datetime.datetime.now())
 
-def api_get_perspectives_from_cse(claim_text):
+    return HttpResponse(status=200)
 
-    csc = CustomSearchClient(key=config["custom_search_api_key"], cx=config["custom_search_engine_id"])
+@csrf_exempt
+def api_submit_feedback(request):
+    if request.method != 'POST':
+        return HttpResponse("api_submit_feedback api only supports POST method.", status=400)
 
-    r = csc.query(claim_text)
-    urls = [_r["link"] for _r in r]
+    query_claim = request.POST.get('claim', '')
+    query_claim = request.POST.get('claim', '')
 
-    sents = []
-
-    for url in urls:
-        article = parse_article(url)
-        paragraphs = [p for p in article.text.splitlines() if p]
-        sents += [sent_tokenize(p)[0] for p in paragraphs]
-        # sents += [_s for p in paragraphs for _s in sent_tokenize(p)]
-
-    perspective_relevance_score = bb_relevance.predict_batch([
-        (claim_text, sent) for sent in sents
-    ])
-
-    perspective_relevance_score = [float(x) for x in perspective_relevance_score]
-
-    perspective_stance_score = bb_stance.predict_batch([
-        (claim_text, sent) for sent in sents
-    ])
-
-    perspective_stance_score = [float(x) for x in perspective_stance_score]
-
-    results = list(zip(sents, perspective_relevance_score, perspective_stance_score))
-
-    return results
-
+    return HttpResponse(status=200)

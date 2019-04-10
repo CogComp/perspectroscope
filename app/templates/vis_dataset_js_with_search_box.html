@@ -346,7 +346,14 @@
             withWiki = "withWiki";
         }
 
+        // Log the query in te data base
+        $.post('/api/submit_query_log/', {
+            "claim": claimText
+        }, function() {
+            console.log("Query Log Success!");
+        });
         let url = '/baseline/' + claimText + "/" + withWiki + "/";
+
         console.log(url);
         window.location.href = url;
     });

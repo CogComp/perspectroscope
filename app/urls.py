@@ -25,5 +25,6 @@ urlpatterns = [
 
     # APIs
     path('load_claim_text/', views.load_claim_text),
-    # path('api_get_perspectives_from_cse', views.api_get_perspectives_from_cse)
+    path('api/submit_query_log/', views.api_submit_query_log),
+    path('api/submit_feedback/', views.api_submit_feedback)
 ]
