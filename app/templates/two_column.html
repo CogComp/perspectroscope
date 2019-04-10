@@ -61,9 +61,22 @@
                     </a>
                     <div class="collapse evidence-collapse">
                         <hr>
-                        <div class="card">
-                            Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident.
-                        </div>
+                        <table class="table">
+                            <tbody>
+                            {% if cluster.2.0 %}
+                            <tr>
+                                <th scope="row">Source</th>
+                                <th>{{ cluster.2.0 }}</th>
+                            </tr>
+                            {% endif %}
+                            {% if cluster.2.1 %}
+                            <tr>
+                                <th scope="row">Link</th>
+                                <th>{{ cluster.2.1 }}</th>
+                            </tr>
+                            {% endif %}
+                            </tbody>
+                        </table>
                     </div>
                     <!--<div class="row">-->
                         <!--<div class="col-2">-->
@@ -127,9 +140,22 @@
                     </a>
                     <div class="collapse evidence-collapse">
                         <hr>
-                        <div class="card">
-                            Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident.
-                        </div>
+                        <table class="table">
+                            <tbody>
+                            {% if cluster.2.0 %}
+                            <tr>
+                                <th scope="row">Source</th>
+                                <th>{{ cluster.2.0 }}</th>
+                            </tr>
+                            {% endif %}
+                            {% if cluster.2.1 %}
+                            <tr>
+                                <th scope="row">Link</th>
+                                <th>{{ cluster.2.1 }}</th>
+                            </tr>
+                            {% endif %}
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             {% endfor %}

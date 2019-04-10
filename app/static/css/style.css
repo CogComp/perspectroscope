@@ -110,3 +110,9 @@
     transform: rotate(360deg);
   }
 }
+
+tr {
+    background: whitesmoke;
+    font-size: 15px;
+    font-weight: 500;
+}

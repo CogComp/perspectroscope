@@ -189,10 +189,10 @@ def perspectrum_solver(request, claim_text="", withWiki=""):
             avg_stance = _normalize_stance_score(sum(stance_list) / len(stance_list))
             avg_relevance = _normalize_relevance_score(sum(relevance_list) / len(relevance_list))
             if avg_stance > 0.0:
-                persp_sup.append((perspectives, [avg_stance, avg_relevance], "PERSPECTRUM"))
+                persp_sup.append((perspectives, [avg_stance, avg_relevance], ["The PERSPECTRUM Dataset", ""]))
                 persp_sup_flash.extend(persp_flash_tmp)
             else:
-                persp_und.append((perspectives, [avg_stance, avg_relevance], []))
+                persp_und.append((perspectives, [avg_stance, avg_relevance], ["The PERSPECTRUM Dataset", ""]))
                 persp_und_flash.extend(persp_flash_tmp)
 
         claim_persp_bundled = [(claim, persp_sup_flash, persp_und_flash)]
@@ -214,7 +214,6 @@ def perspectrum_solver(request, claim_text="", withWiki=""):
                           for _s, _rel_score, _stance_score in web_persps if _rel_score > _REL_SCORE_TH]
             web_persps = sorted(web_persps, key=lambda x: x[1], reverse=True)
 
-
             ## Normalize the relevance score
             wiki_persp_sup = []
             wiki_persp_und = []
@@ -222,9 +221,9 @@ def perspectrum_solver(request, claim_text="", withWiki=""):
             for persp, _rel_score, _stance_score in web_persps:
                 print(_rel_score, _stance_score)
                 if _stance_score > 0:
-                    wiki_persp_sup.append(([persp], [_stance_score, _rel_score], []))
+                    wiki_persp_sup.append(([persp], [_stance_score, _rel_score], ["Wikipedia", ""]))
                 else:
-                    wiki_persp_und.append(([persp], [_stance_score, _rel_score], []))
+                    wiki_persp_und.append(([persp], [_stance_score, _rel_score], ["Wikipedia", ""]))
 
 
             context["wiki_persp_und"] = wiki_persp_und
