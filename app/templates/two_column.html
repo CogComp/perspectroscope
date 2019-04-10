@@ -33,7 +33,7 @@
                             <a href="JavaScript:void(0)"><i class="fa fa-lg fa-thumbs-down" style="color: silver" aria-hidden="true"></i></a>
                         </div>
                     </div>
-                    <a class="collapse score-collapse" tabindex="0" data-toggle="popover" data-trigger="focus"
+                    <a class="score-collapse" tabindex="0" data-toggle="popover" data-trigger="focus" style="display: none"
                        data-container="body" data-placement="bottom" data-html="true"
                        data-content="<font color='grey'>Relevance Score ([0, 1])</font> = {{ cluster.1.1|floatformat:3 }} <br />
                                      <font color='#3498db'>Stance Score ([-1, 1])</font> = {{ cluster.1.0|floatformat:3 }} <br />
@@ -93,7 +93,7 @@
                         </div>
                     </div>
 
-                    <a class="collapse score-collapse" tabindex="0" data-toggle="popover"
+                    <a class="score-collapse" tabindex="0" data-toggle="popover" style="display: none"
                        data-trigger="focus" data-container="body" data-placement="bottom" data-html="true"
                        data-content="<font color='grey'>Relevance Score ([0, 1])</font> = {{ cluster.1.1|floatformat:3 }} <br />
                                      <font color='#e74c3c'>Stance Score ([-1, 1])</font> = {{ cluster.1.0|floatformat:3 }} <br />

@@ -63,11 +63,9 @@
     </div>
     <div class="row">
 
-        <div class="col-4"></div>
-        <div class="col-5">
+        <div class="col text-center">
             <div class="btn-group">
                 <button id="search-claim" type="button" class="btn btn-primary ">Search</button>
-                <button id="wiki" type="button" class="btn btn-default ">Ask Wikipedia - Off</button>
                 <div class="btn-group">
                     <button data-toggle="dropdown" class="btn btn-primary dropdown-toggle btn-sm" type="button"
                             aria-expanded="false">
@@ -81,22 +79,23 @@
                         <li><a id="btn-load-example-4" href="JavaScript:void(0)">Example #4</a></li>
                     </ul>
                 </div>
+                <button id="wiki" type="button" class="btn btn-default" data-toggle="button" aria-pressed="false"
+                        autocomplete="off">Ask Wikipedia - Off</button>
+
+                <button id="btn-switch-display-score" type="button" class="btn btn-default"
+                        data-toggle="button" aria-pressed="false" autocomplete="off" style="display: none">
+                    Display Score - Off
+                </button>
+                <button id="btn-switch-feedback" type="button" class="btn btn-default"
+                        data-toggle="button" aria-pressed="false" autocomplete="off" style="display: none">
+                    Enable Feedbacks - Off
+                </button>
             </div>
         </div>
     </div>
 
     {% if claim_text %}
         <hr>
-        <div class="row">
-            <div class="col">
-                Display Relevance/Stance Score &nbsp;
-                <input type="checkbox" data-toggle="switch" name="default-switch" id="switch-display-score" />
-            </div>
-            <div class="col">
-                Enable Feedbacks &nbsp;
-                <input type="checkbox" data-toggle="switch" name="default-switch" id="switch-feedback" />
-            </div>
-        </div>
         {% include "two_column.html" %}
     {% endif %}
 
@@ -359,17 +358,34 @@
     });
 
     $('#wiki').click(function () {
-        if ($('#wiki').hasClass('active')) {
-            $('#wiki').removeClass('active');
-            $('#wiki').removeClass('btn-success');
-            $('#wiki').addClass('btn-default');
-            $('#wiki').html('Ask Wikipedia - Off');
-        } else {
-            $('#wiki').addClass('active');
-            $('#wiki').removeClass('btn-default');
-            $('#wiki').addClass('btn-success');
-            $('#wiki').html('Ask Wikipedia - On');
-        }
+        $(this).toggleClass("btn-default");
+        $(this).toggleClass("btn-primary");
+
+        if ($(this).hasClass("active"))
+            $(this).html('Ask Wikipedia - Off');
+        else
+            $(this).html('Ask Wikipedia - On')
+    });
+
+
+    $('#btn-switch-display-score').click(function() {
+        $(this).toggleClass("btn-default");
+        $(this).toggleClass("btn-primary");
+
+        if ($(this).hasClass("active"))
+            $(this).html('Display Score - Off');
+        else
+            $(this).html('Display Score - On')
+    });
+
+    $('#btn-switch-feedback').click(function() {
+        $(this).toggleClass("btn-default");
+        $(this).toggleClass("btn-primary");
+
+        if ($(this).hasClass("active"))
+            $(this).html('Enable Feedbacks - Off');
+        else
+            $(this).html('Enable Feedbacks - On')
     });
 
 
@@ -420,20 +436,31 @@
 
         $('#claim-box').easyAutocomplete(options);
 
-        $('#switch-display-score').change(function() {
+        $('#btn-switch-display-score').change(function() {
             $('.score-collapse').collapse('toggle');
         });
 
         {% if wiki_persp_und or wiki_persp_sup %}
             $('#wiki').addClass('active');
             $('#wiki').removeClass('btn-default');
-            $('#wiki').addClass('btn-success');
+            $('#wiki').addClass('btn-primary');
             $('#wiki').html('Ask Wikipedia - On');
+
         {% endif %}
 
-        $('#switch-feedback').change(function() {
+        {% if claim_text %}
+        let $el_feedback = $('#btn-switch-feedback');
+        $el_feedback.show();
+        $el_feedback.click(function() {
             $('.btn-feedback').toggle();
         });
+        let $el_display = $('#btn-switch-display-score');
+        $el_display.show();
+        $el_display.click(function() {
+            $('.score-collapse').toggle();
+        });
+        {% endif %}
+
 
     });
 </script>
