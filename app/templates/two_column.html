@@ -19,25 +19,25 @@
                 Perspectives For
             </h6>
             {% for cluster in persp_sup %}
-                <div class="persp-title btn-block btn-lg" style="background-color: #d9eaff">
+                <div class="persp-title btn-lg" style="background-color: #d9eaff">
                     <div class="row">
-                        <div class="col">
+                        <div class="col persp-text">
                             {% for p in cluster.0 %}
                                 <div>{{ p }}</div>
                             {% endfor %}
                         </div>
                         <div class="col-1  btn-feedback btn-feedback-like" style="display: none">
-                            <a><i class="fa fa-lg fa-thumbs-up" style="color: silver" aria-hidden="true"></i></a>
+                            <a href="JavaScript:void(0)"><i class="fa fa-lg fa-thumbs-up" style="color: silver" aria-hidden="true"></i></a>
                         </div>
                         <div class="col-1  btn-feedback btn-feedback-dislike" style="display: none">
-                            <a><i class="fa fa-lg fa-thumbs-down" style="color: silver" aria-hidden="true"></i></a>
+                            <a href="JavaScript:void(0)"><i class="fa fa-lg fa-thumbs-down" style="color: silver" aria-hidden="true"></i></a>
                         </div>
                     </div>
-                    <a class="collapse score-collapse" tabindex="0" data-toggle="popover" data-trigger="focus" data-container="body"
-                               data-placement="bottom" data-html="true"
-                               data-content="<font color='grey'>Relevance Score ([0, 1])</font> = {{ cluster.1.1|floatformat:3 }} <br />
-                                             <font color='#3498db'>Stance Score ([-1, 1])</font> = {{ cluster.1.0|floatformat:3 }} <br />
-                                             ">
+                    <a class="collapse score-collapse" tabindex="0" data-toggle="popover" data-trigger="focus"
+                       data-container="body" data-placement="bottom" data-html="true"
+                       data-content="<font color='grey'>Relevance Score ([0, 1])</font> = {{ cluster.1.1|floatformat:3 }} <br />
+                                     <font color='#3498db'>Stance Score ([-1, 1])</font> = {{ cluster.1.0|floatformat:3 }} <br />
+                                    ">
                         <div class="row stance-bar">
                             <div class="col-12">
                                 <div class="progress" style="height: 5px; margin-top: 5px">
@@ -78,26 +78,26 @@
                 Perspectives Against
             </h6>
             {% for cluster in persp_und %}
-                <div class="persp-title btn-block btn-lg" style="background-color: #ffdcdf">
+                <div class="persp-title btn-lg" style="background-color: #ffdcdf">
                     <div class="row">
-                        <div class="col">
+                        <div class="col persp-text">
                             {% for p in cluster.0 %}
                                 <div>{{ p }}</div>
                             {% endfor %}
                         </div>
                         <div class="col-1 btn-feedback btn-feedback-like" style="display: none">
-                            <a><i class="fa fa-lg fa-thumbs-up" style="color: silver" aria-hidden="true"></i></a>
+                            <a href="JavaScript:void(0)"><i class="fa fa-lg fa-thumbs-up" style="color: silver" aria-hidden="true"></i></a>
                         </div>
                         <div class="col-1 btn-feedback btn-feedback-dislike" style="display: none">
-                            <a><i class="fa fa-lg fa-thumbs-down" style="color: silver" aria-hidden="true"></i></a>
+                            <a href="JavaScript:void(0)"><i class="fa fa-lg fa-thumbs-down" style="color: silver" aria-hidden="true"></i></a>
                         </div>
                     </div>
 
-                    <a class="collapse score-collapse" tabindex="0" data-toggle="popover" data-trigger="focus" data-container="body"
-                               data-placement="bottom" data-html="true"
-                               data-content="<font color='grey'>Relevance Score ([0, 1])</font> = {{ cluster.1.1|floatformat:3 }} <br />
-                                             <font color='#e74c3c'>Stance Score ([-1, 1])</font> = {{ cluster.1.0|floatformat:3 }} <br />
-                                             ">
+                    <a class="collapse score-collapse" tabindex="0" data-toggle="popover"
+                       data-trigger="focus" data-container="body" data-placement="bottom" data-html="true"
+                       data-content="<font color='grey'>Relevance Score ([0, 1])</font> = {{ cluster.1.1|floatformat:3 }} <br />
+                                     <font color='#e74c3c'>Stance Score ([-1, 1])</font> = {{ cluster.1.0|floatformat:3 }} <br />
+                                    ">
                         <div class="row stance-bar">
                             <div class="col-12">
                                 <div class="progress" style="height: 5px; margin-top: 5px">
@@ -140,15 +140,23 @@
 </body>
 <script>
     $(document).ready(function () {
-        $('.persp-title').click(function() {
-            $(this).find(".evidence-collapse").collapse('toggle');
-        })
+        $('.persp-text').click(function() {
+            $(this).closest('.persp-title').find(".evidence-collapse").collapse('toggle');
+        });
 
         $('[data-toggle="popover"]').popover({
             placement : 'right',
             trigger : 'hover'
         });
+
+        $('.btn-feedback').click(function() {
+            let this_btn = $(this);
+            let other_btn = this_btn.siblings('.btn-feedback').first();
+            this_btn.prop('color', 'slategray');
+            other_btn.prop('color', 'silver');
+        })
     });
+
 </script>
 
 </html>
