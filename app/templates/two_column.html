@@ -72,7 +72,7 @@
                             {% if cluster.2.1 %}
                             <tr class="tbl-row-persp-link">
                                 <th scope="row">Link</th>
-                                <td><a class="persp-link" href="{{ cluster.2.1 }}">{{ cluster.2.1 }}</a></td>
+                                <td style="word-break: break-all"><a class="persp-link" href="{{ cluster.2.1 }}">{{ cluster.2.1 }}</a></td>
                             </tr>
                             {% endif %}
 
@@ -84,7 +84,7 @@
                             </tr>
                             <tr class="tbl-row-evidence-link" style="display: none">
                                 <th scope="row">Evidence Link</th>
-                                <td class="tbl-entry-evidence-link"></td>
+                                <td class="tbl-entry-evidence-link" style="word-break: break-all"></td>
                             </tr>
                             </tbody>
                         </table>
@@ -162,7 +162,7 @@
                             {% if cluster.2.1 %}
                             <tr class="tbl-row-persp-link">
                                 <th scope="row">Link</th>
-                                <td><a class="persp-link" href="{{ cluster.2.1 }}">{{ cluster.2.1 }}</a></td>
+                                <td style="word-break: break-all"><a class="persp-link" href="{{ cluster.2.1 }}">{{ cluster.2.1 }}</a></td>
                             </tr>
                             {% endif %}
 
@@ -174,7 +174,7 @@
                             </tr>
                             <tr class="tbl-row-evidence-link" style="display: none">
                                 <th scope="row">Evidence Link</th>
-                                <td class="tbl-entry-evidence-link"></td>
+                                <td class="tbl-entry-evidence-link" style="word-break: break-all"></td>
                             </tr>
                             </tbody>
                         </table>
@@ -205,6 +205,10 @@
             let $evidence_cell = $(this).closest("td.tbl-entry-evidence");
             let perspective = $(this).closest('.persp-title').find(".persp-text > div").first().text();
             let claim = "{{ claim_text }}";
+
+            $evidence_cell.html("<div class=\"spinner-border text-success\" role=\"status\">\n" +
+                "  <span class=\"sr-only\">Loading...</span>\n" +
+                "</div>");
 
             let url = null;
             if ($persp_link_row.length > 0) {

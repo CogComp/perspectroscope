@@ -11,7 +11,7 @@ from django.http import JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from sklearn.cluster import DBSCAN
 from model.run_bert_on_perspectrum import BertBaseline
-from search.query_elasticsearch import get_perspective_from_pool
+from search.query_elasticsearch import get_perspective_from_pool, get_evidence_from_pool
 from search.google_custom_search import CustomSearchClient
 from search.news_html_to_text import parse_article
 from nltk import sent_tokenize
@@ -35,6 +35,10 @@ bb_stance = BertBaseline(task_name="perspectrum_stance",
                          no_cuda=no_cuda)
 bb_equivalence = BertBaseline(task_name="perspectrum_equivalence",
                               saved_model="data/model/equivalence/perspectrum_equivalence_lr3e-05_bs32_epoch-2.pth",
+                              no_cuda=no_cuda)
+
+bb_evidence = BertBaseline(task_name="perspectrum_evidence",
+                              saved_model="data/model/evidence/perspectrum_evidence_epoch-4.pth",
                               no_cuda=no_cuda)
 
 logging.disable(sys.maxsize)  # Python 3
@@ -104,8 +108,50 @@ def _get_perspectives_from_cse(claim_text):
 
     return results
 
+def _get_evidence_from_perspectrum(claim, perspective):
+    claim_persp = claim + perspective
+    lucene_results = get_evidence_from_pool(claim + perspective, 20)
+
+    evidence_score = bb_evidence.predict_batch([(claim_persp, evi) for evi, eid, _ in lucene_results])
+
+    results = [(lucene_results[i][0], score, lucene_results[i][1]) for i, score in enumerate(evidence_score)]
+    results = sorted(results, key=lambda r: r[1], reverse=True)
+
+    return results[0][0], "Evidence ID = {}".format(results[0][2])
+
+
 def _get_evidence_from_link(url, claim, perspective):
-    return "News media and television journalism have been a key feature in the shaping of American collective memory for much of the twentieth century. Indeed, since the United States' colonial era, news media has influenced collective memory and discourse about national development and trauma. In many ways, mainstream journalists have maintained an authoritative voice as the storytellers of the American past. Their documentary style narratives, detailed exposes, and their positions in the present make them prime sources for public memory", url
+    # return "News media and television journalism have been a key feature in the shaping of American collective memory for much of the twentieth century. Indeed, since the United States' colonial era, news media has influenced collective memory and discourse about national development and trauma. In many ways, mainstream journalists have maintained an authoritative voice as the storytellers of the American past. Their documentary style narratives, detailed exposes, and their positions in the present make them prime sources for public memory", url
+
+    print(url, claim, perspective)
+    if not url:
+        return _get_evidence_from_perspectrum(claim, perspective)
+
+    article = parse_article(url)
+    paragraphs = [p for p in article.text.splitlines() if p]
+    claim_persp = claim.strip() + " " + perspective.strip()
+    all_sent_batch = []
+
+    for p in paragraphs:
+
+        sents = sent_tokenize(p)[1:]
+        num_sent = len(sents)
+        for i, sent in enumerate(sents):
+            three_sent_batch = sent + " "
+            if i + 1 < num_sent:
+                three_sent_batch += sents[i + 1]
+                three_sent_batch += " "
+            if i + 2 < num_sent:
+                three_sent_batch += sents[i + 2]
+
+            all_sent_batch.append(three_sent_batch)
+
+    evidence_score = bb_evidence.predict_batch([(claim_persp, b) for b in all_sent_batch])
+    result = list(zip(all_sent_batch, evidence_score))
+    result = sorted(result, key=lambda x: x[1], reverse=True)
+
+    return result[0][0], url
+
 
 def perspectrum_solver(request, claim_text="", withWiki=""):
     """
@@ -285,7 +331,7 @@ def api_retrieve_evidence(request):
     claim = request.POST.get('claim', '')
     perspective = request.POST.get('perspective', '')
 
-    link  = request.POST.get("link", None)
+    link  = request.POST.get("url", None)
 
     evidence_paragraph, url = _get_evidence_from_link(link, claim, perspective)
 

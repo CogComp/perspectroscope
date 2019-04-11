@@ -112,7 +112,7 @@ def get_perspective_from_pool(text, size):
     return output
 
 def get_evidence_from_pool(text, size):
-    res = es.search(index="evidence_pool_v0.2", doc_type="text", body={"query": {"match": {"text": text}}}, size=size, request_timeout=30)
+    res = es.search(index="evidence_3sentences_batches", doc_type="text", body={"query": {"match": {"text": text}}}, size=size, request_timeout=30)
     output = []
     for doc in res['hits']['hits']:
         score = doc['_score']
