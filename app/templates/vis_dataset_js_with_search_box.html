@@ -54,18 +54,23 @@
 
 <div class="container">
     <div class="row">
-        <div class="col">
+        <div class="col-11" style="padding-right: 5px">
             <div class="form-group">
                 <input id="claim-box" type="text" placeholder="Write a claim here" class="form-control"
                        value="{{ claim_text }}">
             </div>
+        </div>
+        <div class="col-1" style="padding-left: 5px">
+            <button id="search-claim" type="submit" class="btn btn-primary">
+                <span class="fui-search"></span>
+            </button>
         </div>
     </div>
     <div class="row">
 
         <div class="col text-center">
             <div class="btn-group">
-                <button id="search-claim" type="button" class="btn btn-primary ">Search</button>
+                <!--<button id="search-claim" type="button" class="btn btn-primary ">Search</button>-->
                 <div class="btn-group">
                     <button data-toggle="dropdown" class="btn btn-primary dropdown-toggle btn-sm" type="button"
                             aria-expanded="false">
