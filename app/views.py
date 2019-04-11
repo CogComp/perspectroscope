@@ -228,13 +228,13 @@ def perspectrum_solver(request, claim_text="", withWiki=""):
             for persp, _rel_score, _stance_score, url in web_persps:
                 print(_rel_score, _stance_score)
                 if _stance_score > 0:
-                    wiki_persp_sup.append(([persp], [_stance_score, _rel_score], ["Wikipedia", url]))
+                    persp_sup.append(([persp], [_stance_score, _rel_score], ["Wikipedia", url]))
                 else:
-                    wiki_persp_und.append(([persp], [_stance_score, _rel_score], ["Wikipedia", url]))
+                    persp_und.append(([persp], [_stance_score, _rel_score], ["Wikipedia", url]))
 
 
-            context["wiki_persp_und"] = wiki_persp_und
-            context["wiki_persp_sup"] = wiki_persp_sup
+            # context["wiki_persp_und"] = wiki_persp_und
+            # context["wiki_persp_sup"] = wiki_persp_sup
 
     return render(request, "vis_dataset_js_with_search_box.html", context)
 
