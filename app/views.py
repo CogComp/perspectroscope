@@ -104,6 +104,8 @@ def _get_perspectives_from_cse(claim_text):
 
     return results
 
+def _get_evidence_from_link(url, claim, perspective):
+    return "News media and television journalism have been a key feature in the shaping of American collective memory for much of the twentieth century. Indeed, since the United States' colonial era, news media has influenced collective memory and discourse about national development and trauma. In many ways, mainstream journalists have maintained an authoritative voice as the storytellers of the American past. Their documentary style narratives, detailed exposes, and their positions in the present make them prime sources for public memory", url
 
 def perspectrum_solver(request, claim_text="", withWiki=""):
     """
@@ -274,3 +276,21 @@ def api_submit_feedback(request):
         )
 
     return HttpResponse(status=200)
+
+@csrf_exempt
+def api_retrieve_evidence(request):
+    if request.method != 'POST':
+        return HttpResponse("api_submit_feedback api only supports POST method.", status=400)
+
+    claim = request.POST.get('claim', '')
+    perspective = request.POST.get('perspective', '')
+
+    link  = request.POST.get("link", None)
+
+    evidence_paragraph, url = _get_evidence_from_link(link, claim, perspective)
+
+    res_data = {
+        "evidence_paragraph": evidence_paragraph,
+        "url": url
+    }
+    return JsonResponse(res_data, status=200)

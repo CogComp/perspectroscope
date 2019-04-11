@@ -35,14 +35,14 @@
                     </div>
                     <a class="score-collapse" tabindex="0" data-toggle="popover" data-trigger="focus" style="display: none"
                        data-container="body" data-placement="bottom" data-html="true"
-                       data-content="<font color='grey'>Relevance Score ([0, 1])</font> = {{ cluster.1.1|floatformat:3 }} <br />
-                                     <font color='#3498db'>Stance Score ([-1, 1])</font> = {{ cluster.1.0|floatformat:3 }} <br />
+                       data-content="<font color='gray'>Relevance Score ([0, 1]) = {{ cluster.1.1|floatformat:3 }} </font><br />
+                                     <font color='#3498db'>Stance Score ([-1, 1]) = {{ cluster.1.0|floatformat:3 }} </font><br />
                                     ">
                         <div class="row stance-bar">
                             <div class="col-12">
                                 <div class="progress" style="height: 5px; margin-top: 5px">
                                     <!--<div class="progress-bar" style="width:1%; background-color: black"></div>-->
-                                    <div class="progress-bar" style="width: {% widthratio cluster.1.1 1 100 %}%; background-color: silver"></div>
+                                    <div class="progress-bar" style="width: {% widthratio cluster.1.1 1 100 %}%; background-color: darkgrey"></div>
                                 </div>
                             </div>
                         </div>
@@ -61,24 +61,33 @@
                     </a>
                     <div class="collapse evidence-collapse">
                         <hr>
-                        <div style="overflow: auto;">
-                            <table class="table">
-                                <tbody>
-                                {% if cluster.2.0 %}
-                                <tr>
-                                    <th scope="row">Source</th>
-                                    <th>{{ cluster.2.0 }}</th>
-                                </tr>
-                                {% endif %}
-                                {% if cluster.2.1 %}
-                                <tr>
-                                    <th scope="row">Link</th>
-                                    <th>{{ cluster.2.1 }}</th>
-                                </tr>
-                                {% endif %}
-                                </tbody>
-                            </table>
-                        </div>
+                        <table class="table">
+                            <tbody>
+                            {% if cluster.2.0 %}
+                            <tr>
+                                <th scope="row">Source</th>
+                                <td>{{ cluster.2.0 }}</td>
+                            </tr>
+                            {% endif %}
+                            {% if cluster.2.1 %}
+                            <tr class="tbl-row-persp-link">
+                                <th scope="row">Link</th>
+                                <td><a class="persp-link" href="{{ cluster.2.1 }}">{{ cluster.2.1 }}</a></td>
+                            </tr>
+                            {% endif %}
+
+                            <tr>
+                                <th scope="row">Evidence</th>
+                                <td class="tbl-entry-evidence">
+                                    <button class="btn btn-info btn-retrieve-evidence">Retrieve Evidence</button>
+                                </td>
+                            </tr>
+                            <tr class="tbl-row-evidence-link" style="display: none">
+                                <th scope="row">Evidence Link</th>
+                                <td class="tbl-entry-evidence-link"></td>
+                            </tr>
+                            </tbody>
+                        </table>
                     </div>
                     <!--<div class="row">-->
                         <!--<div class="col-2">-->
@@ -110,14 +119,14 @@
 
                     <a class="score-collapse" tabindex="0" data-toggle="popover" style="display: none"
                        data-trigger="focus" data-container="body" data-placement="bottom" data-html="true"
-                       data-content="<font color='grey'>Relevance Score ([0, 1])</font> = {{ cluster.1.1|floatformat:3 }} <br />
-                                     <font color='#e74c3c'>Stance Score ([-1, 1])</font> = {{ cluster.1.0|floatformat:3 }} <br />
+                       data-content="<font color='gray'>Relevance Score ([0, 1]) = {{ cluster.1.1|floatformat:3 }} </font><br />
+                                     <font color='#e74c3c'>Stance Score ([-1, 1]) = {{ cluster.1.0|floatformat:3 }} </font><br />
                                     ">
                         <div class="row stance-bar">
                             <div class="col-12">
                                 <div class="progress" style="height: 5px; margin-top: 5px">
                                     <!--<div class="progress-bar" style="width:1%; background-color: black"></div>-->
-                                    <div class="progress-bar" style="width: {% widthratio cluster.1.1 1 100 %}%; background-color: silver">
+                                    <div class="progress-bar" style="width: {% widthratio cluster.1.1 1 100 %}%; background-color: darkgrey">
                                     </div>
                                 </div>
                             </div>
@@ -142,24 +151,33 @@
                     </a>
                     <div class="collapse evidence-collapse">
                         <hr>
-                        <div style="overflow: auto;">
-                            <table class="table">
-                                <tbody>
-                                {% if cluster.2.0 %}
-                                <tr>
-                                    <th scope="row">Source</th>
-                                    <th>{{ cluster.2.0 }}</th>
-                                </tr>
-                                {% endif %}
-                                {% if cluster.2.1 %}
-                                <tr>
-                                    <th scope="row">Link</th>
-                                    <th>{{ cluster.2.1 }}</th>
-                                </tr>
-                                {% endif %}
-                                </tbody>
-                            </table>
-                        </div>
+                        <table class="table">
+                            <tbody>
+                            {% if cluster.2.0 %}
+                            <tr>
+                                <th scope="row">Source</th>
+                                <td>{{ cluster.2.0 }}</td>
+                            </tr>
+                            {% endif %}
+                            {% if cluster.2.1 %}
+                            <tr class="tbl-row-persp-link">
+                                <th scope="row">Link</th>
+                                <td><a class="persp-link" href="{{ cluster.2.1 }}">{{ cluster.2.1 }}</a></td>
+                            </tr>
+                            {% endif %}
+
+                            <tr>
+                                <th scope="row">Evidence</th>
+                                <td class="tbl-entry-evidence">
+                                    <button class="btn btn-info btn-retrieve-evidence">Retrieve Evidence</button>
+                                </td>
+                            </tr>
+                            <tr class="tbl-row-evidence-link" style="display: none">
+                                <th scope="row">Evidence Link</th>
+                                <td class="tbl-entry-evidence-link"></td>
+                            </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             {% endfor %}
@@ -177,6 +195,36 @@
         $('[data-toggle="popover"]').popover({
             placement : 'right',
             trigger : 'hover'
+        });
+
+        $('.btn-retrieve-evidence').click(function() {
+            let $evi_row = $(this).closest("tr");
+            let $persp_link_row = $evi_row.siblings("tr.tbl-row-persp-link");
+            let $evidence_link_row = $evi_row.siblings("tr.tbl-row-evidence-link");
+            let $evidence_link_cell = $evidence_link_row.find("td.tbl-entry-evidence-link");
+            let $evidence_cell = $(this).closest("td.tbl-entry-evidence");
+            let perspective = $(this).closest('.persp-title').find(".persp-text > div").first().text();
+            let claim = "{{ claim_text }}";
+
+            let url = null;
+            if ($persp_link_row.length > 0) {
+                url = $persp_link_row.find('a.persp-link').attr('href');
+            }
+
+            let payload = {
+                "claim": claim,
+                "perspective": perspective,
+                "url": url,
+            };
+            $.post('/api/retrieve_evidence/', payload, function(data) {
+                $evidence_cell.html(data['evidence_paragraph']);
+                $evidence_link_cell.html("<a href=\'" + data['url'] + "\'>" + data['url'] + "</a>");
+                $evidence_link_row.show();
+            });
+
+            console.log(claim);
+            console.log(perspective);
+            console.log(url);
         });
 
         $('.btn-feedback').click(function() {
