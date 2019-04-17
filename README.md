@@ -27,7 +27,8 @@ pip3.6 install -r requirements.txt
 $ python3 manage.py runserver
 ```
 
-## Summary of System used
+## Details
+
 The system has two layers: 
 
 ### Information Retrieval
