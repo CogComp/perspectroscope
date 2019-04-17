@@ -255,7 +255,11 @@ def perspectrum_solver(request, claim_text="", withWiki=""):
                 stance_list.append(stance_score)
                 relevance_list.append(relevance_score)
                 perspectives.append(p_text)
-                persp_flash_tmp.append((p_text, url, cluster_id + 1, [], stance_score))
+
+                pid = 0
+                for p_text, stance_score, relevance_score, url in perspective_clusters[cluster_id]:
+                    persp_flash_tmp.append((p_text, cluster_id * 100 + pid, cluster_id + 1, [], stance_score))
+                    pid += 1
 
                 if url:
                     source = "Wikipedia"
