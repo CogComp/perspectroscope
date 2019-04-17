@@ -93,7 +93,7 @@
                 </button>
                 <button id="btn-switch-feedback" type="button" class="btn btn-default"
                         data-toggle="button" aria-pressed="false" autocomplete="off" style="display: none">
-                    Enable Feedbacks - Off
+                    Enable Feedback - Off
                 </button>
             </div>
         </div>
@@ -358,8 +358,13 @@
         });
         let url = '/baseline/' + claimText + "/" + withWiki + "/";
 
-        console.log(url);
         window.location.href = url;
+
+        {% if not claim_text %}
+        setTimeout(function() {
+            location.reload();
+        }, 10000);
+        {% endif %}
     });
 
     $('#wiki').click(function () {
@@ -388,9 +393,9 @@
         $(this).toggleClass("btn-primary");
 
         if ($(this).hasClass("active"))
-            $(this).html('Enable Feedbacks - Off');
+            $(this).html('Enable Feedback - Off');
         else
-            $(this).html('Enable Feedbacks - On')
+            $(this).html('Enable Feedback - On')
     });
 
 
@@ -445,13 +450,12 @@
             $('.score-collapse').collapse('toggle');
         });
 
-        {% if wiki_persp_und or wiki_persp_sup %}
+        if (window.location.href.includes('withWiki')) {
             $('#wiki').addClass('active');
             $('#wiki').removeClass('btn-default');
             $('#wiki').addClass('btn-primary');
             $('#wiki').html('Ask Wikipedia - On');
-
-        {% endif %}
+        }
 
         let $el_feedback = $('#btn-switch-feedback');
         let $el_display = $('#btn-switch-display-score');
