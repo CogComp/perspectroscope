@@ -1,7 +1,6 @@
 # PerspectroScope 
-TODO 
 
-
+A Django-based web demo system for discovering diverse perspectives to claims.
 
 ## Setting up the system 
 #### Getting started 
@@ -15,25 +14,20 @@ pip3.6 install -r requirements.txt
  ```
  $ python -m django --version
  ```
- 
- - Run the app: 
+
+- Setup the database
 ```
-$ python3.7 manage.py runserver
+> python3 manage.py makemigrations app  # you should see the migrations under "app/migrations"
+> python3 manage.py sqlmigrate app 0001
+> python3 manage.py migrate
 ```
 
-
-#### Immigration of Models to DB 
-If starting with fresh DB, you need to create tables corresponding to the models in the DB:  
+- Run the app:
 ```
-> python3.6 manage.py makemigrations app  # you should see the migrations under "app/migrations"
-> python3.6 manage.py sqlmigrate app 0001
-> python3.6 manage.py migrate 
+$ python3 manage.py runserver
 ```
 
-**Note** if you change the models (add or drop a table), to synch up the models with the DB, run this: 
-```
-python3.6 manage.py migrate --run-syncdb
-```
+## Summary of System used
 The system has two layers: 
 
 ### Information Retrieval
@@ -51,7 +45,12 @@ and put them under `data/model/` (for instance, `data/model/relevance/perspectru
 
 
 ## Citation 
-Please cite the following work, if you find this useful: 
+If you find this useful, please consider citing the following work(s):
 ```
-TODO
-``
+@inproceedings{chen2018perspectives,
+  title={Seeing Things from a Different Angle: Discovering Diverse Perspectives about Claims},
+  author={Chen, Sihao and Khashabi, Daniel and Yin, Wenpeng and Callison-Burch, Chris and Roth, Dan},
+  book={Conference of the North American Chapter of the Association for Computational Linguistics (NAACL)},
+  year={2019}
+}
+```
