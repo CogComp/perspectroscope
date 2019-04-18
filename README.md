@@ -49,9 +49,6 @@ and put them under `data/model/` (for instance, `data/model/relevance/perspectru
 If you find this useful, please consider citing the following work(s):
 ```
 @inproceedings{chen2018perspectives,
-  title={Seeing Things from a Different Angle: Discovering Diverse Perspectives about Claims},
-  author={Chen, Sihao and Khashabi, Daniel and Yin, Wenpeng and Callison-Burch, Chris and Roth, Dan},
-  book={Conference of the North American Chapter of the Association for Computational Linguistics (NAACL)},
-  year={2019}
+  TODO
 }
 ```
