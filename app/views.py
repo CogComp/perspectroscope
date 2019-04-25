@@ -11,7 +11,7 @@ from django.http import JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from sklearn.cluster import DBSCAN
 from model.run_bert_on_perspectrum import BertBaseline
-from search.query_elasticsearch import get_perspective_from_pool, get_evidence_from_pool
+from search.query_elasticsearch import get_perspective_from_pool, get_evidence_from_pool, test_connection
 from search.google_custom_search import CustomSearchClient
 from search.news_html_to_text import parse_article
 from nltk import sent_tokenize
@@ -343,3 +343,9 @@ def api_retrieve_evidence(request):
         "url": url
     }
     return JsonResponse(res_data, status=200)
+
+
+@csrf_exempt
+def api_test_es_connection(request):
+    test_connection()
+    return HttpResponse(status=204)

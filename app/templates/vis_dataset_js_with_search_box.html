@@ -359,12 +359,6 @@
         let url = '/baseline/' + claimText + "/" + withWiki + "/";
 
         window.location.href = url;
-
-        {% if not claim_text %}
-        setTimeout(function() {
-            location.reload();
-        }, 30000);
-        {% endif %}
     });
 
     $('#wiki').click(function () {
@@ -421,6 +415,10 @@
     $('document').ready(function () {
 
         var wikipedia_searched = false;
+
+        $.post('/api/test_es_connection/', {}, function() {
+            console.log("ES server connection [OK]");
+        });
 
         $('#btn-load-example-1').click(function () {
             load_example_1()

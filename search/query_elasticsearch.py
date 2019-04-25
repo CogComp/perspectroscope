@@ -121,6 +121,10 @@ def get_evidence_from_pool(text, size):
         output.append((text, eId, score))
     return output
 
+def test_connection():
+    res = get_perspective_from_pool("Vaccination should be mandatory.", 1)
+    return res
+
 if __name__ == '__main__':
     # print(json.dumps(data))
     data = get_top_sentences("He explains that community organizers have to build structures to hold")
