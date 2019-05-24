@@ -2,7 +2,11 @@
 
 A Django-based web demo system for discovering diverse perspectives to claims.
 
+![screenshot_perspectroscope.png](screenshot_perspectroscope.png)
+
+
 Here is a video summarizing the main idea: 
+
 [![IMAGE ALT TEXT HERE](http://img.youtube.com/vi/1tR0c5Xah_Y/0.jpg)](http://www.youtube.com/watch?v=1tR0c5Xah_Y)
 
 ## Setting up the system 
