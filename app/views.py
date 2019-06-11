@@ -188,6 +188,9 @@ def perspectrum_solver(request, claim_text="", withWiki=""):
             web_persps = [(_s, _normalize_relevance_score(_rel_score), _normalize_stance_score(_stance_score), url)
                           for _s, _rel_score, _stance_score, url in web_persps if _rel_score > _REL_SCORE_TH]
 
+            ## Filter results that have low stance score
+            web_persps = [web_p for web_p in web_persps if abs(web_p[2]) > 0.1]
+
             web_persps = web_persps[:20] # Only keep top 20
 
             perspectives_sorted += web_persps
