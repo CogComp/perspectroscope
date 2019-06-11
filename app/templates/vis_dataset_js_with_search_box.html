@@ -16,6 +16,8 @@
           integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flat-ui/2.3.0/css/flat-ui.min.css"
           integrity="sha256-7bYJaNviFZlH+bKqZlshmYKeyvkp+fXBQuerWp2AXlA=" crossorigin="anonymous"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.8.2/css/all.css"
+          integrity="sha256-39jKbsb/ty7s7+4WzbtELS4vq9udJ+MDjGTD5mtxHZ0=" crossorigin="anonymous" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="stylesheet" href="{% static "css/style.css" %}?ver2">
     <script type="text/javascript" src="{% static "js/vis.js" %}"></script>
@@ -38,6 +40,10 @@
     code {
         font-size: 14px;
         background: #dddddd;
+    }
+
+    .popover {
+        max-width: none;
     }
 </style>
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark" style="margin-bottom: 0; border-radius: 0">
@@ -63,6 +69,21 @@
                 <h1 class="display-4"><a href="/">PerspectroScope</a></h1>
                 <p class="lead">A Window to the World of Diverse Perspectives.</p>
             </div>
+        </div>
+        <button id="popover_citation" type="button" class="btn btn-info" data-toggle="popover"><i class="fa fa-lg fa-book"></i>&nbsp;&nbsp;Cite this demo!</button>
+        <a class="btn btn-success" href="https://github.com/CogComp/perspectroscope"><i class="fab fa-lg fa-github"></i>&nbsp;&nbsp;Github</a>
+        <div id="citation-content" style="display: none;">
+            @inproceedings{chen2018perspectives,
+            <br>
+            &nbsp;&nbsp;&nbsp;&nbsp;title={PerspectroScope: A Window to the World of Diverse Perspectives},
+            <br>
+            &nbsp;&nbsp;&nbsp;&nbsp;author={Chen, Sihao and Khashabi, Daniel and Callison-Burch, Chris and Roth, Dan},
+            <br>
+            &nbsp;&nbsp;&nbsp;&nbsp;book={ACL - Demos},
+            <br>
+            &nbsp;&nbsp;&nbsp;&nbsp;year={2019}
+            <br>
+            }
         </div>
     </div>
 </div>
@@ -430,6 +451,14 @@
     $('document').ready(function () {
 
         var wikipedia_searched = false;
+
+        $(function () {
+            $('#popover_citation').popover({
+                html: true,
+                content: function() {
+                    return $('#citation-content').html();
+                }});
+        });
 
         $.post('/api/test_es_connection/', {}, function() {
             console.log("ES server connection [OK]");
