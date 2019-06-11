@@ -55,7 +55,7 @@ and put them under `data/model/` (for instance, `data/model/relevance/perspectru
 ## Citation 
 If you find this useful, please consider citing the following work(s):
 ```
-@inproceedings{chen2018perspectives,
+@inproceedings{chen2019perspectroscope,
   title={PerspectroScope: A Window to the World of Diverse Perspectives},
   author={Chen, Sihao and Khashabi, Daniel and Callison-Burch, Chris and Roth, Dan},
   book={ACL - Demos},
