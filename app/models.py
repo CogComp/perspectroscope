@@ -18,7 +18,7 @@ class FeedbackRecord(models.Model):
 
 class LRUCache(models.Model):
     claim = models.TextField()
-    with_wiki = models.BooleanField()
+    with_wiki = models.BooleanField(default=False)
     data = models.TextField()
 
     @staticmethod
