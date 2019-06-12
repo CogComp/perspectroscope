@@ -17,3 +17,12 @@ class FeedbackRecord(models.Model):
 
 class LRUCache(models.Model):
     claim = models.TextField()
+    data = models.TextField()
+
+    @staticmethod
+    def get(claim):
+        if LRUCache.objects.exists(claim=claim):
+            return LRUCache.objects.get(claim=claim)
+        else:
+            return None
+
