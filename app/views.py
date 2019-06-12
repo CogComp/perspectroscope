@@ -16,7 +16,7 @@ from search.google_custom_search import CustomSearchClient
 from search.news_html_to_text import parse_article
 from nltk import sent_tokenize
 
-from app.models import QueryLog, FeedbackRecord
+from app.models import QueryLog, FeedbackRecord, LRUCache
 
 file_names = {
     'evidence': 'data/perspectrum/evidence_pool_v0.2.json',
@@ -164,129 +164,139 @@ def perspectrum_solver(request, claim_text="", withWiki=""):
     context = {}
 
     if claim_text != "":
+
         claim = claim_text
 
-        # given a claim, extract perspectives
-        perspective_given_claim = [(p_text, pId, pScore / len(p_text.split(" "))) for p_text, pId, pScore in
-                                   get_perspective_from_pool(claim, 30)]
+        _ctx = LRUCache.get(claim)
 
-        perspective_relevance_score = bb_relevance.predict_batch(
-            [(claim, p_text) for (p_text, pId, _) in perspective_given_claim])
+        if _ctx is None:
 
-        perspective_stance_score = bb_stance.predict_batch(
-            [(claim, p_text) for (p_text, pId, _) in perspective_given_claim])
+            # given a claim, extract perspectives
+            perspective_given_claim = [(p_text, pId, pScore / len(p_text.split(" "))) for p_text, pId, pScore in
+                                       get_perspective_from_pool(claim, 30)]
 
-        perspectives_sorted = [(p_text, _normalize_relevance_score(perspective_relevance_score[i]),
-                                _normalize_stance_score(perspective_stance_score[i]), None) for i, (p_text, pId, _) in
-                               enumerate(perspective_given_claim) if perspective_relevance_score[i] > 1]
+            perspective_relevance_score = bb_relevance.predict_batch(
+                [(claim, p_text) for (p_text, pId, _) in perspective_given_claim])
 
-        if withWiki == "withWiki":
-            web_persps = _get_perspectives_from_cse(claim_text)
+            perspective_stance_score = bb_stance.predict_batch(
+                [(claim, p_text) for (p_text, pId, _) in perspective_given_claim])
 
-            ## Filter results based on a threshold on relevance score
-            _REL_SCORE_TH = 1.5
-            web_persps = [(_s, _normalize_relevance_score(_rel_score), _normalize_stance_score(_stance_score), url)
-                          for _s, _rel_score, _stance_score, url in web_persps if _rel_score > _REL_SCORE_TH]
+            perspectives_sorted = [(p_text, _normalize_relevance_score(perspective_relevance_score[i]),
+                                    _normalize_stance_score(perspective_stance_score[i]), None) for i, (p_text, pId, _) in
+                                   enumerate(perspective_given_claim) if perspective_relevance_score[i] > 1]
 
-            ## Filter results that have low stance score
-            web_persps = [web_p for web_p in web_persps if abs(web_p[2]) > 0.1]
+            if withWiki == "withWiki":
+                web_persps = _get_perspectives_from_cse(claim_text)
 
-            web_persps = web_persps[:20] # Only keep top 20
+                ## Filter results based on a threshold on relevance score
+                _REL_SCORE_TH = 1.5
+                web_persps = [(_s, _normalize_relevance_score(_rel_score), _normalize_stance_score(_stance_score), url)
+                              for _s, _rel_score, _stance_score, url in web_persps if _rel_score > _REL_SCORE_TH]
 
-            perspectives_sorted += web_persps
+                ## Filter results that have low stance score
+                web_persps = [web_p for web_p in web_persps if abs(web_p[2]) > 0.1]
 
-        perspectives_sorted = list(set(perspectives_sorted))
-        perspectives_sorted = sorted(perspectives_sorted, key=lambda x: x[1] + 0.2 * math.fabs(x[2]), reverse=True)
+                web_persps = web_persps[:20] # Only keep top 20
 
-        perspectives_equivalences = []
-        persp_sup = []
-        persp_sup_flash = []
-        persp_und = []
-        persp_und_flash = []
+                perspectives_sorted += web_persps
 
-        print(len(perspectives_sorted))
+            perspectives_sorted = list(set(perspectives_sorted))
+            perspectives_sorted = sorted(perspectives_sorted, key=lambda x: x[1] + 0.2 * math.fabs(x[2]), reverse=True)
 
-        if len(perspectives_sorted) > 0:
+            perspectives_equivalences = []
+            persp_sup = []
+            persp_sup_flash = []
+            persp_und = []
+            persp_und_flash = []
 
+            print(len(perspectives_sorted))
 
-            similarity_score = np.zeros((len(perspectives_sorted), len(perspectives_sorted)))
-
-            for i, (p_text1, _, _, _) in enumerate(perspectives_sorted):
-                list1 = []
-                for j, (p_text2, _, _, _) in enumerate(perspectives_sorted):
-                    list1.append((claim + " . " + p_text1, p_text2))
-
-                predictions1 = bb_equivalence.predict_batch(list1)
-
-                for j, (p_text2, _, _, _) in enumerate(perspectives_sorted):
-                    if i != j:
-                        perspectives_equivalences.append((p_text1, p_text2, predictions1[j], predictions1[j]))
-                        similarity_score[i, j] = predictions1[j]
-                        similarity_score[j, i] = predictions1[j]
-
-            distance_scores = -similarity_score
-
-            # rescale distance score to [0, 1]
-            distance_scores -= np.min(distance_scores)
-            distance_scores /= np.max(distance_scores)
-
-            clustering = DBSCAN(eps=0.3, min_samples=1, metric='precomputed')
-            cluster_labels = clustering.fit_predict(distance_scores)
-            max_val = max(cluster_labels)
-            for i, _ in enumerate(cluster_labels):
-                max_val += 1
-                if cluster_labels[i] == -1:
-                    cluster_labels[i] = max_val
+            if len(perspectives_sorted) > 0:
 
 
+                similarity_score = np.zeros((len(perspectives_sorted), len(perspectives_sorted)))
 
-            perspective_clusters = {}
-            for i, (p_text, relevance_score, stance_score, url) in enumerate(perspectives_sorted):
-                id = cluster_labels[i]
-                if id not in perspective_clusters:
-                    perspective_clusters[id] = []
-                perspective_clusters[id].append((p_text, stance_score, relevance_score, url))
+                for i, (p_text1, _, _, _) in enumerate(perspectives_sorted):
+                    list1 = []
+                    for j, (p_text2, _, _, _) in enumerate(perspectives_sorted):
+                        list1.append((claim + " . " + p_text1, p_text2))
 
-            for cluster_id in perspective_clusters.keys():
-                stance_list = []
-                relevance_list = []
-                perspectives = []
-                persp_flash_tmp = []
+                    predictions1 = bb_equivalence.predict_batch(list1)
 
-                (p_text, stance_score, relevance_score, url) = max(perspective_clusters[cluster_id], key=lambda c: 0.2*c[1] + c[2])
+                    for j, (p_text2, _, _, _) in enumerate(perspectives_sorted):
+                        if i != j:
+                            perspectives_equivalences.append((p_text1, p_text2, predictions1[j], predictions1[j]))
+                            similarity_score[i, j] = predictions1[j]
+                            similarity_score[j, i] = predictions1[j]
 
-                stance_list.append(stance_score)
-                relevance_list.append(relevance_score)
-                perspectives.append(p_text)
+                distance_scores = -similarity_score
 
-                pid = 0
-                for p_text, stance_score, relevance_score, url in perspective_clusters[cluster_id]:
-                    persp_flash_tmp.append((p_text, cluster_id * 100 + pid, cluster_id + 1, [], stance_score))
-                    pid += 1
+                # rescale distance score to [0, 1]
+                distance_scores -= np.min(distance_scores)
+                distance_scores /= np.max(distance_scores)
 
-                if url:
-                    source = "Wikipedia"
-                    _url = url
-                else:
-                    source = "The PERSPECTRUM Dataset"
-                    _url = ""
-                if stance_score > 0:
-                    persp_sup.append((perspectives, [stance_score, relevance_score], [source, _url]))
-                    persp_sup_flash.extend(persp_flash_tmp)
-                else:
-                    persp_und.append((perspectives, [stance_score, relevance_score], [source, _url]))
-                    persp_und_flash.extend(persp_flash_tmp)
+                clustering = DBSCAN(eps=0.3, min_samples=1, metric='precomputed')
+                cluster_labels = clustering.fit_predict(distance_scores)
+                max_val = max(cluster_labels)
+                for i, _ in enumerate(cluster_labels):
+                    max_val += 1
+                    if cluster_labels[i] == -1:
+                        cluster_labels[i] = max_val
 
-        claim_persp_bundled = [(claim, persp_sup_flash, persp_und_flash)]
 
-        context["claim_text"] =  claim_text
-        context["perspectives_sorted"] = perspectives_sorted
-        context["perspectives_equivalences"] = perspectives_equivalences
-        context["claim_persp_bundled"] = claim_persp_bundled
-        context["used_evidences_and_texts"] = []  # used_evidences_and_texts,
-        context["persp_sup"] = persp_sup
-        context["persp_und"] =  persp_und
 
+                perspective_clusters = {}
+                for i, (p_text, relevance_score, stance_score, url) in enumerate(perspectives_sorted):
+                    id = cluster_labels[i]
+                    if id not in perspective_clusters:
+                        perspective_clusters[id] = []
+                    perspective_clusters[id].append((p_text, stance_score, relevance_score, url))
+
+                for cluster_id in perspective_clusters.keys():
+                    stance_list = []
+                    relevance_list = []
+                    perspectives = []
+                    persp_flash_tmp = []
+
+                    (p_text, stance_score, relevance_score, url) = max(perspective_clusters[cluster_id], key=lambda c: 0.2*c[1] + c[2])
+
+                    stance_list.append(stance_score)
+                    relevance_list.append(relevance_score)
+                    perspectives.append(p_text)
+
+                    pid = 0
+                    for p_text, stance_score, relevance_score, url in perspective_clusters[cluster_id]:
+                        persp_flash_tmp.append((p_text, cluster_id * 100 + pid, cluster_id + 1, [], stance_score))
+                        pid += 1
+
+                    if url:
+                        source = "Wikipedia"
+                        _url = url
+                    else:
+                        source = "The PERSPECTRUM Dataset"
+                        _url = ""
+                    if stance_score > 0:
+                        persp_sup.append((perspectives, [stance_score, relevance_score], [source, _url]))
+                        persp_sup_flash.extend(persp_flash_tmp)
+                    else:
+                        persp_und.append((perspectives, [stance_score, relevance_score], [source, _url]))
+                        persp_und_flash.extend(persp_flash_tmp)
+
+            claim_persp_bundled = [(claim, persp_sup_flash, persp_und_flash)]
+
+            context["claim_text"] =  claim_text
+            context["perspectives_sorted"] = perspectives_sorted
+            context["perspectives_equivalences"] = perspectives_equivalences
+            context["claim_persp_bundled"] = claim_persp_bundled
+            context["used_evidences_and_texts"] = []  # used_evidences_and_texts,
+            context["persp_sup"] = persp_sup
+            context["persp_und"] =  persp_und
+
+            LRUCache.objects.create(claim=claim,
+                                    data=json.dumps(context, separators=(',', ':')))
+
+        else:
+            context = _ctx
 
     return render(request, "vis_dataset_js_with_search_box.html", context)
 

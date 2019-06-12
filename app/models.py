@@ -1,4 +1,5 @@
 from django.db import models
+import json
 
 
 class QueryLog(models.Model):
@@ -22,7 +23,8 @@ class LRUCache(models.Model):
     @staticmethod
     def get(claim):
         if LRUCache.objects.exists(claim=claim):
-            return LRUCache.objects.get(claim=claim)
+            item = LRUCache.objects.get(claim=claim)
+            return json.loads(item.data)
         else:
             return None
 
