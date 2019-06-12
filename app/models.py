@@ -18,12 +18,14 @@ class FeedbackRecord(models.Model):
 
 class LRUCache(models.Model):
     claim = models.TextField()
+    with_wiki = models.BooleanField()
     data = models.TextField()
 
     @staticmethod
-    def get(claim):
-        if LRUCache.objects.exists(claim=claim):
-            item = LRUCache.objects.get(claim=claim)
+    def get(claim, with_wiki):
+        f = LRUCache.objects.filter(claim=claim, with_wiki=with_wiki)
+        if f.exists():
+            item = f.first()
             return json.loads(item.data)
         else:
             return None
