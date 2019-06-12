@@ -168,7 +168,7 @@ def perspectrum_solver(request, claim_text="", withWiki=""):
 
         claim = claim_text
 
-        _ctx = LRUCache.get(claim, with_wiki=(withWiki == ""))
+        _ctx = LRUCache.get(claim, with_wiki=(withWiki == "withWiki"))
 
         if _ctx is None:
 
