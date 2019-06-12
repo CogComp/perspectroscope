@@ -294,6 +294,7 @@ def perspectrum_solver(request, claim_text="", withWiki=""):
             context["persp_und"] =  persp_und
 
             LRUCache.objects.create(claim=claim,
+                                    with_wiki=(withWiki=="withWiki"),
                                     data=pickle.dumps(context))
 
         else:

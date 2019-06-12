@@ -24,6 +24,7 @@ class LRUCache(models.Model):
     @staticmethod
     def get(claim, with_wiki):
         f = LRUCache.objects.filter(claim=claim, with_wiki=with_wiki)
+        print(f)
         if f.exists():
             item = f.first()
             return pickle.loads(item.data)
