@@ -1,5 +1,5 @@
 from django.db import models
-import json
+import pickle
 
 
 class QueryLog(models.Model):
@@ -19,14 +19,14 @@ class FeedbackRecord(models.Model):
 class LRUCache(models.Model):
     claim = models.TextField()
     with_wiki = models.BooleanField(default=False)
-    data = models.TextField()
+    data = models.BinaryField()
 
     @staticmethod
     def get(claim, with_wiki):
         f = LRUCache.objects.filter(claim=claim, with_wiki=with_wiki)
         if f.exists():
             item = f.first()
-            return json.loads(item.data)
+            return pickle.loads(item.data)
         else:
             return None
 

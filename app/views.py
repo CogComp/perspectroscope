@@ -5,6 +5,7 @@ import math
 import numpy as np
 import json
 import datetime
+import pickle
 
 from django.shortcuts import render
 from django.http import JsonResponse, HttpResponse
@@ -293,7 +294,7 @@ def perspectrum_solver(request, claim_text="", withWiki=""):
             context["persp_und"] =  persp_und
 
             LRUCache.objects.create(claim=claim,
-                                    data=json.dumps(context, separators=(',', ':')))
+                                    data=pickle.dumps(context))
 
         else:
             context = _ctx
