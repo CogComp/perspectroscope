@@ -380,6 +380,10 @@
     var network = new vis.Network(container, data, options);
 </script>
 <script type="application/javascript">
+    $(function () {
+
+    });
+
     $('#search-claim').click(function () {
         var claimText = $("#claim-box").val();
         withWiki = "noWiki";
@@ -449,21 +453,22 @@
         $('#claim-box').val("Social media (like facebook or twitter) have had very positive effects in our life style. ")
     }
 
+    $('#popover_citation').popover({
+        html: true,
+        content: function() {
+            return $('#citation-content').html();
+        }
+    });
+
     $('document').ready(function () {
 
         var wikipedia_searched = false;
 
-        $(function () {
-            $('#popover_citation').popover({
-                html: true,
-                content: function() {
-                    return $('#citation-content').html();
-                }});
-        });
 
         $.post('/api/test_es_connection/', {}, function() {
             console.log("ES server connection [OK]");
         });
+
 
         $('#btn-load-example-1').click(function () {
             load_example_1()
