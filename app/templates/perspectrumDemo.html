@@ -1,0 +1,532 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"
+            integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+            crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js"
+            integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh"
+            crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js"
+            integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ"
+            crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css"
+          integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flat-ui/2.3.0/css/flat-ui.min.css"
+          integrity="sha256-7bYJaNviFZlH+bKqZlshmYKeyvkp+fXBQuerWp2AXlA=" crossorigin="anonymous"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.8.2/css/all.css"
+          integrity="sha256-39jKbsb/ty7s7+4WzbtELS4vq9udJ+MDjGTD5mtxHZ0=" crossorigin="anonymous" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="{% static "css/style.css" %}?ver2">
+    <script type="text/javascript" src="{% static "js/vis.js" %}"></script>
+    <link href="{% static "css/vis-network.min.css" %}" rel="stylesheet" type="text/css"/>
+    <script type="text/javascript" src="{% static "js/jquery.easy-autocomplete.js" %}"></script>
+    <link href="{% static "css/easy-autocomplete.css" %}" rel="stylesheet" type="text/css"/>
+
+    <title>PerspectroScope</title>
+    {% csrf_token %}
+</head>
+<body>
+
+<style type="text/css">
+    #mynetwork {
+        width: 100%;
+        height: 100%;
+    {#border: 2px solid lightgray;#}
+    }
+
+    code {
+        font-size: 14px;
+        background: #dddddd;
+    }
+
+    .popover {
+        max-width: none;
+    }
+</style>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark" style="margin-bottom: 0; border-radius: 0">
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExample08" aria-controls="navbarsExample08" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse justify-content-md-center" id="navbarsExample08">
+    <ul class="navbar-nav">
+      <li class="nav-item ">
+        <a class="nav-link" style="font-weight: normal" href="http://cogcomp.org/perspectrum/">Perspectrum</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link active" style="font-weight: bold" href="Javascript:void(0)">Perspectroscope</a>
+      </li>
+    </ul>
+  </div>
+</nav>
+<div class="jumbotron jumbotron-fluid">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm">
+                <h1 class="display-4"><a href="/">PerspectroScope</a></h1>
+                <p class="lead">A Window to the World of Diverse Perspectives.</p>
+            </div>
+        </div>
+        <button id="popover_citation" type="button" class="btn btn-info" data-toggle="popover"><i class="fa fa-lg fa-book"></i>&nbsp;&nbsp;Cite this demo!</button>
+        <a class="btn btn-success" target="_blank" href="https://github.com/CogComp/perspectroscope"><i class="fab fa-lg fa-github"></i>&nbsp;&nbsp;Github</a>
+        <a class="btn btn-danger" target="_blank" href="https://youtu.be/MXBTR1Sp3Bs"><i class="fab fa-lg fa-youtube"></i>&nbsp;&nbsp;Video Demo</a>
+        <div id="citation-content" style="display: none;">
+            @inproceedings{chen2019perspectroscope,
+            <br>
+            &nbsp;&nbsp;&nbsp;&nbsp;title={PerspectroScope: A Window to the World of Diverse Perspectives},
+            <br>
+            &nbsp;&nbsp;&nbsp;&nbsp;author={Chen, Sihao and Khashabi, Daniel and Callison-Burch, Chris and Roth, Dan},
+            <br>
+            &nbsp;&nbsp;&nbsp;&nbsp;book={ACL - Demos},
+            <br>
+            &nbsp;&nbsp;&nbsp;&nbsp;year={2019}
+            <br>
+            }
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row">
+        <div class="col-11" style="padding-right: 5px">
+            <div class="form-group">
+                <input id="claim-box" type="text" placeholder="Write a claim here" class="form-control"
+                       value="{{ claim_text }}">
+            </div>
+        </div>
+        <div class="col-1" style="padding-left: 5px">
+            <button id="search-claim" type="submit" class="btn btn-primary">
+                <span class="fui-search"></span>
+            </button>
+        </div>
+    </div>
+    <div class="row">
+
+        <div class="col text-center">
+            <div class="btn-group">
+                <!--<button id="search-claim" type="button" class="btn btn-primary ">Search</button>-->
+                <div class="btn-group">
+                    <button data-toggle="dropdown" class="btn btn-primary dropdown-toggle btn-sm" type="button"
+                            aria-expanded="false">
+                        Load Pre-defined Examples
+                    </button>
+                    <ul role="menu" class="dropdown-menu" x-placement="bottom-start"
+                        style="position: absolute; transform: translate3d(0px, 41px, 0px); top: 0px; left: 0px; will-change: transform;">
+                        <li><a id="btn-load-example-1" href="JavaScript:void(0)">Example #1</a></li>
+                        <li><a id="btn-load-example-2" href="JavaScript:void(0)">Example #2</a></li>
+                        <li><a id="btn-load-example-3" href="JavaScript:void(0)">Example #3</a></li>
+                        <li><a id="btn-load-example-4" href="JavaScript:void(0)">Example #4</a></li>
+                    </ul>
+                </div>
+                <button id="wiki" type="button" class="btn btn-default" data-toggle="button" aria-pressed="false"
+                        autocomplete="off">Ask Wikipedia - Off</button>
+
+                <button id="btn-switch-display-score" type="button" class="btn btn-default"
+                        data-toggle="button" aria-pressed="false" autocomplete="off" style="display: none">
+                    Display Score - Off
+                </button>
+                <button id="btn-switch-feedback" type="button" class="btn btn-default"
+                        data-toggle="button" aria-pressed="false" autocomplete="off" style="display: none">
+                    Enable Feedback - Off
+                </button>
+            </div>
+        </div>
+    </div>
+
+    {% if claim_text %}
+        <hr>
+        {% include "two_column.html" %}
+    {% endif %}
+
+    {% if claim_text %}
+        <p>
+            <button class="btn btn-primary btn-sm" type="button" data-toggle="collapse" data-target="#collapseExample1"
+                    aria-expanded="false" aria-controls="collapseExample">
+                Graph Visualization
+            </button>
+            <button class="btn btn-primary btn-sm" type="button" data-toggle="collapse" data-target="#collapseExample2"
+                    aria-expanded="false" aria-controls="collapseExample">
+                Logs
+            </button>
+        </p>
+        <div class="collapse" id="collapseExample1">
+            <div class="card card-body">
+                <div class="row" style="width: 100%;">
+                    <div id="mynetwork" style="width: 1420px; height: 720px"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="collapse" id="collapseExample2">
+            <div class="card card-body">
+                <div class="demo_result">
+                    <div class="row">
+                        <h6>Perspective relevance to the claim: </h6>
+                    </div>
+                    <table class="table table-sm">
+                        <thead>
+                        <tr>
+                            <th scope="col">pId</th>
+                            <th scope="col">Perspective</th>
+                            <th scope="col">Relevance score (Lucene, Bert)</th>
+                            <th scope="col">Stance (Support)</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for item in perspectives_sorted %}
+                            <tr>
+                                <th scope="row">{{ item.1 }}</th>
+                                <td>{{ item.0 }}</td>
+                                <td>({{ item.2 }}, {{ item.3 }})</td>
+                                <td>{{ item.4 }}</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                    <br>
+                    <div class="row">
+                        <div class="col-8">
+                            <h6>Perspective equivalences</h6>
+                        </div>
+                        <table class="table table-sm">
+                            <thead>
+                            <tr>
+                                <th scope="col">Perspective 1</th>
+                                <th scope="col">Perspective 2</th>
+                                <th scope="col">score (Bert)</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for item in perspectives_equivalences %}
+                                <tr>
+                                    <td>{{ item.0 }}</td>
+                                    <td>{{ item.1 }}</td>
+                                    <td>({{ item.2 }}, {{ item.3 }})</td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+    <!--{% if claim_text %}-->
+        <!--{% if wiki_persp_sup or wiki_persp_und %}-->
+            <!--<hr>-->
+            <!--<p>Potential Perspectives from Wikipedia</p>-->
+            <!--<div class="row" style="width: 100%; align-content: center; ">-->
+                <!--{% with persp_sup=wiki_persp_sup persp_und=wiki_persp_und %}-->
+                <!--{% include "two_column.html" %}-->
+                <!--{% endwith %}-->
+            <!--</div>-->
+        <!--{% endif %}-->
+    <!--{% endif %}-->
+</div>
+
+<script type="text/javascript">
+    Array.prototype.contains = function (v) {
+        for (var i = 0; i < this.length; i++) {
+            if (this[i] === v) return true;
+        }
+        return false;
+    };
+    Array.prototype.unique = function () {
+        var arr = [];
+        for (var i = 0; i < this.length; i++) {
+            if (!arr.includes(this[i])) {
+                arr.push(this[i]);
+            }
+        }
+        return arr;
+    };
+    var nodes = [];
+    var edges = [];
+    var nodeIds = [];
+    var evidenceIds = [];
+    var offset = 100000;
+    {% for claim, persp_sup, persp_und in claim_persp_bundled %}
+        var claimID = -{{ forloop.counter }};
+        // adding claim
+        var claim_text = "{{ claim }}";
+        nodes.push({
+                id: claimID,
+                label: "<b>Claim:</b> \n" + claim_text,
+                widthConstraint: {maximum: 200},
+                group: 0,
+                font: {multi: 'html'}
+            }
+        );
+        // perspective nodes: support
+        {% for p, pid, cluster_id, evidences, score  in persp_sup %}
+            if (!nodeIds.includes({{ pid }})) {
+                nodes.push({
+                    id: {{ pid }},
+                    widthConstraint: {maximum: 200},
+                    label: "<b>Perspective:</b> \n {{ p }}",
+                    group: {{ cluster_id }},
+                    font: {multi: 'html'}
+                });
+                nodeIds.push({{ pid }})
+            }
+        {% endfor %}
+        // perspective nodes: undermine
+        {% for p, pid, cluster_id, evidences, score  in persp_und %}
+            if (!nodeIds.includes({{ pid }})) {
+                nodes.push({
+                    id: {{ pid }},
+                    widthConstraint: {maximum: 200},
+                    label: "<b>Perspective:</b> \n {{ p }}",
+                    group: {{ cluster_id }},
+                    font: {multi: 'html'}
+                });
+                nodeIds.push({{ pid }})
+            }
+        {% endfor %}
+        // evidence nodes
+        {% for eId, evidences in used_evidences_and_texts %}
+            if (!evidenceIds.includes(offset + {{ eId }})) {
+                nodes.push({
+                    id: (offset + {{ eId }}),
+                    widthConstraint: {maximum: 300},
+                    label: `<b>Evidence:</b> {{ evidences }}`,
+                    group: -1,
+                    font: {multi: 'html', size: 7}
+                });
+                evidenceIds.push(offset + {{ eId }});
+            }
+        {% endfor %}
+        // adding claim to perspective edges: undermine
+        {% for p, pid, cluster_id, evidences, score in persp_und %}
+            var pScore = {{ score }};
+            pScore = Math.floor(pScore * 10) / 10;
+            edges.push({
+                from: claimID,
+                to: {{ pid }},
+                label: "<b>Stance:</b> Oppose (" + pScore + ")",
+                font: {multi: 'html'}
+            });
+        {% endfor %}
+        // adding claim to perspective edges: support
+        {% for p, pid, cluster_id, evidences, score in persp_sup %}
+            var pScore = {{ score }};
+            pScore = Math.floor(pScore * 10) / 10;
+            edges.push({
+                from: claimID,
+                to: {{ pid }},
+                label: "<b>Stance:</b> Support (" + pScore + ")",
+                font: {multi: 'html'}
+            });
+        {% endfor %}
+        // adding edges between perspectives
+        {% for p1, pid1, cluster_id1, evidences1, score1 in persp_und %}
+            {% for p2, pid2, cluster_id2, evidences2, score2 in persp_und %}
+                {% if pid2 > pid1 and cluster_id2 == cluster_id1 %}
+                    edges.push({from: {{ pid1 }}, to: {{ pid2 }}, label: "", font: {multi: 'html'}});
+                {% endif %}
+            {% endfor %}
+        {% endfor %}
+        // adding perspective to evidence edges
+        {% for p, pid, cluster_id, evidences, score in persp_sup %}
+            {% for eId in evidences %}
+                edges.push({from: {{ pid }}, to: (offset + {{ eId }}), label: "", font: {multi: 'html'}});
+            {% endfor %}
+        {% endfor %}
+        {% for p, pid, cluster_id, evidences, score in persp_und %}
+            {% for eId in evidences %}
+                edges.push({from: {{ pid }}, to: (offset + {{ eId }}), label: "", font: {multi: 'html'}});
+            {% endfor %}
+        {% endfor %}
+    {% endfor %}
+    nodes = nodes.unique();
+    var container = document.getElementById('mynetwork');
+    var data = {
+        nodes: nodes,
+        edges: edges
+    };
+    var options = {
+        edges: {
+            font: {
+                size: 12
+            },
+            widthConstraint: {
+                maximum: 90
+            }
+        },
+        nodes: {
+            shape: 'box',
+            margin: 10,
+            widthConstraint: {
+                maximum: 200
+            }
+        },
+        physics: {
+            enabled: true,
+            repulsion: {
+                centralGravity: 0.0000001,
+                //damping: 3
+                //springConstant: 2
+                //springLength: 200000
+                damping: 0.000001
+                //nodeDistance: 200000000
+            },
+            solver: "forceAtlas2Based"
+        }
+    };
+    var network = new vis.Network(container, data, options);
+</script>
+<script type="application/javascript">
+    $(function () {
+
+    });
+
+    $('#search-claim').click(function () {
+        var claimText = $("#claim-box").val();
+        withWiki = "noWiki";
+        if ($('#wiki').hasClass('active')) {
+            withWiki = "withWiki";
+        }
+
+        // Log the query in te data base
+        $.post('/api/submit_query_log/', {
+            "claim": claimText
+        }, function() {
+            console.log("Query Log Success!");
+        });
+        let url = '/baseline/' + claimText + "/" + withWiki + "/";
+
+        window.location.href = url;
+    });
+
+    $('#wiki').click(function () {
+        $(this).toggleClass("btn-default");
+        $(this).toggleClass("btn-primary");
+
+        if ($(this).hasClass("active"))
+            $(this).html('Ask Wikipedia - Off');
+        else
+            $(this).html('Ask Wikipedia - On')
+    });
+
+
+    $('#btn-switch-display-score').click(function() {
+        $(this).toggleClass("btn-default");
+        $(this).toggleClass("btn-primary");
+
+        if ($(this).hasClass("active"))
+            $(this).html('Display Score - Off');
+        else
+            $(this).html('Display Score - On')
+    });
+
+    $('#btn-switch-feedback').click(function() {
+        $(this).toggleClass("btn-default");
+        $(this).toggleClass("btn-primary");
+
+        if ($(this).hasClass("active"))
+            $(this).html('Enable Feedback - Off');
+        else
+            $(this).html('Enable Feedback - On')
+    });
+
+
+</script>
+<script type="application/javascript">
+
+    function load_example_1() {
+        $('#claim-box').val("Animal testing for medical research should be allowed.")
+    }
+
+    function load_example_2() {
+        $('#claim-box').val("University education should be free.")
+    }
+
+    function load_example_3() {
+        $('#claim-box').val("The drinking age should be lowered from 21.")
+    }
+
+    function load_example_4() {
+        $('#claim-box').val("Social media (like facebook or twitter) have had very positive effects in our life style. ")
+    }
+
+    $('#popover_citation').popover({
+        html: true,
+        content: function() {
+            return $('#citation-content').html();
+        }
+    });
+
+    $('document').ready(function () {
+
+        var wikipedia_searched = false;
+
+
+        $.post('/api/test_es_connection/', {}, function() {
+            console.log("ES server connection [OK]");
+        });
+
+
+        $('#btn-load-example-1').click(function () {
+            load_example_1()
+        });
+        $('#btn-load-example-2').click(function () {
+            load_example_2()
+        });
+        $('#btn-load-example-3').click(function () {
+            load_example_3()
+        });
+        $('#btn-load-example-4').click(function () {
+            load_example_4()
+        });
+
+        var options = {
+            url: "/load_claim_text/",
+            list: {
+                match: {
+                    enabled: true
+                }
+            }
+        };
+
+        $('#claim-box').easyAutocomplete(options);
+
+        $('#btn-switch-display-score').change(function() {
+            $('.score-collapse').collapse('toggle');
+        });
+
+        if (window.location.href.includes('withWiki')) {
+            $('#wiki').addClass('active');
+            $('#wiki').removeClass('btn-default');
+            $('#wiki').addClass('btn-primary');
+            $('#wiki').html('Ask Wikipedia - On');
+        }
+
+        let $el_feedback = $('#btn-switch-feedback');
+        let $el_display = $('#btn-switch-display-score');
+
+        {% if claim_text %}
+
+        $el_feedback.show();
+        $el_feedback.click(function() {
+            $('.btn-feedback').toggle();
+        });
+
+        $el_display.show();
+        $el_display.click(function() {
+            $('.score-collapse').toggle();
+        });
+
+        {% else %}
+        $el_feedback.remove();
+        $el_display.remove();
+        {% endif %}
+
+
+    });
+</script>
+</body>
+</html>

@@ -153,15 +153,7 @@ def _get_evidence_from_link(url, claim, perspective):
     return result[0][0], url
 
 
-def perspectrum_solver(request, claim_text="", withWiki=""):
-    """
-    solves a given instances with one of the baselines.
-    :param request: the default request argument.
-    :param claim_text: the text of the input claim.
-    :param vis_type: whether we visualize with the fancy graphical interface or we use a simple visualization.
-    :param baseline_name: the solver name (BERT and Lucene).
-    :return:
-    """
+def solve_given_claim(claim_text, withWiki):
     context = {}
 
     if claim_text != "":
@@ -183,7 +175,8 @@ def perspectrum_solver(request, claim_text="", withWiki=""):
                 [(claim, p_text) for (p_text, pId, _) in perspective_given_claim])
 
             perspectives_sorted = [(p_text, _normalize_relevance_score(perspective_relevance_score[i]),
-                                    _normalize_stance_score(perspective_stance_score[i]), None) for i, (p_text, pId, _) in
+                                    _normalize_stance_score(perspective_stance_score[i]), None) for i, (p_text, pId, _)
+                                   in
                                    enumerate(perspective_given_claim) if perspective_relevance_score[i] > 1]
 
             if withWiki == "withWiki":
@@ -197,7 +190,7 @@ def perspectrum_solver(request, claim_text="", withWiki=""):
                 ## Filter results that have low stance score
                 web_persps = [web_p for web_p in web_persps if abs(web_p[2]) > 0.1]
 
-                web_persps = web_persps[:20] # Only keep top 20
+                web_persps = web_persps[:20]  # Only keep top 20
 
                 perspectives_sorted += web_persps
 
@@ -213,7 +206,6 @@ def perspectrum_solver(request, claim_text="", withWiki=""):
             print(len(perspectives_sorted))
 
             if len(perspectives_sorted) > 0:
-
 
                 similarity_score = np.zeros((len(perspectives_sorted), len(perspectives_sorted)))
 
@@ -234,7 +226,8 @@ def perspectrum_solver(request, claim_text="", withWiki=""):
 
                 # rescale distance score to [0, 1]
                 distance_scores -= np.min(distance_scores)
-                distance_scores /= np.max(distance_scores)
+                if np.max(distance_scores) != 0.0:
+                    distance_scores /= np.max(distance_scores)
 
                 clustering = DBSCAN(eps=0.3, min_samples=1, metric='precomputed')
                 cluster_labels = clustering.fit_predict(distance_scores)
@@ -243,8 +236,6 @@ def perspectrum_solver(request, claim_text="", withWiki=""):
                     max_val += 1
                     if cluster_labels[i] == -1:
                         cluster_labels[i] = max_val
-
-
 
                 perspective_clusters = {}
                 for i, (p_text, relevance_score, stance_score, url) in enumerate(perspectives_sorted):
@@ -259,7 +250,8 @@ def perspectrum_solver(request, claim_text="", withWiki=""):
                     perspectives = []
                     persp_flash_tmp = []
 
-                    (p_text, stance_score, relevance_score, url) = max(perspective_clusters[cluster_id], key=lambda c: 0.2*c[1] + c[2])
+                    (p_text, stance_score, relevance_score, url) = max(perspective_clusters[cluster_id],
+                                                                       key=lambda c: 0.2 * c[1] + c[2])
 
                     stance_list.append(stance_score)
                     relevance_list.append(relevance_score)
@@ -285,23 +277,40 @@ def perspectrum_solver(request, claim_text="", withWiki=""):
 
             claim_persp_bundled = [(claim, persp_sup_flash, persp_und_flash)]
 
-            context["claim_text"] =  claim_text
+            context["claim_text"] = claim_text
             context["perspectives_sorted"] = perspectives_sorted
             context["perspectives_equivalences"] = perspectives_equivalences
             context["claim_persp_bundled"] = claim_persp_bundled
             context["used_evidences_and_texts"] = []  # used_evidences_and_texts,
             context["persp_sup"] = persp_sup
-            context["persp_und"] =  persp_und
+            context["persp_und"] = persp_und
 
             LRUCache.objects.create(claim=claim,
-                                    with_wiki=(withWiki=="withWiki"),
+                                    with_wiki=(withWiki == "withWiki"),
                                     data=pickle.dumps(context))
 
         else:
             context = _ctx
 
-    return render(request, "vis_dataset_js_with_search_box.html", context)
+        return context
 
+def perspectrum_solver(request, claim_text="", withWiki=""):
+    """
+    solves a given instances with one of the baselines.
+    :param request: the default request argument.
+    :param claim_text: the text of the input claim.
+    :param vis_type: whether we visualize with the fancy graphical interface or we use a simple visualization.
+    :param baseline_name: the solver name (BERT and Lucene).
+    :return:
+    """
+
+    context = solve_given_claim(claim_text, withWiki)
+    return render(request, "perspectrumDemo.html", context)
+
+def perspectrum_annotator(request, claim_text="", withWiki=""):
+
+    context = solve_given_claim(claim_text, withWiki)
+    return render(request, "perspectrumAnnotator.html", context)
 
 @csrf_exempt
 def api_submit_query_log(request):
