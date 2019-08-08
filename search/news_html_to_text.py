@@ -1,7 +1,18 @@
-from newspaper import Article
+from newspaper import Article, Config
+
+config = Config()
+config.memoize_articles = False
+config.language = 'en'
+
 
 def parse_article(url, language='en'):
-    a = Article(url, language=language)
+    """
+    TODO: support other languages
+    :param url:
+    :param language:
+    :return:
+    """
+    a = Article(url, config)
     a.download()
     a.parse()
 
