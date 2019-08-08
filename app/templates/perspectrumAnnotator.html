@@ -31,14 +31,59 @@
 <body>
 
 <style type="text/css">
+    .dropbtn {
+        border: none;
+        cursor: pointer;
+        width: 350px;
+    }
+
+    #myInput {
+      box-sizing: border-box;
+      background-image: url('searchicon.png');
+      background-position: 14px 12px;
+      background-repeat: no-repeat;
+      font-size: 14px;
+      padding: 14px 20px 12px 45px;
+      border: none;
+      border-bottom: 1px solid #ddd;
+    }
+
+    #myInput:focus {outline: 3px solid #ddd;}
+
+    .dropdown {
+          position: relative;
+          display: inline-block;
+    }
+
+    .dropdown-content {
+          display: none;
+          {#position: absolute;#}
+          background-color: #f6f6f6;
+          min-width: 300px;
+          overflow: auto;
+          border: 1px solid #ddd;
+          z-index: 1;
+          font-size: 12px;
+    }
+
+    .dropdown-content a {
+          color: black;
+          padding: 3px 16px;
+          text-decoration: none;
+          display: block;
+    }
+
+    .dropdown a:hover { background-color: #ddd; }
+
+    .show {display: block;}
+
     #mynetwork {
         width: 100%;
         height: 100%;
-    {#border: 2px solid lightgray;#}
     }
 
     code {
-        font-size: 14px;
+        font-size: 12px;
         background: #dddddd;
     }
 
@@ -46,61 +91,65 @@
         max-width: none;
     }
 </style>
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark" style="margin-bottom: 0; border-radius: 0">
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExample08" aria-controls="navbarsExample08" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
-
-  <div class="collapse navbar-collapse justify-content-md-center" id="navbarsExample08">
-    <ul class="navbar-nav">
-      <li class="nav-item ">
-        <a class="nav-link" style="font-weight: normal" href="http://cogcomp.org/perspectrum/">Perspectrum</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link active" style="font-weight: bold" href="Javascript:void(0)">Perspectroscope</a>
-      </li>
-    </ul>
-  </div>
-</nav>
+{#<nav class="navbar navbar-expand-lg navbar-dark bg-dark" style="margin-bottom: 0; border-radius: 0">#}
+{#  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExample08" aria-controls="navbarsExample08" aria-expanded="false" aria-label="Toggle navigation">#}
+{#    <span class="navbar-toggler-icon"></span>#}
+{#  </button>#}
+{#  <div class="collapse navbar-collapse justify-content-md-center" id="navbarsExample08">#}
+{#    <ul class="navbar-nav">#}
+{#      <li class="nav-item ">#}
+{#        <a class="nav-link" style="font-weight: normal" href="http://cogcomp.org/perspectrum/">Perspectrum</a>#}
+{#      </li>#}
+{#      <li class="nav-item">#}
+{#        <a class="nav-link active" style="font-weight: bold" href="Javascript:void(0)">Perspectroscope</a>#}
+{#      </li>#}
+{#    </ul>#}
+{#  </div>#}
+{#</nav>#}
 <div class="jumbotron jumbotron-fluid">
     <div class="container">
         <div class="row">
             <div class="col-sm">
-                <h1 class="display-4"><a href="/">PerspectroScope</a></h1>
-                <p class="lead">A Window to the World of Diverse Perspectives.</p>
+                <h1 class="display-4"><a href="/annotator">Perspective Annotator</a></h1>
+{#                <p class="lead">A Window to the World of Diverse Perspectives.</p>#}
             </div>
-        </div>
-        <button id="popover_citation" type="button" class="btn btn-info" data-toggle="popover"><i class="fa fa-lg fa-book"></i>&nbsp;&nbsp;Cite this demo!</button>
-        <a class="btn btn-success" target="_blank" href="https://github.com/CogComp/perspectroscope"><i class="fab fa-lg fa-github"></i>&nbsp;&nbsp;Github</a>
-        <a class="btn btn-danger" target="_blank" href="https://youtu.be/MXBTR1Sp3Bs"><i class="fab fa-lg fa-youtube"></i>&nbsp;&nbsp;Video Demo</a>
-        <div id="citation-content" style="display: none;">
-            @inproceedings{chen2019perspectroscope,
-            <br>
-            &nbsp;&nbsp;&nbsp;&nbsp;title={PerspectroScope: A Window to the World of Diverse Perspectives},
-            <br>
-            &nbsp;&nbsp;&nbsp;&nbsp;author={Chen, Sihao and Khashabi, Daniel and Callison-Burch, Chris and Roth, Dan},
-            <br>
-            &nbsp;&nbsp;&nbsp;&nbsp;book={ACL - Demos},
-            <br>
-            &nbsp;&nbsp;&nbsp;&nbsp;year={2019}
-            <br>
-            }
         </div>
     </div>
 </div>
 
 <div class="container">
     <div class="row">
-        <div class="col-11" style="padding-right: 5px">
-            <div class="form-group">
-                <input id="claim-box" type="text" placeholder="Write a claim here" class="form-control"
-                       value="{{ claim_text }}">
+        <div class="col-sm-5">
+            <div class="dropdown">'
+            <button onclick="myFunction()" class="dropbtn btn btn-primary">Select a claim</button>
+                <div id="myDropdown" class="dropdown-content">
+                    <input type="text" placeholder="Search..." id="myInput" onkeyup="filterFunction()">
+                </div>
             </div>
         </div>
-        <div class="col-1" style="padding-left: 5px">
+        <div class="col-sm-1" style="text-align: center">
+            or
+        </div>
+        <div class="col-sm-5">
+            <div class="form-group">
+                <input id="claim-box" type="text" placeholder="Write a claim here" class="form-control"
+                       value="{{ claim_text }}" style="width: 100%">
+            </div>
+        </div>
+        <div class="col-sm-1">
             <button id="search-claim" type="submit" class="btn btn-primary">
                 <span class="fui-search"></span>
             </button>
+        </div>
+
+        <div class="col-111" style="padding-right: 5px">
+
+        </div>
+        <div class="col-11" style="padding-right: 5px">
+
+        </div>
+        <div class="col-1" style="padding-left: 5px">
+
         </div>
     </div>
     <div class="row">
@@ -108,21 +157,21 @@
         <div class="col text-center">
             <div class="btn-group">
                 <!--<button id="search-claim" type="button" class="btn btn-primary ">Search</button>-->
-                <div class="btn-group">
-                    <button data-toggle="dropdown" class="btn btn-primary dropdown-toggle btn-sm" type="button"
-                            aria-expanded="false">
-                        Load Pre-defined Examples
-                    </button>
-                    <ul role="menu" class="dropdown-menu" x-placement="bottom-start"
-                        style="position: absolute; transform: translate3d(0px, 41px, 0px); top: 0px; left: 0px; will-change: transform;">
-                        <li><a id="btn-load-example-1" href="JavaScript:void(0)">Example #1</a></li>
-                        <li><a id="btn-load-example-2" href="JavaScript:void(0)">Example #2</a></li>
-                        <li><a id="btn-load-example-3" href="JavaScript:void(0)">Example #3</a></li>
-                        <li><a id="btn-load-example-4" href="JavaScript:void(0)">Example #4</a></li>
-                    </ul>
-                </div>
-                <button id="wiki" type="button" class="btn btn-default" data-toggle="button" aria-pressed="false"
-                        autocomplete="off">Ask Wikipedia - Off</button>
+{#                <div class="btn-group">#}
+{#                    <button data-toggle="dropdown" class="btn btn-primary dropdown-toggle btn-sm" type="button"#}
+{#                            aria-expanded="false">#}
+{#                        Load Pre-defined Examples#}
+{#                    </button>#}
+{#                    <ul role="menu" class="dropdown-menu" x-placement="bottom-start"#}
+{#                        style="position: absolute; transform: translate3d(0px, 41px, 0px); top: 0px; left: 0px; will-change: transform;">#}
+{#                        <li><a id="btn-load-example-1" href="JavaScript:void(0)">Example #1</a></li>#}
+{#                        <li><a id="btn-load-example-2" href="JavaScript:void(0)">Example #2</a></li>#}
+{#                        <li><a id="btn-load-example-3" href="JavaScript:void(0)">Example #3</a></li>#}
+{#                        <li><a id="btn-load-example-4" href="JavaScript:void(0)">Example #4</a></li>#}
+{#                    </ul>#}
+{#                </div>#}
+{#                <button id="wiki" type="button" class="btn btn-default" data-toggle="button" aria-pressed="false"#}
+{#                        autocomplete="off">Ask Wikipedia - Off</button>#}
 
                 <button id="btn-switch-display-score" type="button" class="btn btn-default"
                         data-toggle="button" aria-pressed="false" autocomplete="off" style="display: none">
@@ -229,6 +278,44 @@
 </div>
 
 <script type="text/javascript">
+    $.getJSON('/load_new_claim_text/', function(data) {
+        var arrayLength = data.length;
+        for (var i = 0; i < arrayLength; i++) {
+            console.log(data[i]);
+
+            var element = "<a href='#base' onclick='load_claim( `" + data[i] + "` )'> " + data[i] + " </a>";
+            $("#myDropdown").append(element)
+        }
+    });
+
+
+
+    {#function f1(text) {#}
+    {#    console.log(text)#}
+    {#    load_claim(text)#}
+    {#}#}
+
+    /* When the user clicks on the button, toggle between hiding and showing the dropdown content */
+    function myFunction() {
+      document.getElementById("myDropdown").classList.toggle("show");
+    }
+
+    function filterFunction() {
+      var input, filter, ul, li, a, i;
+      input = document.getElementById("myInput");
+      filter = input.value.toUpperCase();
+      div = document.getElementById("myDropdown");
+      a = div.getElementsByTagName("a");
+      for (i = 0; i < a.length; i++) {
+        txtValue = a[i].textContent || a[i].innerText;
+        if (txtValue.toUpperCase().indexOf(filter) > -1) {
+          a[i].style.display = "";
+        } else {
+          a[i].style.display = "none";
+        }
+      }
+    }
+
     Array.prototype.contains = function (v) {
         for (var i = 0; i < this.length; i++) {
             if (this[i] === v) return true;
@@ -380,16 +467,12 @@
     var network = new vis.Network(container, data, options);
 </script>
 <script type="application/javascript">
-    $(function () {
-
-    });
-
     $('#search-claim').click(function () {
         var claimText = $("#claim-box").val();
-        withWiki = "noWiki";
-        if ($('#wiki').hasClass('active')) {
-            withWiki = "withWiki";
-        }
+        withWiki = "withWiki";
+        {#if ($('#wiki').hasClass('active')) {#}
+        {#    withWiki = "withWiki";#}
+        {#}#}
 
         // Log the query in te data base
         $.post('/api/submit_query_log/', {
@@ -397,7 +480,7 @@
         }, function() {
             console.log("Query Log Success!");
         });
-        let url = '/baseline/' + claimText + "/" + withWiki + "/";
+        let url = '/annotator/' + claimText + "/" + withWiki + "/";
 
         window.location.href = url;
     });
@@ -411,7 +494,6 @@
         else
             $(this).html('Ask Wikipedia - On')
     });
-
 
     $('#btn-switch-display-score').click(function() {
         $(this).toggleClass("btn-default");
@@ -437,20 +519,8 @@
 </script>
 <script type="application/javascript">
 
-    function load_example_1() {
-        $('#claim-box').val("Animal testing for medical research should be allowed.")
-    }
-
-    function load_example_2() {
-        $('#claim-box').val("University education should be free.")
-    }
-
-    function load_example_3() {
-        $('#claim-box').val("The drinking age should be lowered from 21.")
-    }
-
-    function load_example_4() {
-        $('#claim-box').val("Social media (like facebook or twitter) have had very positive effects in our life style. ")
+    function load_claim(text) {
+        $('#claim-box').val(text)
     }
 
     $('#popover_citation').popover({
@@ -464,35 +534,9 @@
 
         var wikipedia_searched = false;
 
-
         $.post('/api/test_es_connection/', {}, function() {
             console.log("ES server connection [OK]");
         });
-
-
-        $('#btn-load-example-1').click(function () {
-            load_example_1()
-        });
-        $('#btn-load-example-2').click(function () {
-            load_example_2()
-        });
-        $('#btn-load-example-3').click(function () {
-            load_example_3()
-        });
-        $('#btn-load-example-4').click(function () {
-            load_example_4()
-        });
-
-        var options = {
-            url: "/load_claim_text/",
-            list: {
-                match: {
-                    enabled: true
-                }
-            }
-        };
-
-        $('#claim-box').easyAutocomplete(options);
 
         $('#btn-switch-display-score').change(function() {
             $('.score-collapse').collapse('toggle');
@@ -524,8 +568,6 @@
         $el_feedback.remove();
         $el_display.remove();
         {% endif %}
-
-
     });
 </script>
 </body>

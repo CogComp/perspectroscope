@@ -53,6 +53,17 @@ def load_claim_text(request):
         data = json.loads(data_file.read())
         return JsonResponse([c['text'] for c in data], safe=False)
 
+file1 = "app/static/claims/starts_should_.txt"
+file2 = "app/static/claims/starts_should_not_.txt"
+from random import shuffle
+def load_new_claim_text(request):
+    with open(file1, encoding='utf-8') as data_file:
+        all_lines = data_file.readlines()
+        shuffle(all_lines)
+        all_lines = all_lines[0:1000]
+        sentences = [x.replace("\n", "") for x in all_lines]
+    return JsonResponse(sentences, safe=False)
+
 
 def _keep_two_decimal(num):
     return math.floor(num * 100) / 100.0
