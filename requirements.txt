@@ -10,3 +10,4 @@ elasticsearch==6.2.0
 nltk
 newspaper3k
 google-api-python-client
+django-google-analytics-app

@@ -46,10 +46,14 @@ The two indices have to be named `"perspective_pool_v0.2"` and  `"evidence_pool_
 [Here](README_elastic.md) is a brief instruction on how to use elasticsearch and how to index json files.
 
 
+ - Google Analysis are done using the following app: https://pypi.org/project/django-google-analytics-app/ 
+
 ### Learned models 
 
 Download the trained model files from [this link](https://drive.google.com/drive/folders/1B0XAWxn7xOsn1bRYCbZcSzh2HiABkx6p?usp=sharing)
 and put them under `data/model/` (for instance, `data/model/relevance/perspectrum_relevance_lr2e-05_bs32_epoch-0.pth`).
+
+
 
 
 ## Citation 

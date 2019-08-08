@@ -14,7 +14,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 from app import views
 
 urlpatterns = [
@@ -31,5 +31,7 @@ urlpatterns = [
     path('api/submit_query_log/', views.api_submit_query_log),
     path('api/submit_feedback/', views.api_submit_feedback),
     path('api/retrieve_evidence/', views.api_retrieve_evidence),
-    path('api/test_es_connection/', views.api_test_es_connection)
+    path('api/test_es_connection/', views.api_test_es_connection),
+    path(r'^djga/', include('google_analytics.urls')),
+
 ]

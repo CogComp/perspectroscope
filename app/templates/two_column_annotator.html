@@ -1,0 +1,282 @@
+{% load static %}
+{% load i18n %}
+{% load filter %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css"
+      integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>Perspective Annotation Interface</title>
+</head>
+<body>
+<div class="container-fluid">
+
+    <div class="row">
+        <div class="col persps-container tile" style="background-color: #f5f5f5">
+            <h6>
+                Perspectives For
+            </h6>
+            {% for cluster in persp_sup %}
+                <div class="persp-title btn-lg" style="background-color: #d9eaff">
+                    <div class="row">
+                        <div class="col persp-text" id="{{ cluster.1.1|floatformat:3 }}_{{ cluster.1.0|floatformat:3 }}" >
+                            {% for p in cluster.0 %}
+                                <div>{{ p }}</div>
+                            {% endfor %}
+                        </div>
+                        <div class="col-1  btn-feedback btn-feedback-like" >
+                            <a href="JavaScript:void(0)"><i class="fa fa-lg fa-thumbs-up" style="color: silver" aria-hidden="true"></i></a>
+                        </div>
+                        <div class="col-1  btn-feedback btn-feedback-dislike" >
+                            <a href="JavaScript:void(0)"><i class="fa fa-lg fa-thumbs-down" style="color: silver" aria-hidden="true"></i></a>
+                        </div>
+                    </div>
+                    <a class="score-collapse" tabindex="0" data-toggle="popover" data-trigger="focus"
+                       data-container="body" data-placement="bottom" data-html="true"
+                       data-content="<font color='gray'>Relevance Score ([0, 1]) = {{ cluster.1.1|floatformat:3 }} </font><br />
+                                     <font color='#3498db'>Stance Score ([-1, 1]) = {{ cluster.1.0|floatformat:3 }} </font><br />
+                                    ">
+                        <div class="row stance-bar">
+                            <div class="col-12">
+                                <div class="progress" style="height: 5px; margin-top: 5px">
+                                    <!--<div class="progress-bar" style="width:1%; background-color: black"></div>-->
+                                    <div class="progress-bar" style="width: {% widthratio cluster.1.1 1 100 %}%; background-color: darkgrey"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row stance-bar">
+                            <div class="col-12">
+                                <div class="progress" style="height: 5px; margin-top: 5px">
+                                    <div class="progress-bar" style="width: 49%; background-color: rgb(235, 237, 239)"></div>
+                                    <div class="progress-bar" style="width: 1%; background-color: black"></div>
+                                    {% widthratio cluster.1.0 1 50 as stancewidth %}
+                                    {% blocktrans %}
+                                    <div class="progress-bar progress-bar-info" style="width: {{stancewidth}}%;"></div>
+                                    {% endblocktrans %}
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                    <div class="collapse evidence-collapse">
+                        <hr>
+                        <table class="table">
+                            <tbody>
+                            {% if cluster.2.0 %}
+                            <tr>
+                                <th scope="row">Source</th>
+                                <td>{{ cluster.2.0 }}</td>
+                            </tr>
+                            {% endif %}
+                            {% if cluster.2.1 %}
+                            <tr class="tbl-row-persp-link">
+                                <th scope="row">Link</th>
+                                <td style="word-break: break-all"><a class="persp-link" href="{{ cluster.2.1 }}">{{ cluster.2.1 }}</a></td>
+                            </tr>
+                            {% endif %}
+
+                            <tr>
+                                <th scope="row">Evidence</th>
+                                <td class="tbl-entry-evidence">
+                                    <button class="btn btn-info btn-retrieve-evidence">Retrieve Evidence</button>
+                                </td>
+                            </tr>
+                            <tr class="tbl-row-evidence-link" style="display: none">
+                                <th scope="row">Evidence Link</th>
+                                <td class="tbl-entry-evidence-link" style="word-break: break-all"></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <!--<div class="row">-->
+                        <!--<div class="col-2">-->
+                            <!--<i class="far fa-thumbs-up fa-lg" style="color: silver" aria-hidden="true"></i>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                </div>
+            {% endfor %}
+        </div>
+        <div class="col persps-container tile" style="background-color: #f5f5f5">
+            <h6>
+                Perspectives Against
+            </h6>
+            {% for cluster in persp_und %}
+                <div class="persp-title btn-lg" style="background-color: #ffdcdf">
+                    <div class="row">
+                        <div class="col persp-text">
+                            {% for p in cluster.0 %}
+                                <div>{{ p }}</div>
+                            {% endfor %}
+                        </div>
+                        <div class="col-1 btn-feedback btn-feedback-like" style="display: none">
+                            <a href="JavaScript:void(0)"><i class="fa fa-lg fa-thumbs-up" style="color: silver" aria-hidden="true"></i></a>
+                        </div>
+                        <div class="col-1 btn-feedback btn-feedback-dislike" style="display: none">
+                            <a href="JavaScript:void(0)"><i class="fa fa-lg fa-thumbs-down" style="color: silver" aria-hidden="true"></i></a>
+                        </div>
+                    </div>
+
+                    <a class="score-collapse" tabindex="0" data-toggle="popover"
+                       data-trigger="focus" data-container="body" data-placement="bottom" data-html="true"
+                       data-content="<font color='gray'>Relevance Score ([0, 1]) = {{ cluster.1.1|floatformat:3 }} </font><br />
+                                     <font color='#e74c3c'>Stance Score ([-1, 1]) = {{ cluster.1.0|floatformat:3 }} </font><br />
+                                    ">
+                        <div class="row stance-bar">
+                            <div class="col-12">
+                                <div class="progress" style="height: 5px; margin-top: 5px">
+                                    <!--<div class="progress-bar" style="width:1%; background-color: black"></div>-->
+                                    <div class="progress-bar" style="width: {% widthratio cluster.1.1 1 100 %}%; background-color: darkgrey">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row stance-bar">
+                            <div class="col-12">
+                                <div class="progress" style="height: 5px; margin-top: 5px">
+                                    {% with stanceabs=cluster.1.0|abs_val blankabs=cluster.1.0|blank_abs%}
+                                    {% widthratio stanceabs 1 50 as stancewidth %}
+                                    {% widthratio blankabs 1 50 as blankwidth %}
+                                    {% blocktrans %}
+                                    <div class="progress-bar" style="width: {{ blankwidth }}%; background-color: rgb(235, 237, 239)"></div>
+                                    <div class="progress-bar progress-bar-danger" style="width: {{stancewidth}}%;"></div>
+                                    {% endblocktrans %}
+                                    <div class="progress-bar" style="width: 1%; background-color: black"></div>
+                                    <div class="progress-bar" style="width: 49%; background-color: rgb(235, 237, 239)"></div>
+                                    {% endwith %}
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                    <div class="collapse evidence-collapse">
+                        <hr>
+                        <table class="table">
+                            <tbody>
+                            {% if cluster.2.0 %}
+                            <tr>
+                                <th scope="row">Source</th>
+                                <td>{{ cluster.2.0 }}</td>
+                            </tr>
+                            {% endif %}
+                            {% if cluster.2.1 %}
+                            <tr class="tbl-row-persp-link">
+                                <th scope="row">Link</th>
+                                <td style="word-break: break-all"><a class="persp-link" href="{{ cluster.2.1 }}">{{ cluster.2.1 }}</a></td>
+                            </tr>
+                            {% endif %}
+
+                            <tr>
+                                <th scope="row">Evidence</th>
+                                <td class="tbl-entry-evidence">
+                                    <button class="btn btn-info btn-retrieve-evidence">Retrieve Evidence</button>
+                                </td>
+                            </tr>
+                            <tr class="tbl-row-evidence-link" style="display: none">
+                                <th scope="row">Evidence Link</th>
+                                <td class="tbl-entry-evidence-link" style="word-break: break-all"></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+</body>
+<script>
+    $(document).ready(function () {
+        $('.persp-text').click(function() {
+            $(this).closest('.persp-title').find(".evidence-collapse").collapse('toggle');
+        });
+
+        $('[data-toggle="popover"]').popover({
+            placement : 'right',
+            trigger : 'hover'
+        });
+
+        $('.btn-retrieve-evidence').click(function() {
+            let $evi_row = $(this).closest("tr");
+            let $persp_link_row = $evi_row.siblings("tr.tbl-row-persp-link");
+            let $evidence_link_row = $evi_row.siblings("tr.tbl-row-evidence-link");
+            let $evidence_link_cell = $evidence_link_row.find("td.tbl-entry-evidence-link");
+            let $evidence_cell = $(this).closest("td.tbl-entry-evidence");
+            let perspective = $(this).closest('.persp-title').find(".persp-text > div").first().text();
+            let claim = "{{ claim_text }}";
+
+            $evidence_cell.html("<div class=\"spinner-grow\" role=\"status\">\n" +
+                "  <span class=\"sr-only\">Loading...</span>\n" +
+                "</div>");
+
+            let url = null;
+            if ($persp_link_row.length > 0) {
+                url = $persp_link_row.find('a.persp-link').attr('href');
+            }
+
+            let payload = {
+                "claim": claim,
+                "perspective": perspective,
+                "url": url,
+            };
+            $.post('/api/retrieve_evidence/', payload, function(data) {
+                $evidence_cell.html(data['evidence_paragraph']);
+                $evidence_link_cell.html("<a href=\'" + data['url'] + "\'>" + data['url'] + "</a>");
+                $evidence_link_row.show();
+            });
+
+            console.log(claim);
+            console.log(perspective);
+            console.log(url);
+        });
+
+        $('.btn-feedback').click(function() {
+            let this_btn = $(this).find('i');
+            let other_btn = $(this).siblings('.btn-feedback:not(this)').first().find('i');
+
+            if (this_btn.hasClass('active')) {
+                this_btn.removeClass('active');
+                this_btn.css('color', 'silver');
+            }
+            else {
+                this_btn.addClass("active");
+                this_btn.css('color', 'slategrey');
+                other_btn.removeClass('active');
+                other_btn.css('color', 'silver');
+
+                let persp_text = "";
+                let persp_text_div = $(this).siblings('.persp-text').first();
+                persp_text_div.find('div').each(function() {
+                    persp_text += $(this).text();
+                    persp_text += " "
+                });
+
+                let pd_id_parts = persp_text_div.prop('id').split("_");
+                let rel_score = parseFloat(pd_id_parts[0]);
+                let stance_score = parseFloat(pd_id_parts[1]);
+
+                let feedback = "";
+                if ($(this).hasClass("btn-feedback-like"))
+                    feedback = "like";
+                else
+                    feedback = "dislike";
+
+                let payload = {
+                    "claim": "{{ claim_text }}",
+                    "perspective": persp_text,
+                    "relevance_score": rel_score,
+                    "stance_score": stance_score,
+                    "feedback": feedback
+                };
+
+                $.post('/api/submit_feedback/', payload, function() {
+                    console.log(payload)
+                })
+            }
+        })
+    });
+
+</script>
+
+</html>

@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'app.templatetags.filter',
+    'google_analytics'
 ]
 
 MIDDLEWARE = [
@@ -67,6 +68,10 @@ TEMPLATES = [
         },
     },
 ]
+
+GOOGLE_ANALYTICS = {
+    'google_analytics_id': 'UA-632814-2',
+}
 
 WSGI_APPLICATION = 'app.wsgi.application'
 
