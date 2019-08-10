@@ -26,7 +26,8 @@
         <div class="col persps-container tile" ondrop="drop(event)" ondragover="allowDrop(event)" style="background-color: #f5f5f5">
             <h6>Perspectives For</h6>
             {% for cluster in persp_sup %}
-                <div class="persp-title btn-lg" id="persptive_box_sup_{{ forloop.counter }}" draggable="true" style="background-color: #d9eaff">
+                <div class="persp-title btn-lg" id="persptive_box_sup_{{ forloop.counter }}" draggable="true"
+                     style="background-color: #d9eaff; {% if  forloop.counter > 2 %} visibility: hidden; display: none {% endif %}">
                     <div class="row">
                         <div class="col persp-text" id="{{ cluster.1.1|floatformat:3 }}_{{ cluster.1.0|floatformat:3 }}" >
                             {% for p in cluster.0 %}
@@ -112,9 +113,9 @@
             <h6>
                 Perspectives Against
             </h6>
-
             {% for cluster in persp_und %}
-                <div class="persp-title btn-lg" id="persptive_box_und_{{ forloop.counter }}" draggable="true" style="background-color: #ffdcdf">
+                <div class="persp-title btn-lg" id="persptive_box_und_{{ forloop.counter }}"
+                     draggable="true" style="background-color: #ffdcdf; {% if  forloop.counter > 2 %} visibility: hidden; display: none {% endif %}">
                     <div class="row" >
                         <div class="col persp-text">
                             {% for p in cluster.0 %}
@@ -385,6 +386,7 @@ var cols = document.querySelectorAll('*[id^="persptive_box_"]');
     //col.addEventListener('drop', drop, false);
     col.addEventListener('dragend', handleDragEnd, false);
 });
+
 </script>
 
 <style>

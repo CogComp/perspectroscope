@@ -210,6 +210,10 @@
     {% if claim_text %}
         <hr>
         {% include "two_column_annotator.html" %}
+        <div style="text-align: center">
+            <button type="button" class="btn btn-outline-dark" id="show-more-button"> Show More ⬇ </button>
+        </div>
+        <br>
     {% endif %}
 </div>
 
@@ -257,7 +261,6 @@
     });
 
     $('document').ready(function () {
-
         //var wikipedia_searched = false;
 
         $.post('/api/test_es_connection/', {}, function() {
@@ -293,6 +296,40 @@
 {#            $el_feedback.remove();#}
 {#            $el_display.remove();#}
 {#        {% endif %}#}
+    });
+
+        // upon each click, reveal new perspectives
+    $('#show-more-button').click(function() {
+        console.log("show more . . . ");
+            $('*[id^="persptive_box_und_"]').each(function() {
+            {#console.log("Perspective . . . ");#}
+            {#console.log(this);#}
+            // $(this).css('display') == 'none' || $(this).css("visibility") == "hidden"
+            if($(this).css("visibility") == "hidden") {
+                {#console.log("hidden . . . ");#}
+                $(this).css('visibility', 'visible');
+                $(this).css('display', 'block');
+                return false;
+            }
+            else {
+                {#console.log("otherwise")#}
+            }
+        });
+
+        $('*[id^="persptive_box_sup_"]').each(function() {
+            {#console.log("Perspective . . . ");#}
+            {#console.log(this);#}
+            // $(this).css('display') == 'none' || $(this).css("visibility") == "hidden"
+            if($(this).css("visibility") == "hidden") {
+                {#console.log("hidden . . . ");#}
+                $(this).css('visibility', 'visible');
+                $(this).css('display', 'block');
+                return false;
+            }
+            else {
+                {#console.log("otherwise")#}
+            }
+        });
     });
 </script>
 </body>
