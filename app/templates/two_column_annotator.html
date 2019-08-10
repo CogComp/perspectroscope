@@ -315,8 +315,7 @@ function drop(ev) {
     console.log(" -> drop ");
     ev.preventDefault();
     var data = ev.dataTransfer.getData("text");
-    {#ev.target.appendChild(document.getElementById(data));#}
-    $(ev.target).after($(data));
+    ev.target.appendChild(dragSrcEl);
 }
 
 function handleDragStart(e) {
