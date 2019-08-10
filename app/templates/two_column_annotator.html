@@ -9,17 +9,24 @@
       integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Perspective Annotation Interface</title>
+<style>
+#div1 {
+  width: 1350px;
+  height: 170px;
+  padding: 10px;
+  border: 1px solid #aaaaaa;
+}
+</style>
 </head>
 <body>
-<div class="container-fluid">
 
+<div class="container-fluid">
     <div class="row">
+{#    ondrop="drop(event)" ondragover="allowDrop(event)" #}
         <div class="col persps-container tile" style="background-color: #f5f5f5">
-            <h6>
-                Perspectives For
-            </h6>
+            <h6>Perspectives For</h6>
             {% for cluster in persp_sup %}
-                <div class="persp-title btn-lg" style="background-color: #d9eaff">
+                <div class="persp-title btn-lg" id="persptive_box_sup_{{ forloop.counter }}" style="background-color: #d9eaff">
                     <div class="row">
                         <div class="col persp-text" id="{{ cluster.1.1|floatformat:3 }}_{{ cluster.1.0|floatformat:3 }}" >
                             {% for p in cluster.0 %}
@@ -27,10 +34,14 @@
                             {% endfor %}
                         </div>
                         <div class="col-1  btn-feedback btn-feedback-like" >
-                            <a href="JavaScript:void(0)"><i class="fa fa-lg fa-thumbs-up" style="color: silver" aria-hidden="true"></i></a>
+                            <a data-toggle="popover" data-trigger="focus" data-container="body" data-placement="bottom" data-html="true"
+                               data-content="Thumbs up: would reaffirm that the perspective if indeed relevant."
+                               href="JavaScript:void(0)"><i class="fa fa-lg fa-thumbs-up" style="color: silver" aria-hidden="true"></i></a>
                         </div>
                         <div class="col-1  btn-feedback btn-feedback-dislike" >
-                            <a href="JavaScript:void(0)"><i class="fa fa-lg fa-thumbs-down" style="color: silver" aria-hidden="true"></i></a>
+                            <a data-toggle="popover" data-trigger="focus" data-container="body" data-placement="bottom" data-html="true"
+                            data-content="Thumbs down: would <b>delete</b> the perspective if it is irrelevant."
+                               href="JavaScript:void(0)"><i class="fa fa-lg fa-thumbs-down" style="color: silver" aria-hidden="true"></i></a>
                         </div>
                     </div>
                     <a class="score-collapse" tabindex="0" data-toggle="popover" data-trigger="focus"
@@ -97,23 +108,28 @@
                 </div>
             {% endfor %}
         </div>
-        <div class="col persps-container tile" style="background-color: #f5f5f5">
+        <div class="col persps-container tile" ondrop="drop(event)" ondragover="allowDrop(event)" style="background-color: #f5f5f5">
             <h6>
                 Perspectives Against
             </h6>
+
             {% for cluster in persp_und %}
-                <div class="persp-title btn-lg" style="background-color: #ffdcdf">
-                    <div class="row">
+                <div class="persp-title btn-lg" id="persptive_box_und_{{ forloop.counter }}" draggable="true" style="background-color: #ffdcdf">
+                    <div class="row" >
                         <div class="col persp-text">
                             {% for p in cluster.0 %}
                                 <div>{{ p }}</div>
                             {% endfor %}
                         </div>
-                        <div class="col-1 btn-feedback btn-feedback-like" style="display: none">
-                            <a href="JavaScript:void(0)"><i class="fa fa-lg fa-thumbs-up" style="color: silver" aria-hidden="true"></i></a>
+                        <div class="col-1 btn-feedback btn-feedback-like">
+                            <a href="JavaScript:void(0)" data-toggle="popover" data-trigger="focus" data-container="body" data-placement="bottom" data-html="true"
+                            data-content="Thumbs up: would reaffirm that the perspective if indeed relevant.">
+                                <i class="fa fa-lg fa-thumbs-up" style="color: silver" aria-hidden="true"></i></a>
                         </div>
-                        <div class="col-1 btn-feedback btn-feedback-dislike" style="display: none">
-                            <a href="JavaScript:void(0)"><i class="fa fa-lg fa-thumbs-down" style="color: silver" aria-hidden="true"></i></a>
+                        <div class="col-1 btn-feedback btn-feedback-dislike">
+                            <a href="JavaScript:void(0)" data-toggle="popover" data-trigger="focus" data-container="body" data-placement="bottom" data-html="true"
+                            data-content="Thumbs down: you can <b>delete</b> the perspective if it is irrelevant.">
+                                <i class="fa fa-lg fa-thumbs-down" style="color: silver" aria-hidden="true"></i></a>
                         </div>
                     </div>
 
@@ -278,5 +294,102 @@
     });
 
 </script>
+
+
+<script>
+function allowDrop(ev) {
+    console.log(" -> allowDrop ");
+    ev.preventDefault();
+}
+
+function drag(ev) {
+    console.log(" -> drag ");
+    ev.dataTransfer.setData("text", ev.target.id);
+}
+
+function drop(ev) {
+    console.log(" -> drop ")
+    ev.preventDefault();
+    var data = ev.dataTransfer.getData("text");
+    ev.target.appendChild(document.getElementById(data));
+}
+
+function handleDragStart(e) {
+    console.log("handle drag start (reduce the opacity of the rectangle) ");
+    this.style.opacity = '0.4';  // this / e.target is the source node.
+
+    dragSrcEl = this;
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/html', this.innerHTML);
+}
+
+function handleDragOver(e) {
+    console.log(" -> handleDragOver ");
+    if (e.preventDefault) {
+        e.preventDefault(); // Necessary. Allows us to drop.
+    }
+    e.dataTransfer.dropEffect = 'move';  // See the section on the DataTransfer object.
+    return false;
+}
+
+function handleDragEnter(e) {
+    console.log(" -> handleDragEnter ");
+    // this / e.target is the current hover target.
+    this.classList.add('over');
+}
+
+function handleDragLeave(e) {
+    console.log(" -> handleDragLeave ");
+    this.classList.remove('over');  // this / e.target is previous target element.
+}
+
+function handleDrop(e) {
+    // this / e.target is current target element.
+    if (e.stopPropagation) {
+        e.stopPropagation(); // stops the browser from redirecting.
+    }
+    e.preventDefault();
+
+    // Don't do anything if dropping the same column we're dragging.
+    if (dragSrcEl != this) {
+        // Set the source column's HTML to the HTML of the column we dropped on.
+        dragSrcEl.innerHTML = this.innerHTML;
+        this.innerHTML = e.dataTransfer.getData('text/html');
+    }
+
+    var files = e.dataTransfer.files;
+    for (var i = 0, f; f = files[i]; i++) {
+        // Read the File objects in this FileList.
+    }
+
+    // See the section on the DataTransfer object.
+    return false;
+}
+
+function handleDragEnd(e) {
+    // this/e.target is the source node.
+    [].forEach.call(cols, function (col) {
+        col.classList.remove('over');
+    });
+}
+
+var cols = document.querySelectorAll('*[id^="persptive_box_"]');
+[].forEach.call(cols, function(col) {
+    console.log("col");
+    col.addEventListener('dragstart', handleDragStart, false);
+    col.addEventListener('dragenter', handleDragEnter, false);
+    col.addEventListener('dragover', handleDragOver, false);
+    col.addEventListener('dragleave', handleDragLeave, false);
+    col.addEventListener('drop', handleDrop, false);
+    //col.addEventListener('drop', drop, false);
+    col.addEventListener('dragend', handleDragEnd, false);
+});
+</script>
+
+<style>
+.over {
+  border: 3px dashed #000;
+}
+</style>
 
 </html>
