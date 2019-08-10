@@ -12,7 +12,7 @@ def parse_article(url, language='en'):
     :param language:
     :return:
     """
-    a = Article(url, config)
+    a = Article(url, config=config)
     a.download()
     a.parse()
 

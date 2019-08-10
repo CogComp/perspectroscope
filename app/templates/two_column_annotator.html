@@ -23,10 +23,10 @@
 <div class="container-fluid">
     <div class="row">
 {#    ondrop="drop(event)" ondragover="allowDrop(event)" #}
-        <div class="col persps-container tile" style="background-color: #f5f5f5">
+        <div class="col persps-container tile" ondrop="drop(event)" ondragover="allowDrop(event)" style="background-color: #f5f5f5">
             <h6>Perspectives For</h6>
             {% for cluster in persp_sup %}
-                <div class="persp-title btn-lg" id="persptive_box_sup_{{ forloop.counter }}" style="background-color: #d9eaff">
+                <div class="persp-title btn-lg" id="persptive_box_sup_{{ forloop.counter }}" draggable="true" style="background-color: #d9eaff">
                     <div class="row">
                         <div class="col persp-text" id="{{ cluster.1.1|floatformat:3 }}_{{ cluster.1.0|floatformat:3 }}" >
                             {% for p in cluster.0 %}
@@ -250,6 +250,7 @@
         $('.btn-feedback').click(function() {
             let this_btn = $(this).find('i');
             let other_btn = $(this).siblings('.btn-feedback:not(this)').first().find('i');
+            let persp_ctnr = $(this).closest('.persp-title');
 
             if (this_btn.hasClass('active')) {
                 this_btn.removeClass('active');
@@ -287,7 +288,10 @@
                 };
 
                 $.post('/api/submit_feedback/', payload, function() {
-                    console.log(payload)
+                    console.log(payload);
+                    if (feedback === "dislike") {
+                        persp_ctnr.remove();
+                    }
                 })
             }
         })
@@ -308,10 +312,11 @@ function drag(ev) {
 }
 
 function drop(ev) {
-    console.log(" -> drop ")
+    console.log(" -> drop ");
     ev.preventDefault();
     var data = ev.dataTransfer.getData("text");
-    ev.target.appendChild(document.getElementById(data));
+    {#ev.target.appendChild(document.getElementById(data));#}
+    $(ev.target).after($(data));
 }
 
 function handleDragStart(e) {
@@ -328,6 +333,9 @@ function handleDragOver(e) {
     if (e.preventDefault) {
         e.preventDefault(); // Necessary. Allows us to drop.
     }
+
+    this.style.opacity = 1;
+
     e.dataTransfer.dropEffect = 'move';  // See the section on the DataTransfer object.
     return false;
 }
@@ -351,15 +359,9 @@ function handleDrop(e) {
     e.preventDefault();
 
     // Don't do anything if dropping the same column we're dragging.
-    if (dragSrcEl != this) {
-        // Set the source column's HTML to the HTML of the column we dropped on.
-        dragSrcEl.innerHTML = this.innerHTML;
-        this.innerHTML = e.dataTransfer.getData('text/html');
-    }
-
-    var files = e.dataTransfer.files;
-    for (var i = 0, f; f = files[i]; i++) {
-        // Read the File objects in this FileList.
+    if (dragSrcEl !== this) {
+        $(this).after($(dragSrcEl).clone());
+        $(dragSrcEl).remove();
     }
 
     // See the section on the DataTransfer object.
