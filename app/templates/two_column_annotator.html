@@ -20,6 +20,29 @@
 </head>
 <body>
 
+<script>
+    {#$('#deleteModal').on('show.bs.modal', function (event) {#}
+    {#    var button = $(event.relatedTarget) // Button that triggered the modal#}
+    {#    console.log("modal event . . . ")#}
+    {#    console.log(button)#}
+    {#});#}
+
+    $(document).on('show.bs.modal','#deleteModal', function (event) {
+      {#alert('hi');#}
+        var button = $(event.relatedTarget); // Button that triggered the modal
+        //console.log("modal event . . . ");
+        //console.log(button);
+        {#console.log(button.id);#}
+        let persp_ctnr = button.closest('.persp-title');
+        //console.log(persp_ctnr);
+        $("#modal-delete-btn").click(function() {
+            persp_ctnr.remove();
+            $('#deleteModal').modal('toggle');
+        });
+    });
+
+</script>
+
 <div class="container-fluid">
     <div class="row">
 {#    ondrop="drop(event)" ondragover="allowDrop(event)" #}
@@ -36,10 +59,10 @@
                         </div>
                         <div class="col-1  btn-feedback btn-feedback-like" >
                             <a data-toggle="popover" data-trigger="focus" data-container="body" data-placement="bottom" data-html="true"
-                               data-content="Thumbs up: would reaffirm that the perspective if indeed relevant."
+                               data-content="Thumbs up: would reaffirm that the perspective is indeed relevant."
                                href="JavaScript:void(0)"><i class="fa fa-lg fa-thumbs-up" style="color: silver" aria-hidden="true"></i></a>
                         </div>
-                        <div class="col-1  btn-feedback btn-feedback-dislike" >
+                        <div class="col-1 " data-toggle="modal" data-target=".bd-example-modal-sm">
                             <a data-toggle="popover" data-trigger="focus" data-container="body" data-placement="bottom" data-html="true"
                             data-content="Thumbs down: would <b>delete</b> the perspective if it is irrelevant."
                                href="JavaScript:void(0)"><i class="fa fa-lg fa-thumbs-down" style="color: silver" aria-hidden="true"></i></a>
@@ -115,19 +138,21 @@
             </h6>
             {% for cluster in persp_und %}
                 <div class="persp-title btn-lg" id="persptive_box_und_{{ forloop.counter }}"
-                     draggable="true" style="background-color: #ffdcdf; {% if  forloop.counter > 2 %} visibility: hidden; display: none {% endif %}">
+                     draggable="true"
+                     style="background-color: #ffdcdf; {% if  forloop.counter > 2 %} visibility: hidden; display: none {% endif %}"
+                     data-toggle="modal" data-target=".bd-example-modal-sm">
                     <div class="row" >
                         <div class="col persp-text">
                             {% for p in cluster.0 %}
                                 <div>{{ p }}</div>
                             {% endfor %}
                         </div>
-                        <div class="col-1 btn-feedback btn-feedback-like">
+                        <div class="col-1 btn-feedback btn-feedback-like" >
                             <a href="JavaScript:void(0)" data-toggle="popover" data-trigger="focus" data-container="body" data-placement="bottom" data-html="true"
-                            data-content="Thumbs up: would reaffirm that the perspective if indeed relevant.">
+                            data-content="Thumbs up: would reaffirm that the perspective is indeed relevant.">
                                 <i class="fa fa-lg fa-thumbs-up" style="color: silver" aria-hidden="true"></i></a>
                         </div>
-                        <div class="col-1 btn-feedback btn-feedback-dislike">
+                        <div class="col-1">
                             <a href="JavaScript:void(0)" data-toggle="popover" data-trigger="focus" data-container="body" data-placement="bottom" data-html="true"
                             data-content="Thumbs down: you can <b>delete</b> the perspective if it is irrelevant.">
                                 <i class="fa fa-lg fa-thumbs-down" style="color: silver" aria-hidden="true"></i></a>
@@ -202,6 +227,28 @@
     </div>
 </div>
 
+{#<button type="button" class="btn btn-primary" data-toggle="modal" data-target=".bd-example-modal-sm">Small modal</button>#}
+
+<div class="modal fade bd-example-modal-sm" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+                <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Delete Perspective?</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            Are you sure that want to delete this perspective? Please confirm that this perspective is not relevant to the input claim.
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close.</button>
+            <button type="button" class="btn btn-primary btn-feedback btn-feedback-dislike" id="modal-delete-btn">Yes, delete this</button>
+          </div>
+    </div>
+  </div>
+</div>
+
 </body>
 <script>
     $(document).ready(function () {
@@ -251,7 +298,7 @@
         $('.btn-feedback').click(function() {
             let this_btn = $(this).find('i');
             let other_btn = $(this).siblings('.btn-feedback:not(this)').first().find('i');
-            let persp_ctnr = $(this).closest('.persp-title');
+            //let persp_ctnr = $(this).closest('.persp-title');
 
             if (this_btn.hasClass('active')) {
                 this_btn.removeClass('active');
@@ -270,6 +317,19 @@
                     persp_text += " "
                 });
 
+                {#$('.modal').on('show.bs.modal', function (e) {#}
+                {#     var $trigger = $(e.relatedTarget);#}
+                {#     console.log("modal event . . . ")#}
+                {#     console.log($trigger);#}
+                {#});#}
+
+                {#$(document).on('shown.bs.modal', '#myModal', function (event) {#}
+                {#     var triggerElement = $(event.relatedTarget); // Button that triggered#}
+                {#    console.log("modal event . . . ")#}
+                {#     console.log(triggerElement);#}
+                {#});#}
+
+                /*
                 let pd_id_parts = persp_text_div.prop('id').split("_");
                 let rel_score = parseFloat(pd_id_parts[0]);
                 let stance_score = parseFloat(pd_id_parts[1]);
@@ -291,9 +351,10 @@
                 $.post('/api/submit_feedback/', payload, function() {
                     console.log(payload);
                     if (feedback === "dislike") {
-                        persp_ctnr.remove();
+                        //persp_ctnr.remove();
                     }
-                })
+                });
+                */
             }
         })
     });
@@ -315,7 +376,7 @@ function drag(ev) {
 function drop(ev) {
     console.log(" -> drop ");
     ev.preventDefault();
-    var data = ev.dataTransfer.getData("text");
+    var data = ev.dataTransfer.getData("text"); // Daniel comment: why data is not used?
     ev.target.appendChild(dragSrcEl);
 }
 

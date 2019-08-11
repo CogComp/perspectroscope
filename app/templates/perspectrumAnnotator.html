@@ -168,14 +168,15 @@
                 </button>
             </div>
         {% else %}
-            <div style="text-align: center; width: 100%"><p> Showing perspectives for the following claim: `<i>{{ claim_text }}</i>`. </p>
-            <button type="button" class="btn btn-primary btn-xs" onclick="location.href = '/annotator/';">Try a new claim.</button>
+            <div style="text-align: center; width: 100%">
+                <button type="button" class="btn btn-primary btn-xs" onclick="location.href = '/annotator/';">Home page.</button>
+                <button type="button" class="btn btn-primary btn-xs" onclick="location.href = '/annotator/';">Random claim.</button>
+                <br><hr>
+                <p> Showing perspectives for the following claim: `<i>{{ claim_text }}</i>`. </p>
             </div>
-
         {% endif %}
     </div>
     <div class="row">
-
         <div class="col text-center">
             <div class="btn-group">
                 <!--<button id="search-claim" type="button" class="btn btn-primary ">Search</button>-->
@@ -208,7 +209,6 @@
     </div>
 
     {% if claim_text %}
-        <hr>
         {% include "two_column_annotator.html" %}
         <div style="text-align: center">
             <button type="button" class="btn btn-outline-dark" id="show-more-button"> Show More ⬇ </button>
