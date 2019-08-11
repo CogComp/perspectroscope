@@ -317,13 +317,13 @@ function drag(ev) {
 function drop(ev) {
     console.log(" -> drop ");
     ev.preventDefault();
-    var data = ev.dataTransfer.getData("text"); // Daniel comment: why data is not used?
-    ev.target.appendChild(dragSrcEl);
+    //var data = ev.dataTransfer.getData("text"); // Daniel comment: why data is not used?
+    let _ctnr = $(ev.target).closest(".persps-container");
+    $(_ctnr).append($(dragSrcEl));
 }
 
 function handleDragStart(e) {
     console.log("handle drag start (reduce the opacity of the rectangle) ");
-    this.style.opacity = '0.4';  // this / e.target is the source node.
 
     dragSrcEl = this;
     e.dataTransfer.effectAllowed = 'move';
@@ -336,7 +336,8 @@ function handleDragOver(e) {
         e.preventDefault(); // Necessary. Allows us to drop.
     }
 
-    this.style.opacity = 1;
+    let _ctnr = $(this).closest(".persps-container");
+    $(_ctnr).addClass('over');
 
     e.dataTransfer.dropEffect = 'move';  // See the section on the DataTransfer object.
     return false;
@@ -345,12 +346,16 @@ function handleDragOver(e) {
 function handleDragEnter(e) {
     console.log(" -> handleDragEnter ");
     // this / e.target is the current hover target.
-    this.classList.add('over');
+    let _ctnr = $(this).closest(".persps-container");
+    $(_ctnr).addClass('over');
+    //this.classList.add('over');
 }
 
 function handleDragLeave(e) {
     console.log(" -> handleDragLeave ");
-    this.classList.remove('over');  // this / e.target is previous target element.
+    let _ctnr = $(this).closest(".persps-container");
+    $(_ctnr).removeClass('over');
+    //this.classList.remove('over');  // this / e.target is previous target element.
 }
 
 function handleDrop(e) {
@@ -362,8 +367,8 @@ function handleDrop(e) {
 
     // Don't do anything if dropping the same column we're dragging.
     if (dragSrcEl !== this) {
-        $(this).after($(dragSrcEl).clone());
-        $(dragSrcEl).remove();
+        let _ctnr = $(this).closest(".persps-container");
+        $(_ctnr).append($(dragSrcEl));
     }
 
     // See the section on the DataTransfer object.
@@ -372,9 +377,11 @@ function handleDrop(e) {
 
 function handleDragEnd(e) {
     // this/e.target is the source node.
-    [].forEach.call(cols, function (col) {
-        col.classList.remove('over');
-    });
+    //[].forEach.call(cols, function (col) {
+    //    col.classList.remove('over');
+    //});
+    let _ctnr = $(this).closest(".persps-container");
+    $(_ctnr).removeClass('over');
 }
 
 var cols = document.querySelectorAll('*[id^="persptive_box_"]');
