@@ -89,11 +89,6 @@
 
     .show {display: block;}
 
-    {##mynetwork {#}
-    {#    width: 100%;#}
-    {#    height: 100%;#}
-    {#}#}
-
     code {
         font-size: 12px;
         background: #dddddd;
@@ -102,8 +97,22 @@
     .popover {
         max-width: none;
     }
+
+    /* The navigation bar */
+    .navbar {
+        overflow: hidden;
+        background-color: #333;
+        position: fixed; /* Set the navbar to fixed position */
+        top: 0; /* Position the navbar at the top of the page */
+        width: 100%; /* Full width */
+        z-index: 10;
+    }
+    .navbar a:hover {
+        background: #ddd;
+        color: black;
+    }
 </style>
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
+<nav class="navbar navbar-expand-lg navbar-light" style="background-color: rgb(222,222,222);">
   <a class="navbar-brand" href="/annotator">Perspective Annotator</a>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
@@ -127,8 +136,9 @@
             </li>
         </ul>
         <form class="form-inline my-2 my-lg-0">
-            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Log in</button>
-            <button class="btn btn-success my-2 my-sm-0" type="submit">Sign up</button>
+            <button class="btn-xs btn-primary btn-outline-primary my-2 my-sm-0" style="border-color: #1abc9c" type="submit">Log in</button>
+            <div style="width: 2px"></div>
+            <button class="btn-xs btn-primary my-2 my-sm-0" type="submit" style="border-color: #1abc9c">Sign up</button>
         </form>
     </div>
 </nav>
