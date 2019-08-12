@@ -260,19 +260,6 @@
                     persp_text += " "
                 });
 
-                {#$('.modal').on('show.bs.modal', function (e) {#}
-                {#     var $trigger = $(e.relatedTarget);#}
-                {#     console.log("modal event . . . ")#}
-                {#     console.log($trigger);#}
-                {#});#}
-
-                {#$(document).on('shown.bs.modal', '#myModal', function (event) {#}
-                {#     var triggerElement = $(event.relatedTarget); // Button that triggered#}
-                {#    console.log("modal event . . . ")#}
-                {#     console.log(triggerElement);#}
-                {#});#}
-
-                /*
                 let pd_id_parts = persp_text_div.prop('id').split("_");
                 let rel_score = parseFloat(pd_id_parts[0]);
                 let stance_score = parseFloat(pd_id_parts[1]);
@@ -283,12 +270,20 @@
                 else
                     feedback = "dislike";
 
+                let _ctnr = $(this_btn).closest(".persps-container");
+                let stance = "UND";
+                if ($(_ctnr).hasClass('persps-container-for')) {
+                    stance = "SUP";
+                }
+
                 let payload = {
                     "claim": "{{ claim_text }}",
                     "perspective": persp_text,
                     "relevance_score": rel_score,
                     "stance_score": stance_score,
-                    "feedback": feedback
+                    "stance": stance,
+                    "feedback": feedback,
+                    "comment": "",
                 };
 
                 $.post('/api/submit_feedback/', payload, function() {
@@ -297,7 +292,6 @@
                         //persp_ctnr.remove();
                     }
                 });
-                */
             }
         })
     });
