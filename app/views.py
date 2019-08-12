@@ -316,12 +316,12 @@ def perspectrum_solver(request, claim_text="", withWiki=""):
     """
 
     context = solve_given_claim(claim_text, withWiki)
-    return render(request, "perspectrumDemo.html", context)
+    return render(request, "perspectroscope/perspectrumDemo.html", context)
 
 def perspectrum_annotator(request, claim_text="", withWiki=""):
 
     context = solve_given_claim(claim_text, withWiki)
-    return render(request, "perspectrumAnnotator.html", context)
+    return render(request, "perspectrumAnnotator/perspectrumAnnotator.html", context)
 
 @csrf_exempt
 def api_submit_query_log(request):

@@ -46,7 +46,7 @@
 <div class="container-fluid">
     <div class="row">
 {#    ondrop="drop(event)" ondragover="allowDrop(event)" #}
-        <div class="col persps-container tile persps-container-for" ondrop="drop(event)" ondragover="allowDrop(event)" style="background-color: #f5f5f5">
+        <div class="col persps-container tile persps-container-for" id="persps-container-for" ondrop="drop(event)" ondragover="allowDrop(event)" style="background-color: #f5f5f5">
             <h6>Perspectives For</h6>
             {% for cluster in persp_sup %}
                 <div class="persp-title btn-lg" id="persptive_box_sup_{{ forloop.counter }}" draggable="true"
@@ -62,7 +62,7 @@
                                data-content="Thumbs up: would reaffirm that the perspective is indeed relevant."
                                href="JavaScript:void(0)"><i class="fa fa-lg fa-thumbs-up" style="color: silver" aria-hidden="true"></i></a>
                         </div>
-                        <div class="col-1 " data-toggle="modal" data-target=".bd-example-modal-sm">
+                        <div class="col-1" data-toggle="modal" data-target=".bd-example-modal-sm">
                             <a data-toggle="popover" data-trigger="focus" data-container="body" data-placement="bottom" data-html="true"
                             data-content="Thumbs down: would <b>delete</b> the perspective if it is irrelevant."
                                href="JavaScript:void(0)"><i class="fa fa-lg fa-thumbs-down" style="color: silver" aria-hidden="true"></i></a>
@@ -106,15 +106,15 @@
                 </div>
             {% endfor %}
         </div>
-        <div class="col persps-container tile persps-container-against" ondrop="drop(event)" ondragover="allowDrop(event)" style="background-color: #f5f5f5">
+        <div class="col persps-container tile persps-container-against" id="persps-container-against"
+             ondrop="drop(event)" ondragover="allowDrop(event)" style="background-color: #f5f5f5">
             <h6>
                 Perspectives Against
             </h6>
             {% for cluster in persp_und %}
                 <div class="persp-title btn-lg" id="persptive_box_und_{{ forloop.counter }}"
                      draggable="true"
-                     style="background-color: #ffdcdf; {% if  forloop.counter > 2 %} visibility: hidden; display: none {% endif %}"
-                     data-toggle="modal" data-target=".bd-example-modal-sm">
+                     style="background-color: #ffdcdf; {% if  forloop.counter > 2 %} visibility: hidden; display: none {% endif %}">
                     <div class="row" >
                         <div class="col persp-text">
                             {% for p in cluster.0 %}
@@ -122,12 +122,14 @@
                             {% endfor %}
                         </div>
                         <div class="col-1 btn-feedback btn-feedback-like" >
-                            <a href="JavaScript:void(0)" data-toggle="popover" data-trigger="focus" data-container="body" data-placement="bottom" data-html="true"
+                            <a href="JavaScript:void(0)" data-toggle="popover" data-trigger="focus" data-container="body"
+                               data-placement="bottom" data-html="true"
                             data-content="Thumbs up: would reaffirm that the perspective is indeed relevant.">
                                 <i class="fa fa-lg fa-thumbs-up" style="color: silver" aria-hidden="true"></i></a>
                         </div>
-                        <div class="col-1">
-                            <a href="JavaScript:void(0)" data-toggle="popover" data-trigger="focus" data-container="body" data-placement="bottom" data-html="true"
+                        <div class="col-1" data-toggle="modal" data-target=".bd-example-modal-sm">
+                            <a href="JavaScript:void(0)" data-toggle="popover" data-trigger="focus" data-container="body"
+                               data-placement="bottom" data-html="true"
                             data-content="Thumbs down: you can <b>delete</b> the perspective if it is irrelevant.">
                                 <i class="fa fa-lg fa-thumbs-down" style="color: silver" aria-hidden="true"></i></a>
                         </div>
@@ -305,17 +307,17 @@
 
 <script>
 function allowDrop(ev) {
-    console.log(" -> allowDrop ");
+    //console.log(" -> allowDrop ");
     ev.preventDefault();
 }
 
 function drag(ev) {
-    console.log(" -> drag ");
+    //console.log(" -> drag ");
     ev.dataTransfer.setData("text", ev.target.id);
 }
 
 function drop(ev) {
-    console.log(" -> drop ");
+    //console.log(" -> drop ");
     ev.preventDefault();
     //var data = ev.dataTransfer.getData("text"); // Daniel comment: why data is not used?
     let _ctnr = $(ev.target).closest(".persps-container");
@@ -331,15 +333,14 @@ function drop(ev) {
 }
 
 function handleDragStart(e) {
-    console.log("handle drag start (reduce the opacity of the rectangle) ");
-
+    //console.log("handle drag start (reduce the opacity of the rectangle) ");
     dragSrcEl = this;
     e.dataTransfer.effectAllowed = 'move';
     e.dataTransfer.setData('text/html', this.innerHTML);
 }
 
 function handleDragOver(e) {
-    console.log(" -> handleDragOver ");
+    //console.log(" -> handleDragOver ");
     if (e.preventDefault) {
         e.preventDefault(); // Necessary. Allows us to drop.
     }
@@ -352,7 +353,7 @@ function handleDragOver(e) {
 }
 
 function handleDragEnter(e) {
-    console.log(" -> handleDragEnter ");
+    //console.log(" -> handleDragEnter ");
     // this / e.target is the current hover target.
     let _ctnr = $(this).closest(".persps-container");
     $(_ctnr).addClass('over');
@@ -360,7 +361,7 @@ function handleDragEnter(e) {
 }
 
 function handleDragLeave(e) {
-    console.log(" -> handleDragLeave ");
+    //console.log(" -> handleDragLeave ");
     let _ctnr = $(this).closest(".persps-container");
     $(_ctnr).removeClass('over');
     //this.classList.remove('over');  // this / e.target is previous target element.
@@ -368,7 +369,7 @@ function handleDragLeave(e) {
 
 function handleDrop(e) {
     // this / e.target is current target element.
-    console.log('handle drop');
+    // console.log('handle drop');
     if (e.stopPropagation) {
         e.stopPropagation(); // stops the browser from redirecting.
     }
@@ -401,7 +402,7 @@ function handleDragEnd(e) {
 
 var cols = document.querySelectorAll('*[id^="persptive_box_"]');
 [].forEach.call(cols, function(col) {
-    console.log("col");
+    //console.log("col");
     col.addEventListener('dragstart', handleDragStart, false);
     col.addEventListener('dragenter', handleDragEnter, false);
     col.addEventListener('dragover', handleDragOver, false);
@@ -409,6 +410,18 @@ var cols = document.querySelectorAll('*[id^="persptive_box_"]');
     col.addEventListener('drop', handleDrop, false);
     //col.addEventListener('drop', drop, false);
     col.addEventListener('dragend', handleDragEnd, false);
+});
+
+var cols2 = document.querySelectorAll('*[id^="persps-container"]');
+[].forEach.call(cols2, function(col) {
+    console.log("col");
+    //col.addEventListener('dragstart', handleDragStart, false);
+    col.addEventListener('dragenter', handleDragEnter, false);
+    col.addEventListener('dragover', handleDragOver, false);
+    col.addEventListener('dragleave', handleDragLeave, false);
+    //col.addEventListener('drop', handleDrop, false);
+    //col.addEventListener('drop', drop, false);
+    //col.addEventListener('dragend', handleDragEnd, false);
 });
 
 </script>
