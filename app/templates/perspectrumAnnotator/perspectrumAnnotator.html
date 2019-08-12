@@ -5,6 +5,7 @@
 <div class="container">
     <div class="row">
         {% if not persp_sup %}
+            <div style="height: 200px; width: 100%"></div>
             <div class="col-sm-5">
                 <div class="dropdown">
                 <button onclick="myFunction()" class="dropbtn btn btn-primary">Select a claim</button>
@@ -29,8 +30,8 @@
             </div>
         {% else %}
             <div style="text-align: center; width: 100%">
-                <button type="button" class="btn btn-primary btn-xs" onclick="location.href = '/annotator/';">Home page.</button>
-                <button type="button" class="btn btn-primary btn-xs" onclick="location.href = '/annotator/';">Random claim.</button>
+{#                <button type="button" class="btn btn-primary btn-xs" onclick="location.href = '/annotator/';">Home page.</button>#}
+{#                <button type="button" class="btn btn-primary btn-xs" onclick="location.href = '/annotator/';">Random claim.</button>#}
                 <br><hr>
                 <p> Showing perspectives for the following claim: `<i>{{ claim_text }}</i>`. </p>
 
@@ -72,7 +73,7 @@
     {% if claim_text %}
         {% include "perspectrumAnnotator/two_column_annotator.html" %}
         <div style="text-align: center">
-            <button type="button" class="btn btn-outline-dark" id="show-more-button"> Show More ⬇ </button>
+            <button type="button" class="btn btn-outline-dark" id="show-more-button">  Show More  ⬇  </button>
         </div>
         <br>
     {% endif %}

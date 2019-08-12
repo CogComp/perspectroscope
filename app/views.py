@@ -327,6 +327,14 @@ def perspectrum_annotator_about(request):
     context = {}
     return render(request, "perspectrumAnnotator/about.html", context)
 
+def perspectrum_annotator_leaderboard(request):
+    context = {}
+    return render(request, "perspectrumAnnotator/leaderboard.html", context)
+
+def perspectrum_annotator_admin(request):
+    context = {}
+    return render(request, "perspectrumAnnotator/admin.html", context)
+
 @csrf_exempt
 def api_submit_query_log(request):
     if request.method != 'POST':

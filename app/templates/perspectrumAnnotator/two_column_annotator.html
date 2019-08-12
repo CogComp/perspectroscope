@@ -75,7 +75,7 @@
                                 <div class="progress-bar" style="width: 1%; background-color: black"></div>
                                 {% widthratio cluster.1.0 1 50 as stancewidth %}
                                 {% blocktrans %}
-                                    <div class="progress-bar progress-bar-info" style="width: {{stancewidth}}%;"></div>
+                                    <div class="progress-bar progress-bar-info progress-bar-colored" style="width: {{stancewidth}}%;"></div>
                                 {% endblocktrans %}
                             </div>
                         </div>
@@ -154,7 +154,7 @@
                                 {% widthratio blankabs 1 50 as blankwidth %}
                                 {% blocktrans %}
                                 <div class="progress-bar" style="width: {{ blankwidth }}%; background-color: rgb(235, 237, 239)"></div>
-                                <div class="progress-bar progress-bar-danger" style="width: {{stancewidth}}%;"></div>
+                                <div class="progress-bar progress-bar-danger progress-bar-colored" style="width: {{stancewidth}}%;"></div>
                                 {% endblocktrans %}
                                 <div class="progress-bar" style="width: 1%; background-color: black"></div>
                                 <div class="progress-bar" style="width: 49%; background-color: rgb(235, 237, 239)"></div>
@@ -400,8 +400,14 @@ function handleDrop(e) {
     // Don't do anything if dropping the same column we're dragging.
     if (dragSrcEl !== this) {
         let _ctnr = $(this).closest(".persps-container");
+        let _progressbar = $(this).closest(".progress-bar-colored");
+        console.log(_progressbar);
         if ($(_ctnr).hasClass('persps-container-for')) {
             $(dragSrcEl).css('background-color', '#d9eaff');
+            //$(dragSrcEl).css('background-color', '#000000');
+            //$(_progressbar).css("background-color", "#000000")
+            //$(_progressbar).removeClass('progress-bar-info');
+            //$(_progressbar).removeClass('progress-bar-danger');
         }
         else {
             $(dragSrcEl).css('background-color', '#ffdcdf');
