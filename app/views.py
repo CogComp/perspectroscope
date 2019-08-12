@@ -323,6 +323,10 @@ def perspectrum_annotator(request, claim_text="", withWiki=""):
     context = solve_given_claim(claim_text, withWiki)
     return render(request, "perspectrumAnnotator/perspectrumAnnotator.html", context)
 
+def perspectrum_annotator_about(request):
+    context = {}
+    return render(request, "perspectrumAnnotator/about.html", context)
+
 @csrf_exempt
 def api_submit_query_log(request):
     if request.method != 'POST':
