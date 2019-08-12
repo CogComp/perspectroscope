@@ -128,7 +128,7 @@
                      draggable="true"
                      style="background-color: #ffdcdf; {% if  forloop.counter > 2 %} visibility: hidden; display: none {% endif %}">
                     <div class="row" >
-                        <div class="col persp-text">
+                        <div class="col persp-text" id="{{ cluster.1.1|floatformat:3 }}_{{ cluster.1.0|floatformat:3 }}">
                             {% for p in cluster.0 %}
                                 <div>{{ p }}</div>
                             {% endfor %}

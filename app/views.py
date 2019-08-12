@@ -42,7 +42,7 @@ bb_evidence = BertBaseline(task_name="perspectrum_evidence",
                               saved_model="data/model/evidence/perspectrum_evidence_epoch-4.pth",
                               no_cuda=no_cuda)
 
-logging.disable(sys.maxsize)  # Python 3
+# logging.disable(sys.maxsize)  # Python 3
 
 ### Load config JSON object
 config = json.load(open("config/config.json"))
@@ -341,7 +341,7 @@ def api_submit_annotation(request):
     if request.method != 'POST':
         return HttpResponse("api_submit_feedback api only supports POST method.", status=400)
 
-    if request.user.is_authenticated():
+    if request.user.is_authenticated:
         username = request.user.username
     else:
         username = "Anonymous"
