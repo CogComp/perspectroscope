@@ -99,19 +99,26 @@
     }
 
     /* The navigation bar */
-    .navbar {
-        overflow: hidden;
-        background-color: #333;
-        position: fixed; /* Set the navbar to fixed position */
-        top: 0; /* Position the navbar at the top of the page */
-        width: 100%; /* Full width */
-        z-index: 10;
-    }
-    .navbar a:hover {
-        background: #ddd;
-        color: black;
-    }
+    {#.navbar {#}
+    {#    overflow: hidden;#}
+    {#    background-color: #333;#}
+    {#    position: fixed; /* Set the navbar to fixed position */#}
+    {#    top: 0; /* Position the navbar at the top of the page */#}
+    {#    width: 100%; /* Full width */#}
+    {#    z-index: 10;#}
+    {#}#}
+    {#.navbar a:hover {#}
+    {#    background: #ddd;#}
+    {#    color: black;#}
+    {#}#}
 </style>
+<div class="pos-f-t">
+  <div class="collapse" id="navbarToggleExternalContent">
+    <div class="bg-dark p-4">
+      <h5 class="text-white h4">Collapsedasd content</h5>
+      <span class="text-muted">Toggleable via asdthe navbar brand.</span>
+    </div>
+  </div>
 <nav class="navbar navbar-expand-lg navbar-light" style="background-color: rgb(222,222,222);">
   <a class="navbar-brand" href="/annotator">Perspective Annotator</a>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -126,7 +133,7 @@
                 <a class="nav-link" href="/annotator/leaderboard">Leaderboard</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="/annotator/about">About</a>
+                <a class="nav-link" href="/annotator/about" data-toggle="collapse" data-target="#navbarToggleExternalContent" aria-controls="navbarToggleExternalContent" aria-expanded="false" aria-label="Toggle navigation">About</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="mailto:sihaoc@seas.upenn.edu">Contact us</a>
@@ -142,6 +149,8 @@
         </form>
     </div>
 </nav>
+</div>
+
 {#<nav class="navbar navbar-expand-lg navbar-dark bg-dark" style="margin-bottom: 0; border-radius: 0">#}
 {#  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExample08" aria-controls="navbarsExample08" aria-expanded="false" aria-label="Toggle navigation">#}
 {#    <span class="navbar-toggler-icon"></span>#}
