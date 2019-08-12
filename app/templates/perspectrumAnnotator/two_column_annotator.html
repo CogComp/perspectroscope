@@ -68,6 +68,18 @@
                                href="JavaScript:void(0)"><i class="fa fa-lg fa-thumbs-down" style="color: silver" aria-hidden="true"></i></a>
                         </div>
                     </div>
+                    <div class="row stance-bar">
+                        <div class="col-12">
+                            <div class="progress" style="height: 5px; margin-top: 5px">
+                                <div class="progress-bar" style="width: 49%; background-color: rgb(235, 237, 239)"></div>
+                                <div class="progress-bar" style="width: 1%; background-color: black"></div>
+                                {% widthratio cluster.1.0 1 50 as stancewidth %}
+                                {% blocktrans %}
+                                    <div class="progress-bar progress-bar-info" style="width: {{stancewidth}}%;"></div>
+                                {% endblocktrans %}
+                            </div>
+                        </div>
+                    </div>
                     <div class="collapse evidence-collapse">
                         <hr>
                         <table class="table">
@@ -116,7 +128,7 @@
                      draggable="true"
                      style="background-color: #ffdcdf; {% if  forloop.counter > 2 %} visibility: hidden; display: none {% endif %}">
                     <div class="row" >
-                        <div class="col persp-text">
+                        <div class="col persp-text" id="{{ cluster.1.1|floatformat:3 }}_{{ cluster.1.0|floatformat:3 }}">
                             {% for p in cluster.0 %}
                                 <div>{{ p }}</div>
                             {% endfor %}
@@ -132,6 +144,22 @@
                                data-placement="bottom" data-html="true"
                             data-content="Thumbs down: you can <b>delete</b> the perspective if it is irrelevant.">
                                 <i class="fa fa-lg fa-thumbs-down" style="color: silver" aria-hidden="true"></i></a>
+                        </div>
+                    </div>
+                    <div class="row stance-bar">
+                        <div class="col-12">
+                            <div class="progress" style="height: 5px; margin-top: 5px">
+                                {% with stanceabs=cluster.1.0|abs_val blankabs=cluster.1.0|blank_abs%}
+                                {% widthratio stanceabs 1 50 as stancewidth %}
+                                {% widthratio blankabs 1 50 as blankwidth %}
+                                {% blocktrans %}
+                                <div class="progress-bar" style="width: {{ blankwidth }}%; background-color: rgb(235, 237, 239)"></div>
+                                <div class="progress-bar progress-bar-danger" style="width: {{stancewidth}}%;"></div>
+                                {% endblocktrans %}
+                                <div class="progress-bar" style="width: 1%; background-color: black"></div>
+                                <div class="progress-bar" style="width: 49%; background-color: rgb(235, 237, 239)"></div>
+                                {% endwith %}
+                            </div>
                         </div>
                     </div>
                     <div class="collapse evidence-collapse">
@@ -260,19 +288,6 @@
                     persp_text += " "
                 });
 
-                {#$('.modal').on('show.bs.modal', function (e) {#}
-                {#     var $trigger = $(e.relatedTarget);#}
-                {#     console.log("modal event . . . ")#}
-                {#     console.log($trigger);#}
-                {#});#}
-
-                {#$(document).on('shown.bs.modal', '#myModal', function (event) {#}
-                {#     var triggerElement = $(event.relatedTarget); // Button that triggered#}
-                {#    console.log("modal event . . . ")#}
-                {#     console.log(triggerElement);#}
-                {#});#}
-
-                /*
                 let pd_id_parts = persp_text_div.prop('id').split("_");
                 let rel_score = parseFloat(pd_id_parts[0]);
                 let stance_score = parseFloat(pd_id_parts[1]);
@@ -283,21 +298,28 @@
                 else
                     feedback = "dislike";
 
+                let _ctnr = $(this_btn).closest(".persps-container");
+                let stance = "UND";
+                if ($(_ctnr).hasClass('persps-container-for')) {
+                    stance = "SUP";
+                }
+
                 let payload = {
                     "claim": "{{ claim_text }}",
                     "perspective": persp_text,
                     "relevance_score": rel_score,
                     "stance_score": stance_score,
-                    "feedback": feedback
+                    "stance": stance,
+                    "feedback": feedback,
+                    "comment": "",
                 };
 
-                $.post('/api/submit_feedback/', payload, function() {
+                $.post('/api/submit_annotation/', payload, function() {
                     console.log(payload);
                     if (feedback === "dislike") {
                         //persp_ctnr.remove();
                     }
                 });
-                */
             }
         })
     });

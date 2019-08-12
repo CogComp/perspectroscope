@@ -42,7 +42,7 @@ bb_evidence = BertBaseline(task_name="perspectrum_evidence",
                               saved_model="data/model/evidence/perspectrum_evidence_epoch-4.pth",
                               no_cuda=no_cuda)
 
-logging.disable(sys.maxsize)  # Python 3
+# logging.disable(sys.maxsize)  # Python 3
 
 ### Load config JSON object
 config = json.load(open("config/config.json"))
@@ -341,6 +341,42 @@ def api_submit_query_log(request):
 
 
 @csrf_exempt
+def api_submit_annotation(request):
+    if request.method != 'POST':
+        return HttpResponse("api_submit_feedback api only supports POST method.", status=400)
+
+    if request.user.is_authenticated:
+        username = request.user.username
+    else:
+        username = "Anonymous"
+
+    query_claim = request.POST.get('claim', '')
+    perspective = request.POST.get('perspective', '')
+
+    relevance_score = float(request.POST.get('relevance_score', '0.0'))
+    stance_score = float(request.POST.get('stance_score', '0.0'))
+    stance_label = request.POST.get("stance_label", 'UNK')
+    comment = request.POST.get("comment", "")
+    feedback = request.POST.get('feedback', '')
+
+    if feedback and query_claim:
+        like = True if feedback == 'like' else False
+
+        FeedbackRecord.objects.create(
+            username=username,
+            claim=query_claim,
+            perspective=perspective,
+            relevance_score=relevance_score,
+            stance_score=stance_score,
+            stance=stance_label,
+            feedback=like,
+            comment=comment,
+        )
+
+    return HttpResponse(status=200)
+
+
+@csrf_exempt
 def api_submit_feedback(request):
     if request.method != 'POST':
         return HttpResponse("api_submit_feedback api only supports POST method.", status=400)
@@ -364,6 +400,7 @@ def api_submit_feedback(request):
         )
 
     return HttpResponse(status=200)
+
 
 @csrf_exempt
 def api_retrieve_evidence(request):
