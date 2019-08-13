@@ -335,6 +335,11 @@ def perspectrum_annotator_admin(request):
     context = {}
     return render(request, "perspectrumAnnotator/admin.html", context)
 
+
+def render_login_page(request):
+    return render(request, "perspectrumAnnotator/login.html", {})
+
+
 @csrf_exempt
 def api_submit_query_log(request):
     if request.method != 'POST':
@@ -433,3 +438,4 @@ def api_retrieve_evidence(request):
 def api_test_es_connection(request):
     test_connection()
     return HttpResponse(status=204)
+

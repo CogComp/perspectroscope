@@ -18,6 +18,7 @@ from django.urls import path, include
 from app import views
 
 urlpatterns = [
+    path('login/', views.render_login_page, name="render_login"),
     path('admin/', admin.site.urls),
     path('', views.perspectrum_solver),
     path('annotator/', views.perspectrum_annotator),
