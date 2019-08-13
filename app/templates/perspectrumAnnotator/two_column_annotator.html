@@ -71,9 +71,7 @@
                     <div class="row stance-bar">
                         <div class="col-12">
                             <div class="progress" style="height: 5px; margin-top: 5px">
-                                <div class="progress-bar" style="width: 49%; background-color: rgb(235, 237, 239)"></div>
-                                <div class="progress-bar" style="width: 1%; background-color: black"></div>
-                                {% widthratio cluster.1.0 1 50 as stancewidth %}
+                                {% widthratio cluster.1.0 1 100 as stancewidth %}
                                 {% blocktrans %}
                                     <div class="progress-bar progress-bar-info progress-bar-colored" style="width: {{stancewidth}}%;"></div>
                                 {% endblocktrans %}
@@ -150,14 +148,11 @@
                         <div class="col-12">
                             <div class="progress" style="height: 5px; margin-top: 5px">
                                 {% with stanceabs=cluster.1.0|abs_val blankabs=cluster.1.0|blank_abs%}
-                                {% widthratio stanceabs 1 50 as stancewidth %}
+                                {% widthratio stanceabs 1 100 as stancewidth %}
                                 {% widthratio blankabs 1 50 as blankwidth %}
                                 {% blocktrans %}
-                                <div class="progress-bar" style="width: {{ blankwidth }}%; background-color: rgb(235, 237, 239)"></div>
                                 <div class="progress-bar progress-bar-danger progress-bar-colored" style="width: {{stancewidth}}%;"></div>
                                 {% endblocktrans %}
-                                <div class="progress-bar" style="width: 1%; background-color: black"></div>
-                                <div class="progress-bar" style="width: 49%; background-color: rgb(235, 237, 239)"></div>
                                 {% endwith %}
                             </div>
                         </div>
