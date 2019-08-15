@@ -7,6 +7,9 @@ import json
 import datetime
 import pickle
 
+from django.contrib.auth.models import User
+from django.contrib.auth import login
+from django.contrib.auth import authenticate
 from django.shortcuts import render
 from django.http import JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -439,3 +442,34 @@ def api_test_es_connection(request):
     test_connection()
     return HttpResponse(status=204)
 
+
+def api_auth_login(request):
+    if request.method != 'POST':
+        return HttpResponse("api_auth_login api only supports POST method.", status=400)
+
+    username = request.POST.get('username')
+    password = request.POST.get('password')
+
+    user = authenticate(username=username, password=password)
+
+    if user is not None:
+        login(request=request, user=user)
+        return HttpResponse("Login Success!", status=200)
+    else:
+        return HttpResponse("Authentication Failed.", status=401)
+
+
+def api_auth_signup(request):
+    if request.method != 'POST':
+        return HttpResponse("api_auth_login api only supports POST method.", status=400)
+
+    username = request.POST.get('username')
+    password = request.POST.get('password')
+
+    try:
+        user = User.objects.get(username=username, password=password)
+    except User.DoesNotExist:
+        user = User.objects.create_user(username=username, password=password)
+        return HttpResponse("Sign up success", status=200)
+
+    return HttpResponse("User Already Exists.", status=401)

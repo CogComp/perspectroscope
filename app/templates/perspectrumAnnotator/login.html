@@ -1,3 +1,5 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -21,17 +23,56 @@
     <link rel="stylesheet" href="{% static "css/style.css" %}?ver2">
 
     <title>Login - PerspectroScope</title>
+    {% csrf_token %}
 </head>
 <body>
-    <div class="container">
-        <div class="login-page-title">
-            
-        </div>
-        <div class="login-bkg">
-            <div class="login-form">
-
+<div class="container">
+    <div class="login-bkg">
+        <div class="login-form">
+            <div class="form-group">
+                <input type="text" class="form-control login-field" value="" placeholder="Enter your username" id="login-name">
+                <label class="login-field-icon fui-user" for="login-name"></label>
             </div>
+
+            <div class="form-group">
+                <input type="password" class="form-control login-field" value="" placeholder="Password" id="login-pass">
+                <label class="login-field-icon fui-lock" for="login-pass"></label>
+            </div>
+
+            <button id='btn_login' class="btn btn-primary btn-lg btn-block">Log in</button>
+            <button id='btn_signup' class="btn btn-info btn-lg btn-block">Sign up</button>
+            <a class="login-link" href="#">Lost your password?</a>
         </div>
     </div>
+</div>
+<script type="text/javascript">
+    $('#btn_login').click(function(){
+        let username = $('#login-name').val();
+        let pw = $('#login-pass').val();
+
+        if (username && pw) {
+            $.post("/api/auth_login/", {
+                'username': username,
+                'password': pw,
+            }, function(res){
+                window.location.href="/annotator/"
+            })
+        }
+    });
+
+    $('#btn_signup').click(function(){
+        let username = $('#login-name').val();
+        let pw = $('#login-pass').val();
+
+        if (username && pw) {
+            $.post("/api/auth_signup/", {
+                'username': username,
+                'password': pw,
+            }, function(res){
+                window.location.href="/annotator/"
+            })
+        }
+    });
+</script>
 </body>
 </html>

@@ -1,16 +1,14 @@
 /* login.html */
 .login-form {
     width: 500px;
-    height: 180px;
     left: 50%;
-    top: 50vh;
-    margin: -90px 0 0 -250px;
+    top: 30vh;
+    margin: 0 0 0 -250px;
     position: absolute;
 }
 
 .login-bkg {
     height: 100vh;
-    padding-top: 30%;
 }
 
 .login-page-title {

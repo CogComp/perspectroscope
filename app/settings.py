@@ -125,5 +125,8 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+# Use user sessions instead of cookies for CSRF token
+CSRF_USE_SESSIONS = True
+
 # login redirect url
 LOGIN_URL = "render_login"

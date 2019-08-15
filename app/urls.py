@@ -37,5 +37,7 @@ urlpatterns = [
     path('api/submit_annotation/', views.api_submit_annotation),
     path('api/retrieve_evidence/', views.api_retrieve_evidence),
     path('api/test_es_connection/', views.api_test_es_connection),
+    path('api/auth_login/', views.api_auth_login),
+    path('api/auth_signup/', views.api_auth_signup),
     path(r'^djga/', include('google_analytics.urls')),
 ]
