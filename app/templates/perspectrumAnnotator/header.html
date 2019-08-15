@@ -28,6 +28,7 @@
 {#    <script type="text/javascript" src="{% static "js/vis.js" %}"></script>#}
 {#    <link href="{% static "css/vis-network.min.css" %}" rel="stylesheet" type="text/css"/>#}
     <script type="text/javascript" src="{% static "js/jquery.easy-autocomplete.js" %}"></script>
+    <script type="text/javascript" src="{% static "js/header.js" %}"></script>
     <link href="{% static "css/easy-autocomplete.css" %}" rel="stylesheet" type="text/css"/>
 
     <title>PerspectroScope</title>
@@ -142,11 +143,16 @@
                 <a class="nav-link" href="/annotator/admin">Admin</a>
             </li>
         </ul>
-        <form class="form-inline my-2 my-lg-0">
-            <button id='btn_login' class="btn-xs btn-primary btn-outline-primary my-2 my-sm-0" style="border-color: #1abc9c" type="submit">Log in</button>
+{#        <form class="form-inline my-2 my-lg-0">#}
+{#            <button id='btn_login' class="btn-xs btn-primary btn-outline-primary my-2 my-sm-0" style="border-color: #1abc9c" type="submit">Log in</button>#}
+{#            <div style="width: 2px"></div>#}
+{#            <button id='btn_signup' class="btn-xs btn-primary my-2 my-sm-0" type="submit" style="border-color: #1abc9c">Sign up</button>#}
+{#        </form>#}
+        <div class="btn-group">
+            <a id='btn_login' href="/login/" class="btn btn-xs btn-primary" style="border-color: #1abc9c">Log in</a>
             <div style="width: 2px"></div>
-            <button id='btn_signup' class="btn-xs btn-primary my-2 my-sm-0" type="submit" style="border-color: #1abc9c">Sign up</button>
-        </form>
+            <a id='btn_signup' href="/signup/" class="tn btn-xs btn-primary" style="border-color: #1abc9c">Sign up</a>
+        </div>
     </div>
 </nav>
 </div>
