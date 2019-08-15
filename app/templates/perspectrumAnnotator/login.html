@@ -20,10 +20,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.8.2/css/all.css"
           integrity="sha256-39jKbsb/ty7s7+4WzbtELS4vq9udJ+MDjGTD5mtxHZ0=" crossorigin="anonymous" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="stylesheet" href="{% static "css/style.css" %}?ver2">
-
+    <link rel="stylesheet" href="{% static "css/style.css" %}">
     <title>Login - PerspectroScope</title>
-    {% csrf_token %}
 </head>
 <body>
 <div class="container">
@@ -39,14 +37,18 @@
                 <label class="login-field-icon fui-lock" for="login-pass"></label>
             </div>
 
+            {% csrf_token %}
+
             <button id='btn_login' class="btn btn-primary btn-lg btn-block">Log in</button>
             <button id='btn_signup' class="btn btn-info btn-lg btn-block">Sign up</button>
             <a class="login-link" href="#">Lost your password?</a>
         </div>
     </div>
 </div>
+<script src="{% static "js/csrf_util.js" %}"></script>
 <script type="text/javascript">
     $('#btn_login').click(function(){
+        csrfSetup();
         let username = $('#login-name').val();
         let pw = $('#login-pass').val();
 
@@ -61,6 +63,7 @@
     });
 
     $('#btn_signup').click(function(){
+        csrfSetup();
         let username = $('#login-name').val();
         let pw = $('#login-pass').val();
 

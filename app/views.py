@@ -12,7 +12,7 @@ from django.contrib.auth import login
 from django.contrib.auth import authenticate
 from django.shortcuts import render
 from django.http import JsonResponse, HttpResponse
-from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from sklearn.cluster import DBSCAN
 from model.run_bert_on_perspectrum import BertBaseline
 from search.query_elasticsearch import get_perspective_from_pool, get_evidence_from_pool, test_connection
@@ -443,6 +443,7 @@ def api_test_es_connection(request):
     return HttpResponse(status=204)
 
 
+@csrf_protect
 def api_auth_login(request):
     if request.method != 'POST':
         return HttpResponse("api_auth_login api only supports POST method.", status=400)
@@ -459,6 +460,7 @@ def api_auth_login(request):
         return HttpResponse("Authentication Failed.", status=401)
 
 
+@csrf_protect
 def api_auth_signup(request):
     if request.method != 'POST':
         return HttpResponse("api_auth_login api only supports POST method.", status=400)
