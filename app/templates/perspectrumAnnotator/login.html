@@ -27,6 +27,9 @@
 <div class="container">
     <div class="login-bkg">
         <div class="login-form">
+            <div id="div-alerts">
+
+            </div>
             <div class="form-group">
                 <input type="text" class="form-control login-field" value="" placeholder="Enter your username" id="login-name">
                 <label class="login-field-icon fui-user" for="login-name"></label>
@@ -53,12 +56,27 @@
         let pw = $('#login-pass').val();
 
         if (username && pw) {
-            $.post("/api/auth_login/", {
-                'username': username,
-                'password': pw,
-            }, function(res){
-                window.location.href="/annotator/"
+            $.ajax({
+                method: 'POST',
+                url: "/api/auth_login/",
+                data: {
+                    'username': username,
+                    'password': pw,
+                },
+                success: function(res) {
+                    window.location.href = "/annotator/"
+                },
+                error: function(res) {
+                    let $alerts = $('#div-alerts');
+                    $alerts.empty();
+                    $alerts.append("<div class=\"alert alert-danger\" role=\"alert\">Incorrect Username or password!</div>");
+                }
             })
+        }
+        else {
+            let $alerts = $('#div-alerts');
+            $alerts.empty();
+            $alerts.append("<div class=\"alert alert-danger\" role=\"alert\">Username and Password must not be empty!</div>");
         }
     });
 
@@ -68,12 +86,27 @@
         let pw = $('#login-pass').val();
 
         if (username && pw) {
-            $.post("/api/auth_signup/", {
-                'username': username,
-                'password': pw,
-            }, function(res){
-                window.location.href="/annotator/"
+            $.ajax({
+                method: 'POST',
+                url: "/api/auth_signup/",
+                data: {
+                    'username': username,
+                    'password': pw,
+                },
+                success: function(res) {
+                    window.location.href = "/annotator/"
+                },
+                error: function(res) {
+                    let $alerts = $('#div-alerts');
+                    $alerts.empty();
+                    $alerts.append("<div class=\"alert alert-danger\" role=\"alert\">User already exists!</div>");
+                }
             })
+        }
+        else {
+            let $alerts = $('#div-alerts');
+            $alerts.empty();
+            $alerts.append("<div class=\"alert alert-danger\" role=\"alert\">Username and Password must not be empty!</div>");
         }
     });
 </script>
