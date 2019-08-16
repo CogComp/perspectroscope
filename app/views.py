@@ -323,7 +323,17 @@ def perspectrum_solver(request, claim_text="", withWiki=""):
 
 def perspectrum_annotator(request, claim_text="", withWiki=""):
 
-    context = solve_given_claim(claim_text, withWiki)
+    if request.user.is_authenticated:
+        username = request.user.username
+    else:
+        username = ""
+
+    result = solve_given_claim(claim_text, withWiki)
+    context = {
+        'username': username
+    }
+    if result:
+        context = {**context, **result}
     return render(request, "perspectrumAnnotator/perspectrumAnnotator.html", context)
 
 def perspectrum_annotator_about(request):

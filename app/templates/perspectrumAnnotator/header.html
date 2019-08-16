@@ -25,8 +25,8 @@
           integrity="sha256-39jKbsb/ty7s7+4WzbtELS4vq9udJ+MDjGTD5mtxHZ0=" crossorigin="anonymous" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="stylesheet" href="{% static "css/style.css" %}?ver2">
-{#    <script type="text/javascript" src="{% static "js/vis.js" %}"></script>#}
-{#    <link href="{% static "css/vis-network.min.css" %}" rel="stylesheet" type="text/css"/>#}
+    {#    <script type="text/javascript" src="{% static "js/vis.js" %}"></script>#}
+    {#    <link href="{% static "css/vis-network.min.css" %}" rel="stylesheet" type="text/css"/>#}
     <script type="text/javascript" src="{% static "js/jquery.easy-autocomplete.js" %}"></script>
     <script type="text/javascript" src="{% static "js/header.js" %}"></script>
     <link href="{% static "css/easy-autocomplete.css" %}" rel="stylesheet" type="text/css"/>
@@ -38,10 +38,10 @@
 
 <style type="text/css">
     .topright {
-      position: absolute;
-      top: 8px;
-      right: 16px;
-      font-size: 18px;
+        position: absolute;
+        top: 8px;
+        right: 16px;
+        font-size: 18px;
     }
 
     .dropbtn {
@@ -51,39 +51,39 @@
     }
 
     #myInput {
-      box-sizing: border-box;
-      background-image: url('searchicon.png');
-      background-position: 14px 12px;
-      background-repeat: no-repeat;
-      font-size: 14px;
-      padding: 14px 20px 12px 45px;
-      border: none;
-      border-bottom: 1px solid #ddd;
+        box-sizing: border-box;
+        background-image: url('searchicon.png');
+        background-position: 14px 12px;
+        background-repeat: no-repeat;
+        font-size: 14px;
+        padding: 14px 20px 12px 45px;
+        border: none;
+        border-bottom: 1px solid #ddd;
     }
 
     #myInput:focus {outline: 3px solid #ddd;}
 
     .dropdown {
-          position: relative;
-          display: inline-block;
+        position: relative;
+        display: inline-block;
     }
 
     .dropdown-content {
-          display: none;
-          {#position: absolute;#}
-          background-color: #f6f6f6;
-          min-width: 300px;
-          overflow: auto;
-          border: 1px solid #ddd;
-          z-index: 1;
-          font-size: 12px;
+        display: none;
+    {#position: absolute;#}
+        background-color: #f6f6f6;
+        min-width: 300px;
+        overflow: auto;
+        border: 1px solid #ddd;
+        z-index: 1;
+        font-size: 12px;
     }
 
     .dropdown-content a {
-          color: black;
-          padding: 3px 16px;
-          text-decoration: none;
-          display: block;
+        color: black;
+        padding: 3px 16px;
+        text-decoration: none;
+        display: block;
     }
 
     .dropdown a:hover { background-color: #ddd; }
@@ -114,47 +114,47 @@
     {#}#}
 </style>
 <div class="pos-f-t">
-  <div class="collapse" id="navbarToggleExternalContent">
-    <div class="bg-dark p-4">
-      <h5 class="text-white h4">Collapsedasd content</h5>
-      <span class="text-muted">Toggleable via asdthe navbar brand.</span>
-    </div>
-  </div>
-<nav class="navbar navbar-expand-lg navbar-light" style="background-color: rgb(222,222,222);">
-  <a class="navbar-brand" href="/annotator">Perspective Annotator</a>
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
-  <div class="collapse navbar-collapse" id="navbarSupportedContent">
-    <ul class="navbar-nav mr-auto">
-            <li class="nav-item">
-                <a class="nav-link" href="/annotator">Home</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="/annotator/leaderboard">Leaderboard</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="/annotator/about" data-toggle="collapse" data-target="#navbarToggleExternalContent" aria-controls="navbarToggleExternalContent" aria-expanded="false" aria-label="Toggle navigation">About</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="mailto:sihaoc@seas.upenn.edu">Contact us</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="/annotator/admin">Admin</a>
-            </li>
-        </ul>
-{#        <form class="form-inline my-2 my-lg-0">#}
-{#            <button id='btn_login' class="btn-xs btn-primary btn-outline-primary my-2 my-sm-0" style="border-color: #1abc9c" type="submit">Log in</button>#}
-{#            <div style="width: 2px"></div>#}
-{#            <button id='btn_signup' class="btn-xs btn-primary my-2 my-sm-0" type="submit" style="border-color: #1abc9c">Sign up</button>#}
-{#        </form>#}
-        <div class="btn-group">
-            <a id='btn_login' href="/login/" class="btn btn-xs btn-primary" style="border-color: #1abc9c">Log in</a>
-            <div style="width: 2px"></div>
-            <a id='btn_signup' href="/login/" class="tn btn-xs btn-primary" style="border-color: #1abc9c">Sign up</a>
+    <div class="collapse" id="navbarToggleExternalContent">
+        <div class="bg-dark p-4">
+            <h5 class="text-white h4">Collapsedasd content</h5>
+            <span class="text-muted">Toggleable via asdthe navbar brand.</span>
         </div>
     </div>
-</nav>
+    <nav class="navbar navbar-expand-lg navbar-light" style="background-color: rgb(222,222,222);">
+        <a class="navbar-brand" href="/annotator">Perspective Annotator</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/annotator">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/annotator/leaderboard">Leaderboard</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/annotator/about" data-toggle="collapse" data-target="#navbarToggleExternalContent" aria-controls="navbarToggleExternalContent" aria-expanded="false" aria-label="Toggle navigation">About</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="mailto:sihaoc@seas.upenn.edu">Contact us</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/annotator/admin">Admin</a>
+                </li>
+            </ul>
+            {% if username != "" %}
+            <div class="btn-group">
+                <a id='btn_login' href="/login/" class="btn btn-xs btn-primary" style="border-color: #1abc9c">Log in</a>
+                <div style="width: 2px"></div>
+                <a id='btn_signup' href="/login/" class="tn btn-xs btn-primary" style="border-color: #1abc9c">Sign up</a>
+            </div>
+            {% else %}
+                Welcome, {{ username }}
+                <a id='btn_signout' href="/api/auth_signout/" class="btn btn-xs btn-primary" style="border-color: #1abc9c">Sign out</a>
+            {% endif %}
+        </div>
+    </nav>
 </div>
 
 {#<nav class="navbar navbar-expand-lg navbar-dark bg-dark" style="margin-bottom: 0; border-radius: 0">#}
