@@ -8,7 +8,7 @@ import datetime
 import pickle
 
 from django.contrib.auth.models import User
-from django.contrib.auth import login
+from django.contrib.auth import login, logout
 from django.contrib.auth import authenticate
 from django.shortcuts import render
 from django.http import JsonResponse, HttpResponse
@@ -321,20 +321,11 @@ def perspectrum_solver(request, claim_text="", withWiki=""):
     context = solve_given_claim(claim_text, withWiki)
     return render(request, "perspectroscope/perspectrumDemo.html", context)
 
+
 def perspectrum_annotator(request, claim_text="", withWiki=""):
-
-    if request.user.is_authenticated:
-        username = request.user.username
-    else:
-        username = ""
-
     result = solve_given_claim(claim_text, withWiki)
-    context = {
-        'username': username
-    }
-    if result:
-        context = {**context, **result}
-    return render(request, "perspectrumAnnotator/perspectrumAnnotator.html", context)
+    return render(request, "perspectrumAnnotator/perspectrumAnnotator.html", result)
+
 
 def perspectrum_annotator_about(request):
     context = {}
@@ -481,7 +472,13 @@ def api_auth_signup(request):
     try:
         user = User.objects.get(username=username, password=password)
     except User.DoesNotExist:
-        user = User.objects.create_user(username=username, password=password)
+        user = User.objects.create_user(username=username, password=pasword)
         return HttpResponse("Sign up success", status=200)
 
     return HttpResponse("User Already Exists.", status=401)
+
+
+@csrf_protect
+def api_auth_logout(request):
+    logout(request)
+    return perspectrum_annotator(request)

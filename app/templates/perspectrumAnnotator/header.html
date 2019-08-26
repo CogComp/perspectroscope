@@ -143,15 +143,15 @@
                     <a class="nav-link" href="/annotator/admin">Admin</a>
                 </li>
             </ul>
-            {% if username != "" %}
-            <div class="btn-group">
-                <a id='btn_login' href="/login/" class="btn btn-xs btn-primary" style="border-color: #1abc9c">Log in</a>
-                <div style="width: 2px"></div>
-                <a id='btn_signup' href="/login/" class="tn btn-xs btn-primary" style="border-color: #1abc9c">Sign up</a>
-            </div>
+            {% if user.is_authenticated %}
+                Welcome, {{ user.get_username }}. &nbsp;
+                <a id='btn_signout' href="/api/auth_logout/" class="btn btn-xs btn-primary" style="border-color: #1abc9c">Sign out</a>
             {% else %}
-                Welcome, {{ username }}
-                <a id='btn_signout' href="/api/auth_signout/" class="btn btn-xs btn-primary" style="border-color: #1abc9c">Sign out</a>
+                <div class="btn-group">
+                    <a id='btn_login' href="/login/" class="btn btn-xs btn-primary" style="border-color: #1abc9c">Log in</a>
+                    <div style="width: 2px"></div>
+                    <a id='btn_signup' href="/login/" class="tn btn-xs btn-primary" style="border-color: #1abc9c">Sign up</a>
+                </div>
             {% endif %}
         </div>
     </nav>
