@@ -1,6 +1,6 @@
 from elasticsearch import Elasticsearch
 import json
-es = Elasticsearch(['http://macniece.seas.upenn.edu'],port=4009)
+es = Elasticsearch(['http://macniece.seas.upenn.edu'],port=4010)
 
 def get_top_perspectives(evidence):
     res = es.search(index="perspectivesandclaims", doc_type="text", body={"query": {"match": {"title": evidence}}}, size=500)
