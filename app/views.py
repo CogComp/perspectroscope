@@ -332,7 +332,7 @@ def perspectrum_annotator_about(request):
     return render(request, "perspectrumAnnotator/about.html", context)
 
 def perspectrum_annotator_leaderboard(request):
-    context = {}
+    context = {"leader": [["Rick C", 1337], ["Daniel K", 512], ["Sihao C", 251]]}
     return render(request, "perspectrumAnnotator/leaderboard.html", context)
 
 def perspectrum_annotator_admin(request):

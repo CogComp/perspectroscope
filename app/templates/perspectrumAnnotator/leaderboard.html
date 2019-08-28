@@ -3,5 +3,21 @@
 {% include "perspectrumAnnotator/header.html" %}
 
 <div class="container">
-    
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">Rank</th>
+            <th scope="col">User</th>
+            <th scope="col">Score</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for user in leader %}
+        <tr>
+            <th scope="row">{{ forloop.counter }}</th>
+            <td>{{ user.0 }}</td>
+            <td>{{ user.1 }}</td>
+        </tr>
+        {% endfor %}
+    </table>
 </div>
