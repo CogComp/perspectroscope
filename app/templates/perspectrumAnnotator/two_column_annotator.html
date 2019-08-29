@@ -106,6 +106,13 @@
                                 <th scope="row">Evidence Link</th>
                                 <td class="tbl-entry-evidence-link" style="word-break: break-all"></td>
                             </tr>
+                            <tr class="tbl-row-evidence-feedback" style="display: none">
+                                <th scope="row">Feedback</th>
+                                <td class="tbl-entry-evidence-feedback">
+                                    <button class="btn btn-primary">Good <i class="fa fa-lg fa-thumbs-up"></i></button>
+                                    <button class="btn btn-warning">Needs Work <i class="fa fa-lg fa-thumbs-down"></i></button>
+                                </td>
+                            </tr>
                             </tbody>
                         </table>
                     </div>
@@ -186,6 +193,13 @@
                                 <th scope="row">Evidence Link</th>
                                 <td class="tbl-entry-evidence-link" style="word-break: break-all"></td>
                             </tr>
+                            <tr class="tbl-row-evidence-feedback" style="display: none">
+                                <th scope="row">Feedback</th>
+                                <td class="tbl-entry-evidence-feedback">
+                                    <button class="btn btn-primary">Good <i class="fa fa-lg fa-thumbs-up"></i></button>
+                                    <button class="btn btn-warning">Needs Work <i class="fa fa-lg fa-thumbs-down"></i></button>
+                                </td>
+                            </tr>
                             </tbody>
                         </table>
                     </div>
@@ -233,6 +247,7 @@
             let $evi_row = $(this).closest("tr");
             let $persp_link_row = $evi_row.siblings("tr.tbl-row-persp-link");
             let $evidence_link_row = $evi_row.siblings("tr.tbl-row-evidence-link");
+            let $evidence_feedback_row = $evi_row.siblings("tr.tbl-row-evidence-feedback");
             let $evidence_link_cell = $evidence_link_row.find("td.tbl-entry-evidence-link");
             let $evidence_cell = $(this).closest("td.tbl-entry-evidence");
             let perspective = $(this).closest('.persp-title').find(".persp-text > div").first().text();
@@ -256,6 +271,7 @@
                 $evidence_cell.html(data['evidence_paragraph']);
                 $evidence_link_cell.html("<a href=\'" + data['url'] + "\'>" + data['url'] + "</a>");
                 $evidence_link_row.show();
+                $evidence_feedback_row.show();
             });
 
             console.log(claim);

@@ -482,3 +482,40 @@ def api_auth_signup(request):
 def api_auth_logout(request):
     logout(request)
     return perspectrum_annotator(request)
+
+
+@csrf_protect
+def api_submit_evidence_feedback(request):
+    if request.method != 'POST':
+        return HttpResponse("api_submit_evidence_feedback api only supports POST method.", status=400)
+
+    if request.user.is_authenticated:
+        username = request.user.username
+    else:
+        username = "Anonymous"
+
+    query_claim = request.POST.get('claim', '')
+    perspective = request.POST.get('perspective', '')
+    evidence = request.POST.get('evidence', '')
+
+    relevance_score = float(request.POST.get('relevance_score', '0.0'))
+    stance_score = float(request.POST.get('stance_score', '0.0'))
+    stance_label = request.POST.get("stance_label", 'UNK')
+    comment = request.POST.get("comment", "")
+    feedback = request.POST.get('feedback', '')
+
+    if feedback and query_claim:
+        like = True if feedback == 'like' else False
+
+        FeedbackRecord.objects.create(
+            username=username,
+            claim=query_claim,
+            perspective=perspective,
+            relevance_score=relevance_score,
+            stance_score=stance_score,
+            stance=stance_label,
+            feedback=like,
+            comment=comment,
+        )
+
+    return HttpResponse(status=200)
