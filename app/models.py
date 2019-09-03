@@ -19,6 +19,18 @@ class FeedbackRecord(models.Model):
     comment = models.TextField(default="")
 
 
+class EvidenceFeedbackRecord(models.Model):
+    username = models.CharField(max_length=100, default="Anonymous")
+    claim = models.TextField()
+    perspective = models.TextField()
+    relevance_score = models.FloatField()
+    stance_score = models.FloatField()
+    evidence = models.TextField(default="")
+    stance = models.CharField(max_length=3, default="UNK")
+    feedback = models.BooleanField()  # True = Like, False = Dislike
+    comment = models.TextField(default="")
+
+
 class LRUCache(models.Model):
     claim = models.TextField()
     with_wiki = models.BooleanField(default=False)

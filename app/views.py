@@ -514,6 +514,7 @@ def api_submit_evidence_feedback(request):
             relevance_score=relevance_score,
             stance_score=stance_score,
             stance=stance_label,
+            evidence=evidence,
             feedback=like,
             comment=comment,
         )
