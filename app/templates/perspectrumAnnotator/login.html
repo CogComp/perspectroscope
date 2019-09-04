@@ -64,7 +64,11 @@
                     'password': pw,
                 },
                 success: function(res) {
-                    window.location.href = "/annotator/"
+                    {% if request.GET.next %}
+                        window.location.href = "{{ request.GET.next }}";
+                    {% else %}
+                        window.location.href = "/annotator/";
+                    {% endif %}
                 },
                 error: function(res) {
                     let $alerts = $('#div-alerts');
@@ -94,7 +98,11 @@
                     'password': pw,
                 },
                 success: function(res) {
-                    window.location.href = "/annotator/"
+                    {% if request.GET.next %}
+                        window.location.href = "{{ request.GET.next }}";
+                    {% else %}
+                        window.location.href = "/annotator/";
+                    {% endif %}
                 },
                 error: function(res) {
                     let $alerts = $('#div-alerts');
