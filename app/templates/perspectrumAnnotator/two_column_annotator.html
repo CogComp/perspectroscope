@@ -109,8 +109,8 @@
                             <tr class="tbl-row-evidence-feedback" style="display: none">
                                 <th scope="row">Feedback</th>
                                 <td class="tbl-entry-evidence-feedback">
-                                    <button class="btn btn-primary">Good <i class="fa fa-lg fa-thumbs-up"></i></button>
-                                    <button class="btn btn-warning">Needs Work <i class="fa fa-lg fa-thumbs-down"></i></button>
+                                    <button class="btn btn-primary btn-evidence-feedback btn-evidence-feedback-like">Good <i class="fa fa-lg fa-thumbs-up"></i></button>
+                                    <button class="btn btn-warning btn-evidence-feedback btn-evidence-feedback-dislikebtn-evidence-feedback">Needs Work <i class="fa fa-lg fa-thumbs-down"></i></button>
                                 </td>
                             </tr>
                             </tbody>
@@ -280,6 +280,9 @@
         });
 
         $('.btn-feedback').click(function() {
+
+            csrfSetup();
+
             let this_btn = $(this).find('i');
             let other_btn = $(this).siblings('.btn-feedback:not(this)').first().find('i');
             //let persp_ctnr = $(this).closest('.persp-title');
@@ -334,7 +337,60 @@
                     }
                 });
             }
-        })
+        });
+
+        $('.btn-evidence-feedback').click(function(){
+
+            csrfSetup();
+
+            let persp_text = "";
+
+            let persp_ctnr = $(this).closest(".persp-title");
+            let persp_text_div = $(persp_ctnr).find(".persp-text");
+
+            let pd_id_parts = persp_text_div.prop('id').split("_");
+            let rel_score = parseFloat(pd_id_parts[0]);
+            let stance_score = parseFloat(pd_id_parts[1]);
+
+            persp_text_div.find('div').each(function() {
+                persp_text += $(this).text();
+                persp_text += " "
+            });
+
+            let _ctnr = $(this).closest(".persps-container");
+            let stance = "UND";
+            if ($(_ctnr).hasClass('persps-container-for')) {
+                stance = "SUP";
+            }
+
+            let tbl_el = $(this).closest("table");
+            let evidence_text_el = $(tbl_el).find(".tbl-entry-evidence");
+            let evidence_text = $(evidence_text_el).html();
+
+            let feedback = "";
+            if ($(this).hasClass("btn-evidence-feedback-like"))
+                feedback = "like";
+            else
+                feedback = "dislike";
+
+            let payload = {
+                "claim": "{{ claim_text }}",
+                "perspective": persp_text,
+                "relevance_score": rel_score,
+                "stance_score": stance_score,
+                "stance": stance,
+                "evidence": evidence_text,
+                "feedback": feedback,
+                "comment": "",
+            };
+
+            $.post('/api/submit_evidence_feedback/', payload, function() {
+                console.log(payload);
+                let feedback_el = $(this).closest('.tbl-entry-evidence-feedback');
+                $(feedback_el).html("Feedback Received! Thank you!");
+            });
+
+        });
     });
 
 </script>

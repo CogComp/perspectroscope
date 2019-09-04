@@ -1,6 +1,6 @@
 {% load static %}
 
-{% include "perspectrumAnnotator/header.html" with username=username%}
+{% include "perspectrumAnnotator/header.html" with username=username csrf_token=csrf_token %}
 
 <div class="container">
     <div class="row">
@@ -72,7 +72,7 @@
     </div>
 
     {% if claim_text %}
-        {% include "perspectrumAnnotator/two_column_annotator.html" %}
+        {% include "perspectrumAnnotator/two_column_annotator.html" with csrf_token=csrf_token %}
         <div style="text-align: center">
             <button type="button" class="btn btn-outline-dark" id="show-more-button">  Show More  ⬇  </button>
         </div>

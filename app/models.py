@@ -31,6 +31,14 @@ class EvidenceFeedbackRecord(models.Model):
     comment = models.TextField(default="")
 
 
+class Perspectives(models.Model):
+    username = models.CharField(max_length=100, default="Anonymous")
+    claim = models.TextField()
+    perspective = models.TextField()
+    stance = models.CharField(max_length=3, default="UNK")
+    comment = models.TextField(default="")
+
+
 class LRUCache(models.Model):
     claim = models.TextField()
     with_wiki = models.BooleanField(default=False)

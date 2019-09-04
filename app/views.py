@@ -357,7 +357,7 @@ def api_submit_query_log(request):
     return HttpResponse(status=200)
 
 
-@csrf_exempt
+@csrf_protect
 def api_submit_annotation(request):
     if request.method != 'POST':
         return HttpResponse("api_submit_feedback api only supports POST method.", status=400)
