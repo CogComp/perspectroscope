@@ -128,7 +128,11 @@
     </div>
     <nav class="navbar navbar-expand-lg navbar-light" style="background-color: rgb(222,222,222);">
         <a class="navbar-brand" href="/annotator"
-           data-intro="Welcome! Perspective Annotator is an interactive environment for exploring and annotating debate-worthy claims. If this is your first time here, please follow the steps to get yourself familar with the website.">Perspective Annotator</a>
+           {% if not claim_text %}
+               data-intro="Welcome!Perspective Annotator is an interactive environment for exploring and annotating debate-worthy claims.
+               If this is your first time here, please follow the steps to get yourself familar with the website."
+           {% endif %}
+        >Perspective Annotator</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -141,7 +145,12 @@
 {#                    <a class="nav-link" href="/annotator/leaderboard">Leaderboard</a>#}
 {#                </li>#}
                 <li class="nav-item">
-                    <a class="nav-link" href="/annotator/Animal%20testing%20for%20medical%20research%20should%20be%20allowed./withWiki/">Example</a>
+                    <a class="nav-link"
+                       href="/annotator/Animal%20testing%20for%20medical%20research%20should%20be%20allowed./withWiki/"
+                       {% if not claim_text %}
+                           data-intro="To see an example, click here!" data-step="4"
+                       {% endif %}
+                    >Example</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="/annotator/about">About</a>
