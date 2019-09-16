@@ -58,9 +58,11 @@ def load_claim_text(request):
 
 file1 = "app/static/claims/starts_should_.txt"
 file2 = "app/static/claims/starts_should_not_.txt"
+cmv_titles = "app/static/claims/cmv_title.txt"
+
 from random import shuffle
 def load_new_claim_text(request):
-    with open(file1, encoding='utf-8') as data_file:
+    with open(cmv_titles, encoding='utf-8') as data_file:
         all_lines = data_file.readlines()
         shuffle(all_lines)
         all_lines = all_lines[0:1000]
