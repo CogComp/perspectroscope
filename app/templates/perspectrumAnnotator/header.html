@@ -127,7 +127,8 @@
         </div>
     </div>
     <nav class="navbar navbar-expand-lg navbar-light" style="background-color: rgb(222,222,222);">
-        <a class="navbar-brand" href="/annotator" data-intro="Welcome to the Perspective Annotator!">Perspective Annotator</a>
+        <a class="navbar-brand" href="/annotator"
+           data-intro="Welcome! Perspective Annotator is an interactive environment for exploring and annotating debate-worthy claims. If this is your first time here, please follow the steps to get yourself familar with the website.">Perspective Annotator</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -136,18 +137,21 @@
                 <li class="nav-item">
                     <a class="nav-link" href="/annotator">Home</a>
                 </li>
+{#                <li class="nav-item">#}
+{#                    <a class="nav-link" href="/annotator/leaderboard">Leaderboard</a>#}
+{#                </li>#}
                 <li class="nav-item">
-                    <a class="nav-link" href="/annotator/leaderboard">Leaderboard</a>
+                    <a class="nav-link" href="/annotator/Animal%20testing%20for%20medical%20research%20should%20be%20allowed./withWiki/">Example</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="/annotator/about">About</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="mailto:sihaoc@seas.upenn.edu">Contact us</a>
+                    <a class="nav-link" href="mailto:sihaoc@seas.upenn.edu,danielk@allenai.org">Contact us</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/annotator/admin">Admin</a>
-                </li>
+{#                <li class="nav-item">#}
+{#                    <a class="nav-link" href="/annotator/admin">Admin</a>#}
+{#                </li>#}
             </ul>
             {% if user.is_authenticated %}
                 Welcome, {{ user.get_username }}. &nbsp;
