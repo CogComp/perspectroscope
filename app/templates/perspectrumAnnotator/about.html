@@ -4,87 +4,33 @@
 
 <div class="container">
 
-    <h4>Motivation</h4>
+    <h4>What is Perspective Annotator?</h4>
     <p>
-        Understanding controversial issues usually require insights from various perspectives.
+        Perspective Annotator is an interactive environment for exploring debate-worthy claims.
+        Given such claims, we've designed a system that automatically searches the web for potential arguments
+        from different perspectives.
     </p>
 
-Take the following claim for example -- “Animals should have lawful rights”.
+    <h4>Motivation?</h4>
+    <p>
+        Understanding controversial issues usually require insights from various perspectives.
+        We want to help individuals become more open-minded towards views that they don’t necessarily agree with.
+    </p>
 
-There exists a spectrum of valid arguments or, as we would like to call, perspectives which either support or oppose the claim.
+    <h4>How can you help?</h4>
+    <p>
+        Feel free to explore the site with different claims. We'd like you to give feedbacks for the quality of
+        the perspectives based on their validity. This will potentially help us improve the system that's
+        powering this site!
+    </p>
 
-Perspectrum
-In this work we define the task of substantiated perspective discovery, where given a controversial claim, a system is expected to discover a diverse set of perspectives with their stance and supporting evidence.
-
-We address this as an NLP problem and define four subtasks required to solve the challenge.
-
-To facilitate research in substantiated perspective discovery, we present Perspectrum, a dataset of claims, perspectives, and supporting evidence.
-
-To see more details and download the dataset visit cogcomp.org/perspectrum/
-
-
-Example 1:
-Suppose you are curious about various aspects of “using animals” in lab tests.
-So, you issue a claim to the system: “Animal testing for medical research should be allowed.”
-The system comes back with a range of perspectives, each with a stance relative to this claim.
-On one hand there are various arguments that oppose the claim:
-For instance by citing the cruelty of such tests and the suffering that they incur on animals.
-And even further, such tests on animals don’t necessarily guarantee good results on humans.
-On the other hand, there are also arguments in support of this query:
-Using animals as test environments could be a necessity for developing certain medications. Such tests sometimes can save human lives.
-
-Essentially, each of these perspectives are opinions possibly in support of the given claim or against it. And thus, they constitute a particular attitude towards a given claim.
+    <h4>Who's behind all this?</h4>
+    <p>
+        We are a group of researchers interested in understanding argumentation from a computational perspective (no pun intended).
+        Feel free to let us know what you think about the site by hitting the contact us button above!
+    </p>
 
 
-Seeing the World as Perspectives:
-More broadly, by viewing the world as “perspectives”, the goal is to give the users the understanding that each story is not black and white; but really it has more than one perspective.
-And by going towards such representation of the ideas, we want to help individuals become more open-minded about learning views that they don’t necessarily agree with.
-
-Example 2:
-Let’s take a different example: “Social media (like facebook or twitter) have had very positive effects in our life style.”
-
-Again, there is no single way to respond to this query, but rather there are many responses that form a range of perspectives, each with a stance relative to this claim.
-To support this input claim, one could refer to the observation that interactions between individuals have become easier through the social media.
-On the contrary, one could oppose the given claim by pointing out their negative impacts on productivity; or the increase in cyberbullying.
-
-Moreover, each of these perspectives come with their particular evidence documents.
-
-Design Overview
-Our system is built via a combination of retrieval engines and learned classifiers to create a good balance between speed and quality.
-Retrieval engines are used to quickly select candidates for perspectives and evidence documents.
-These documents are retrieved from a pre-compiled pool of documents, as well as Wikipedia content.
-And the learned classifiers make the final fine-grained decision-making on the given set of candidates.
-These systems are trained on recently-published resources.
-Overall, we have created four different classifiers:
-A classifier to measure the relevance of a perspective with respect to the given claim.
-A classifier which assigns stance scores to perspectives; in other words the degree to which it supports or opposes the given claim.
-A classifier that decides whether two given perspectives are equivalent or not, in the context of the given claim.
-And finally, a classifier which decides whether a given document lends enough evidence to a given perspective of the claim.
-Overall, the final process is a greedy algorithm built on top of the scores extracted from these classifiers.
-
-Additionally, our system is designed with the mindset to get feedback from users of the system. A user could give us feedback about:
-Whether a perspective is relevant or not.
-Whether a stance decision is correct or not.
-Etc.
-We keep track of such feedback signals and update our learned models accordingly with the additional supervision.
-
-Beyond this work: Common-mistakes
-It’s important to note that we have not completely solved the problem.
-For instance,
-Our system could make mistakes on retrieving relevant perspectives
-we make mistakes on assigning stance decisions:
-And all of these happen because, of course, natural language is extremely complex with various exceptions which makes it difficult for machines.
-
-Not Considered here
-Beyond this, there are algorithmic components that we have not addressed here and are opportunities for future work.
-For instance,
-The system provided here does not provide any guarantees in terms of the exhaustiveness of the perspectives in the world.
-There is no association of the identified evidence with some levels of expertise and trustworthiness.
-Moreover, any classifier trained on some annotated data could potentially contain hidden biases that might not be easy to see.
-
-We hope that some of these challenges and limitations will be addressed in future work.
-
-Thank you for your attention.
 
 </div>
 
