@@ -4,64 +4,53 @@
 
 <!DOCTYPE html>
 <html lang="en">
-
+<head>
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css"
       integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Perspective Annotation Interface</title>
-<style>
-#div1 {
-  width: 1350px;
-  height: 170px;
-  padding: 10px;
-  border: 1px solid #aaaaaa;
-}
-</style>
 </head>
 <body>
-
 <script>
-    {#$('#deleteModal').on('show.bs.modal', function (event) {#}
-    {#    var button = $(event.relatedTarget) // Button that triggered the modal#}
-    {#    console.log("modal event . . . ")#}
-    {#    console.log(button)#}
-    {#});#}
-
     $(document).on('show.bs.modal','#deleteModal', function (event) {
-      {#alert('hi');#}
         var button = $(event.relatedTarget); // Button that triggered the modal
-        //console.log("modal event . . . ");
-        //console.log(button);
-        {#console.log(button.id);#}
         let persp_ctnr = button.closest('.persp-title');
-        //console.log(persp_ctnr);
         $("#modal-delete-btn").click(function() {
             persp_ctnr.remove();
             $('#deleteModal').modal('toggle');
         });
     });
-
 </script>
 
 <div class="container-fluid">
-    <div class="row" data-intro="And here are a couple of ''perspectives'' extracted by our system. Let us know if it is a valid perspective by
-        clicking the like/dislike button. ">
-{#    ondrop="drop(event)" ondragover="allowDrop(event)" #}
+    <div class="row"
+         {% if tutorial == "true" %}
+            data-intro="And here are a couple of ''perspectives'' extracted by our system. Let us know if it is a valid perspective by clicking the like/dislike button. "
+         {% endif %}
+    >
         <div class="col persps-container tile persps-container-for" id="persps-container-for" ondrop="drop(event)" ondragover="allowDrop(event)" style="background-color: #f5f5f5">
             <h6>Perspectives For</h6>
             {% for cluster in persp_sup %}
                 <div class="persp-title btn-lg" id="persptive_box_sup_{{ forloop.counter }}" draggable="true"
                      style="background-color: #d9eaff; {% if  forloop.counter > 2 %} visibility: hidden; display: none {% endif %}" {% if forloop.counter == 1 %} data-hint="Click on it to see the source + supporting evidence!" {% endif %}>
-                    <div class="row">
+                    <div class="row"
+                         {% if tutorial == "true" and forloop.counter == 1 %}
+                            data-intro="This sounds like a good perspective, since it takes a stance *in support* of the input claim."
+                         {% endif %}
+                    >
                         <div class="col persp-text" id="{{ cluster.1.1|floatformat:3 }}_{{ cluster.1.0|floatformat:3 }}" >
                             {% for p in cluster.0 %}
                                 <div>{{ p }}</div>
                             {% endfor %}
                         </div>
-                        <div class="col-1  btn-feedback btn-feedback-like" >
+                        <div class="col-1  btn-feedback btn-feedback-like">
                             <a data-toggle="popover" data-trigger="focus" data-container="body" data-placement="bottom" data-html="true"
                                data-content="Thumbs up: would reaffirm that the perspective is indeed relevant."
-                               href="JavaScript:void(0)"><i class="fa fa-lg fa-thumbs-up" style="color: silver" aria-hidden="true"></i></a>
+                               href="JavaScript:void(0)"
+                                {% if tutorial == "true" and forloop.counter == 1 %}
+                                    data-intro="Click on the thumbs up to reaffirm the appropriateness of this perspective. "
+                                 {% endif %}
+                            ><i class="fa fa-lg fa-thumbs-up" style="color: silver" aria-hidden="true"></i></a>
                         </div>
                         <div class="col-1" data-toggle="modal" data-target=".bd-example-modal-sm">
                             <a data-toggle="popover" data-trigger="focus" data-container="body" data-placement="bottom" data-html="true"
@@ -134,7 +123,18 @@
                 <div class="persp-title btn-lg" id="persptive_box_und_{{ forloop.counter }}"
                      draggable="true"
                      style="background-color: #ffdcdf; {% if  forloop.counter > 2 %} visibility: hidden; display: none {% endif %}">
-                    <div class="row" >
+                    <div class="row"
+                        {% if tutorial == "true" and forloop.counter == 1 %}
+                            data-intro="This sounds like a good perspective, since it takes a stance *against* the input claim."
+                        {% endif %}
+                        {% if tutorial == "true" and forloop.counter == 2 %}
+                            data-intro="This does sentence does not take concrete stance with respect to the input claim, and hence, not a good perspective."
+                        {% endif %}
+                        {% if tutorial == "true" and forloop.counter == 3 %}
+                            data-intro="This is a good perspective, since it directly takes a stance, but a perspective `for`, not `against`.
+                            So, you can drag this perspective and drop it among the `for` perspectives."
+                        {% endif %}
+                    >
                         <div class="col persp-text" id="{{ cluster.1.1|floatformat:3 }}_{{ cluster.1.0|floatformat:3 }}">
                             {% for p in cluster.0 %}
                                 <div>{{ p }}</div>
@@ -143,13 +143,21 @@
                         <div class="col-1 btn-feedback btn-feedback-like" >
                             <a href="JavaScript:void(0)" data-toggle="popover" data-trigger="focus" data-container="body"
                                data-placement="bottom" data-html="true"
-                            data-content="Thumbs up: would reaffirm that the perspective is indeed relevant.">
+                            data-content="Thumbs up: would reaffirm that the perspective is indeed relevant."
+                                {% if forloop.counter == 1 and tutorial == "true" %}
+                                    data-intro="Click on the thumbs up to reaffirm the appropriateness of this perspective. "
+                                {% endif %}
+                            >
                                 <i class="fa fa-lg fa-thumbs-up" style="color: silver" aria-hidden="true"></i></a>
                         </div>
                         <div class="col-1" data-toggle="modal" data-target=".bd-example-modal-sm">
                             <a href="JavaScript:void(0)" data-toggle="popover" data-trigger="focus" data-container="body"
                                data-placement="bottom" data-html="true"
-                            data-content="Thumbs down: you can <b>delete</b> the perspective if it is irrelevant.">
+                            data-content="Thumbs down: you can <b>delete</b> the perspective if it is irrelevant."
+                                {% if forloop.counter == 2 and tutorial == "true"%}
+                                    data-intro="You can click on the thumbs down to indicate that this is *not* an appropriate perspective."
+                                {% endif %}
+                            >
                                 <i class="fa fa-lg fa-thumbs-down" style="color: silver" aria-hidden="true"></i></a>
                         </div>
                     </div>
@@ -210,12 +218,12 @@
     </div>
 </div>
 
-{#<button type="button" class="btn btn-primary" data-toggle="modal" data-target=".bd-example-modal-sm">Small modal</button>#}
-
-<div class="modal fade bd-example-modal-sm" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
+<div class="modal fade bd-example-modal-sm" id="deleteModal" tabindex="-1" role="dialog"
+     aria-labelledby="mySmallModalLabel" aria-hidden="true"
+>
   <div class="modal-dialog modal-sm">
     <div class="modal-content">
-                <div class="modal-header">
+        <div class="modal-header">
             <h5 class="modal-title" id="exampleModalLabel">Delete Perspective?</h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">&times;</span>
@@ -399,17 +407,14 @@
 
 <script>
 function allowDrop(ev) {
-    //console.log(" -> allowDrop ");
     ev.preventDefault();
 }
 
 function drag(ev) {
-    //console.log(" -> drag ");
     ev.dataTransfer.setData("text", ev.target.id);
 }
 
 function drop(ev) {
-    //console.log(" -> drop ");
     ev.preventDefault();
     //var data = ev.dataTransfer.getData("text"); // Daniel comment: why data is not used?
     let _ctnr = $(ev.target).closest(".persps-container");

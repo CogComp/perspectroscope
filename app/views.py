@@ -324,6 +324,8 @@ def perspectrum_solver(request, claim_text="", withWiki=""):
 
 def perspectrum_annotator(request, claim_text="", withWiki=""):
     result = solve_given_claim(claim_text, withWiki)
+    if claim_text.lower() == "animal testing for medical research should be allowed.":
+        result["tutorial"] = "true"
     return render(request, "perspectrumAnnotator/perspectrumAnnotator.html", result)
 
 

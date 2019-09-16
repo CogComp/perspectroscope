@@ -38,7 +38,11 @@
 {#                <button type="button" class="btn btn-primary btn-xs" onclick="location.href = '/annotator/';">Random claim.</button>#}
                 <br><hr>
                 <p> Showing perspectives for the following claim: </p>
-                <label class="btn btn-sm btn-dark" data-intro="Notice the target claim here.">{{ claim_text }}</label>
+                <label class="btn btn-sm btn-dark"
+                   {% if tutorial == "true" %}
+                        data-intro="Notice the target claim here."
+                   {% endif %}
+                >{{ claim_text }}</label>
 
             </div>
         {% endif %}
@@ -78,7 +82,12 @@
     {% if claim_text %}
         {% include "perspectrumAnnotator/two_column_annotator.html" with csrf_token=csrf_token %}
         <div style="text-align: center">
-            <button type="button" class="btn btn-outline-dark" id="show-more-button">  Show More  ⬇  </button>
+            <button
+                    type="button" class="btn btn-outline-dark" id="show-more-button"
+                    {% if tutorial %}
+                        data-intro="When you're done analyzing the current perspectives, you can click to see more candidate perspectives." data-step=7
+                    {% endif %}
+            >  Show More  ⬇  </button>
         </div>
         <br>
     {% endif %}
@@ -130,7 +139,6 @@
     });
 
     $('document').ready(function () {
-        //var wikipedia_searched = false;
 
         $.post('/api/test_es_connection/', {}, function() {
             console.log("ES server connection [OK]");
@@ -139,13 +147,6 @@
         $('#btn-switch-display-score').change(function() {
             $('.score-collapse').collapse('toggle');
         });
-
-        /*if (window.location.href.includes('withWiki')) {
-            $('#wiki').addClass('active');
-            $('#wiki').removeClass('btn-default');
-            $('#wiki').addClass('btn-primary');
-            $('#wiki').html('Ask Wikipedia - On');
-        }*/
 
         let $el_feedback = $('#btn-switch-feedback');
         let $el_display = $('#btn-switch-display-score');
