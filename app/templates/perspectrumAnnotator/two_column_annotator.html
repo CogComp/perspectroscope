@@ -339,12 +339,15 @@
                     "comment": "",
                 };
 
+                {% if tutorial != "true" %}
                 $.post('/api/submit_annotation/', payload, function() {
                     console.log(payload);
                     if (feedback === "dislike") {
                         //persp_ctnr.remove();
                     }
                 });
+
+                {% endif %}
             }
         });
 
@@ -393,12 +396,15 @@
                 "comment": "",
             };
 
+            {% if tutorial != "true" %}
+
             $.post('/api/submit_evidence_feedback/', payload, function() {
                 console.log(payload);
                 let feedback_el = $(this).closest('.tbl-entry-evidence-feedback');
                 $(feedback_el).html("Feedback Received! Thank you!");
             });
 
+            {% endif %}
         });
     });
 
