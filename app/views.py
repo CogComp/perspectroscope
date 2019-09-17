@@ -309,7 +309,7 @@ def solve_given_claim(claim_text, withWiki):
 
         return context
 
-def perspectrum_solver(request, claim_text="", withWiki=""):
+def perspectrum_solver(request, withWiki=""):
     """
     solves a given instances with one of the baselines.
     :param request: the default request argument.
@@ -318,12 +318,14 @@ def perspectrum_solver(request, claim_text="", withWiki=""):
     :param baseline_name: the solver name (BERT and Lucene).
     :return:
     """
-
+    claim_text = request.GET.get('q', "")
     context = solve_given_claim(claim_text, withWiki)
     return render(request, "perspectroscope/perspectrumDemo.html", context)
 
 
-def perspectrum_annotator(request, claim_text="", withWiki=""):
+def perspectrum_annotator(request, withWiki=""):
+
+    claim_text = request.GET.get('q', "")
     result = solve_given_claim(claim_text, withWiki)
     if not result:
         result = {}
@@ -365,7 +367,8 @@ def api_submit_query_log(request):
     query_claim = request.POST.get('claim', '')
 
     if query_claim:
-        QueryLog.objects.create(query_claim=query_claim, query_time=datetime.datetime.now())
+        if not QueryLog.objects.filter(query_claim=query_claim).exists():
+            QueryLog.objects.create(query_claim=query_claim, query_time=datetime.datetime.now())
 
     return HttpResponse(status=200)
 

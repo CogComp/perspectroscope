@@ -110,7 +110,7 @@
 </script>
 <script type="application/javascript">
     $('#search-claim').click(function () {
-        var claimText = $("#claim-box").val();
+        let claimText = $("#claim-box").val();
 
         // Log the query in te data base
         $.post('/api/submit_query_log/', {
@@ -118,7 +118,7 @@
         }, function() {
             console.log("Query Log Success!");
         });
-        let url = '/annotator/' + claimText + "/withWiki/";
+        let url = '/annotator/withWiki/?q=' + encodeURIComponent(claimText);
 
         window.location.href = url;
     });
