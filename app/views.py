@@ -138,7 +138,6 @@ def _get_evidence_from_perspectrum(claim, perspective):
 
 
 def _get_evidence_from_link(url, claim, perspective):
-    # return "News media and television journalism have been a key feature in the shaping of American collective memory for much of the twentieth century. Indeed, since the United States' colonial era, news media has influenced collective memory and discourse about national development and trauma. In many ways, mainstream journalists have maintained an authoritative voice as the storytellers of the American past. Their documentary style narratives, detailed exposes, and their positions in the present make them prime sources for public memory", url
 
     if not url:
         return _get_evidence_from_perspectrum(claim, perspective)
@@ -326,8 +325,18 @@ def perspectrum_solver(request, claim_text="", withWiki=""):
 
 def perspectrum_annotator(request, claim_text="", withWiki=""):
     result = solve_given_claim(claim_text, withWiki)
+    if not result:
+        result = {}
+
     if claim_text.lower() == "animal testing for medical research should be allowed.":
         result["tutorial"] = "true"
+
+    if request.session.get('visited', None):
+        result["visited"] = True
+    else:
+        result["visited"] = False
+        request.session['visited'] = 'true'
+
     return render(request, "perspectrumAnnotator/perspectrumAnnotator.html", result)
 
 
