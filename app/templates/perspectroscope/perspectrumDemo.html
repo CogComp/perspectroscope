@@ -402,7 +402,7 @@
         }, function() {
             console.log("Query Log Success!");
         });
-        let url = '/baseline/' + withWiki + "/" + encodeURIComponent(claimText);
+        let url = '/baseline/' + withWiki + "/?q=" + encodeURIComponent(claimText);
 
         window.location.href = url;
     });
