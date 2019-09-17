@@ -126,7 +126,15 @@
 <script type="application/javascript">
 
     {% if tutorial == "true" or not visited %}
-    introJs().start();
+    let _intro = introJs();
+    _intro.onbeforechange(function () {
+        if (this._currentStep === 7) {
+            if (!already_showed_more)
+                show_more_persps();
+            return true;
+        }
+    });
+    _intro.start();
     {% endif %}
 
     function load_claim(text) {
@@ -170,8 +178,9 @@
 {#        {% endif %}#}
     });
 
-        // upon each click, reveal new perspectives
-    $('#show-more-button').click(function() {
+    let already_showed_more = false;
+
+    function show_more_persps() {
         console.log("show more . . . ");
             $('*[id^="persptive_box_und_"]').each(function() {
             {#console.log("Perspective . . . ");#}
@@ -202,6 +211,11 @@
                 {#console.log("otherwise")#}
             }
         });
+        already_showed_more = true
+    }
+        // upon each click, reveal new perspectives
+    $('#show-more-button').click(function() {
+       show_more_persps();
     });
 </script>
 </body>

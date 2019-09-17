@@ -126,13 +126,16 @@
                     <div class="row"
                         {% if tutorial == "true" and forloop.counter == 1 %}
                             data-intro="This sounds like a good perspective, since it takes a stance *against* the input claim."
+                            id="tutorial_1"
                         {% endif %}
                         {% if tutorial == "true" and forloop.counter == 2 %}
                             data-intro="This does sentence does not take concrete stance with respect to the input claim, and hence, not a good perspective."
+                            id="tutorial_2"
                         {% endif %}
                         {% if tutorial == "true" and forloop.counter == 3 %}
                             data-intro="This is a good perspective, since it directly takes a stance, but a perspective `for`, not `against`.
                             So, you can drag this perspective and drop it among the `for` perspectives."
+                            id="tutorial_3"
                         {% endif %}
                     >
                         <div class="col persp-text" id="{{ cluster.1.1|floatformat:3 }}_{{ cluster.1.0|floatformat:3 }}">
