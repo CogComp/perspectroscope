@@ -22,7 +22,9 @@
          {% endif %}
     >
         <div class="col persps-container tile persps-container-for" id="persps-container-for" ondrop="drop(event)" ondragover="allowDrop(event)" style="background-color: #f5f5f5">
-            <h6>Perspectives For</h6>
+            <h6>Perspectives For
+                <a href="Javascript:void(0)"><i style="color:#3498db" class="far fa-plus-square"></i></a>
+            </h6>
             {% for cluster in persp_sup %}
                 <div class="persp-title btn-lg" id="persptive_box_sup_{{ forloop.counter }}" draggable="true"
                      style="background-color: #d9eaff; {% if  forloop.counter > 2 %} visibility: hidden; display: none {% endif %}" {% if forloop.counter == 1 %} data-hint="Click on it to see the source + supporting evidence!" {% endif %}>
@@ -113,6 +115,7 @@
              ondrop="drop(event)" ondragover="allowDrop(event)" style="background-color: #f5f5f5">
             <h6>
                 Perspectives Against
+                <a href="Javascript:void(0)"><i style="color:#e74c3c" class="far fa-plus-square"></i></a>
             </h6>
             {% for cluster in persp_und %}
                 <div class="persp-title btn-lg" id="persptive_box_und_{{ forloop.counter }}"
