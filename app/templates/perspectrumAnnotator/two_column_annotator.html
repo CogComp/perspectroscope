@@ -12,14 +12,7 @@
 </head>
 <body>
 <script>
-    $(document).on('show.bs.modal','#deleteModal', function (event) {
-        var button = $(event.relatedTarget); // Button that triggered the modal
-        let persp_ctnr = button.closest('.persp-title');
-        $("#modal-delete-btn").click(function() {
-            persp_ctnr.remove();
-            $('#deleteModal').modal('toggle');
-        });
-    });
+
 </script>
 
 <div class="container-fluid">
@@ -43,8 +36,9 @@
                                 <div>{{ p }}</div>
                             {% endfor %}
                         </div>
-                        <div class="col-1  btn-feedback btn-feedback-like">
-                            <a data-toggle="popover" data-trigger="focus" data-container="body" data-placement="bottom" data-html="true"
+                        <div class="col-1">
+                            <a class="btn-feedback btn-feedback-like" data-toggle="popover" data-trigger="focus"
+                               data-container="body" data-placement="bottom" data-html="true"
                                data-content="Thumbs up: would reaffirm that the perspective is indeed relevant."
                                href="JavaScript:void(0)"
                                 {% if tutorial == "true" and forloop.counter == 1 %}
@@ -53,7 +47,8 @@
                             ><i class="fa fa-lg fa-thumbs-up" style="color: silver" aria-hidden="true"></i></a>
                         </div>
                         <div class="col-1" data-toggle="modal" data-target=".bd-example-modal-sm">
-                            <a data-toggle="popover" data-trigger="focus" data-container="body" data-placement="bottom" data-html="true"
+                            <a class="btn-feedback btn-feedback-dislike" data-toggle="popover" data-trigger="focus"
+                               data-container="body" data-placement="bottom" data-html="true"
                             data-content="Thumbs down: would <b>delete</b> the perspective if it is irrelevant."
                                href="JavaScript:void(0)"><i class="fa fa-lg fa-thumbs-down" style="color: silver" aria-hidden="true"></i></a>
                         </div>
@@ -100,7 +95,7 @@
                                 <th scope="row">Feedback</th>
                                 <td class="tbl-entry-evidence-feedback">
                                     <button class="btn btn-primary btn-evidence-feedback btn-evidence-feedback-like">Good <i class="fa fa-lg fa-thumbs-up"></i></button>
-                                    <button class="btn btn-warning btn-evidence-feedback btn-evidence-feedback-dislikebtn-evidence-feedback">Needs Work <i class="fa fa-lg fa-thumbs-down"></i></button>
+                                    <button class="btn btn-warning btn-evidence-feedback btn-evidence-feedback-dislike">Needs Work <i class="fa fa-lg fa-thumbs-down"></i></button>
                                 </td>
                             </tr>
                             </tbody>
@@ -143,8 +138,9 @@
                                 <div>{{ p }}</div>
                             {% endfor %}
                         </div>
-                        <div class="col-1 btn-feedback btn-feedback-like" >
-                            <a href="JavaScript:void(0)" data-toggle="popover" data-trigger="focus" data-container="body"
+                        <div class="col-1" >
+                            <a class="btn-feedback btn-feedback-like" href="JavaScript:void(0)"
+                               data-toggle="popover" data-trigger="focus" data-container="body"
                                data-placement="bottom" data-html="true"
                             data-content="Thumbs up: would reaffirm that the perspective is indeed relevant."
                                 {% if forloop.counter == 1 and tutorial == "true" %}
@@ -154,7 +150,8 @@
                                 <i class="fa fa-lg fa-thumbs-up" style="color: silver" aria-hidden="true"></i></a>
                         </div>
                         <div class="col-1" data-toggle="modal" data-target=".bd-example-modal-sm">
-                            <a href="JavaScript:void(0)" data-toggle="popover" data-trigger="focus" data-container="body"
+                            <a class="btn-feedback btn-feedback-dislike" href="JavaScript:void(0)"
+                               data-toggle="popover" data-trigger="focus" data-container="body"
                                data-placement="bottom" data-html="true"
                             data-content="Thumbs down: you can <b>delete</b> the perspective if it is irrelevant."
                                 {% if forloop.counter == 2 and tutorial == "true"%}
@@ -237,7 +234,7 @@
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close.</button>
-            <button type="button" class="btn btn-primary btn-feedback btn-feedback-dislike" id="modal-delete-btn">Yes, delete this</button>
+            <button type="button" class="btn btn-primary" id="modal-delete-btn">Yes, delete this</button>
           </div>
     </div>
   </div>
@@ -291,12 +288,11 @@
             console.log(url);
         });
 
-        $('.btn-feedback').click(function() {
-
+        function submit_persp_feedback(el_btn) {
             csrfSetup();
 
-            let this_btn = $(this).find('i');
-            let other_btn = $(this).siblings('.btn-feedback:not(this)').first().find('i');
+            let this_btn = $(el_btn).find('i');
+            let other_btn = $(el_btn).siblings('.btn-feedback:not(this)').first().find('i');
             //let persp_ctnr = $(this).closest('.persp-title');
 
             if (this_btn.hasClass('active')) {
@@ -310,13 +306,14 @@
                 other_btn.css('color', 'silver');
 
                 let persp_text = "";
-                let persp_text_div = $(this).siblings('.persp-text').first();
+                let persp_ctnr = $(el_btn).closest(".persp-title");
+                let persp_text_div = $(persp_ctnr).find('.persp-text');
                 persp_text_div.find('div').each(function() {
                     persp_text += $(this).text();
                     persp_text += " "
                 });
 
-                let pd_id_parts = persp_text_div.prop('id').split("_");
+                let pd_id_parts = $(persp_text_div).prop('id').split("_");
                 let rel_score = parseFloat(pd_id_parts[0]);
                 let stance_score = parseFloat(pd_id_parts[1]);
 
@@ -352,6 +349,28 @@
 
                 {% endif %}
             }
+        }
+
+        let current_btn = null;
+
+        $(document).on('show.bs.modal','#deleteModal', function (event) {
+            var button = $(event.relatedTarget); // Button that triggered the modal
+            $("#modal-delete-btn").click(function() {
+                submit_persp_feedback(current_btn);
+                let persp_ctnr = current_btn.closest('.persp-title');
+                persp_ctnr.remove();
+                $('#deleteModal').modal('toggle');
+            });
+        });
+
+
+        $('.btn-feedback-like').click(function() {
+            submit_persp_feedback(this);
+        });
+
+        $('.btn-feedback-dislike').click(function() {
+            current_btn = this;
+            console.log(current_btn);
         });
 
         $('.btn-evidence-feedback').click(function(){
