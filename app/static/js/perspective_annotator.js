@@ -62,5 +62,8 @@ function get_current_claim() {
 function submit_new_perspective(persp_title_el, new_persp) {
     let el_persp_text = $(persp_title_el).find(".persp-text");
     $(el_persp_text).html("<div>" + new_persp + "</div>");
+
+    let _ctnr = find_closest_persp_ctnr(persp_title_el);
+    $(_ctnr).prop('data-new-persp-lock', 'unlocked');
     return false;
 }
