@@ -11,13 +11,11 @@ const COLOR_PROFILE = {
     }
 };
 
-const NEW_PERSP_TEMPLATE =  "<div class=\"persp-title btn-lg\"" +
-                            "   <div class=\"col persp-text\">" +
-                            "       <div>" +
-                            "           <form>" +
-                            "               <input class='form-control' placeholder='Write your own perspective here...'>" +
-                            "           </form>" +
-                            "       </div>" +
+const NEW_PERSP_TEMPLATE =  "<div class=\"persp-title btn-lg\">" +
+                            "   <div class=\"persp-text\">" +
+                            "       <form action='Javascript:void(0)'>" +
+                            "           <input class='form-control' placeholder='Write your own perspective here...'>" +
+                            "       </form>" +
                             "   </div>" +
                             "</div>";
 
@@ -26,12 +24,24 @@ const NEW_PERSP_TEMPLATE =  "<div class=\"persp-title btn-lg\"" +
  * @param persp_ctnr jquery wrapped object for the perspective container
  */
 function add_new_perspective(persp_ctnr) {
-    let _is_ctnr_for = $(persp_ctnr).hasClass("persps-container-for");
-    let _color_profile = _is_ctnr_for ? COLOR_PROFILE["sup"] : COLOR_PROFILE["und"];
-    let _title = $(persp_ctnr).find("h6:first");
-    let new_persp = $(NEW_PERSP_TEMPLATE).clone();
-    $(new_persp).css('background-color', _color_profile["persp_color_low"]);
-    _title.after(new_persp);
+
+    let b_locked = $(persp_ctnr).prop('data-new-persp-lock');
+
+    if (b_locked !== 'locked') {
+        let _is_ctnr_for = $(persp_ctnr).hasClass("persps-container-for");
+        let _color_profile = _is_ctnr_for ? COLOR_PROFILE["sup"] : COLOR_PROFILE["und"];
+        let _title = $(persp_ctnr).find("h6:first");
+        let new_persp = $(NEW_PERSP_TEMPLATE).clone();
+        $(new_persp).css('background-color', _color_profile["persp_color_low"]);
+        _title.after(new_persp);
+
+        $(new_persp).find('form').submit(function() {
+            let _input_val = $(this).find("input:first").val();
+            submit_new_perspective(new_persp, _input_val);
+        });
+
+        $(persp_ctnr).prop('data-new-persp-lock', 'locked');
+    }
 }
 
 
@@ -48,6 +58,9 @@ function get_current_claim() {
     return "{{ claim_text }}";
 }
 
-function submit_new_perspective_to_db() {
 
+function submit_new_perspective(persp_title_el, new_persp) {
+    let el_persp_text = $(persp_title_el).find(".persp-text");
+    $(el_persp_text).html("<div>" + new_persp + "</div>");
+    return false;
 }
