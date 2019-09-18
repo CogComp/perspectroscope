@@ -23,7 +23,11 @@
     >
         <div class="col persps-container tile persps-container-for" id="persps-container-for" ondrop="drop(event)" ondragover="allowDrop(event)" style="background-color: #f5f5f5">
             <h6>Perspectives For
-                <a href="Javascript:void(0)"><i style="color:#3498db" class="far fa-plus-square"></i></a>
+                <a class='btn_add_new_persp' href="Javascript:void(0)" data-toggle="popover" data-trigger="focus"
+                   data-container="body" data-placement="bottom" data-html="true"
+                   data-content="Add you own perspective for the claim.">
+                    <i style="color:#3498db" class="far fa-plus-square"></i>
+                </a>
             </h6>
             {% for cluster in persp_sup %}
                 <div class="persp-title btn-lg" id="persptive_box_sup_{{ forloop.counter }}" draggable="true"
@@ -115,7 +119,11 @@
              ondrop="drop(event)" ondragover="allowDrop(event)" style="background-color: #f5f5f5">
             <h6>
                 Perspectives Against
-                <a href="Javascript:void(0)"><i style="color:#e74c3c" class="far fa-plus-square"></i></a>
+                <a class='btn_add_new_persp' href="Javascript:void(0)" data-toggle="popover" data-trigger="focus"
+                   data-container="body" data-placement="bottom" data-html="true"
+                   data-content="Add you own perspective against the claim.">
+                    <i style="color:#e74c3c" class="far fa-plus-square"></i>
+                </a>
             </h6>
             {% for cluster in persp_und %}
                 <div class="persp-title btn-lg" id="persptive_box_und_{{ forloop.counter }}"
@@ -366,6 +374,10 @@
             });
         });
 
+        $('.btn_add_new_persp').click(function() {
+           let _ctnr = find_closest_persp_ctnr(this);
+           add_new_perspective(_ctnr)
+        });
 
         $('.btn-feedback-like').click(function() {
             submit_persp_feedback(this);

@@ -198,7 +198,7 @@ def solve_given_claim(claim_text, withWiki):
                 web_persps = _get_perspectives_from_cse(claim_text)
 
                 ## Filter results based on a threshold on relevance score
-                _REL_SCORE_TH = 1.5
+                _REL_SCORE_TH = 1.3
                 web_persps = [(_s, _normalize_relevance_score(_rel_score), _normalize_stance_score(_stance_score), url)
                               for _s, _rel_score, _stance_score, url in web_persps if _rel_score > _REL_SCORE_TH]
 

@@ -16,7 +16,10 @@ class CustomSearchClient:
 
     def query(self, q, **kwargs):
         res = self._service.cse().list(q=q, cx=self._cx, **kwargs).execute()
-        return res['items']
+        if 'items' in res:
+            return res['items']
+        else:
+            return []
 
 
 if __name__ == '__main__':
