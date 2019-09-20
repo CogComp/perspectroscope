@@ -20,7 +20,7 @@ from search.google_custom_search import CustomSearchClient
 from search.news_html_to_text import parse_article
 from nltk import sent_tokenize
 
-from app.models import QueryLog, FeedbackRecord, LRUCache
+from app.models import QueryLog, FeedbackRecord, LRUCache, Perspectives
 
 file_names = {
     'evidence': 'data/perspectrum/evidence_pool_v0.2.json',
@@ -534,5 +534,31 @@ def api_submit_evidence_feedback(request):
             feedback=like,
             comment=comment,
         )
+
+    return HttpResponse(status=200)
+
+
+@csrf_protect
+def api_submit_new_perspective(request):
+    if request.method != 'POST':
+        return HttpResponse("api_submit_evidence_feedback api only supports POST method.", status=400)
+
+    if request.user.is_authenticated:
+        username = request.user.username
+    else:
+        username = "Anonymous"
+
+    query_claim = request.POST.get('claim', '')
+    perspective = request.POST.get('perspective', '')
+    stance_label = request.POST.get("stance_label", 'UNK')
+    comment = request.POST.get("comment", "")
+
+    Perspectives.objects.create(
+        username=username,
+        claim=query_claim,
+        perspective=perspective,
+        stance=stance_label,
+        comment=comment
+    )
 
     return HttpResponse(status=200)
