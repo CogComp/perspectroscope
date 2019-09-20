@@ -2,18 +2,6 @@
 {% load i18n %}
 {% load filter %}
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css"
-      integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
-<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Perspective Annotation Interface</title>
-</head>
-<body>
-<script>
-
-</script>
 
 <div class="container-fluid">
     <div class="row"
@@ -375,8 +363,12 @@
         });
 
         $('.btn_add_new_persp').click(function() {
-           let _ctnr = find_closest_persp_ctnr(this);
-           add_new_perspective(_ctnr)
+            let _ctnr = find_closest_persp_ctnr(this);
+            {% if tutorial == 'true' %}
+                add_new_perspective(_ctnr, true);
+            {% else %}
+                add_new_perspective(_ctnr, false);
+            {% endif %}
         });
 
         $('.btn-feedback-like').click(function() {

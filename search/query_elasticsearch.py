@@ -102,7 +102,7 @@ def get_claims_with_claim_surface(text):
     return output
 
 def get_perspective_from_pool(text, size):
-    res = es.search(index="perspective_pool_v0.2", doc_type="text", body={"query": {"match": {"text": text}}}, size=size, request_timeout=60)
+    res = es.search(index="perspective_pool_v1.0", body={"query": {"match": {"text": text}}}, size=size, request_timeout=60)
     output = []
     for doc in res['hits']['hits']:
         score = doc['_score']

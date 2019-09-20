@@ -50,6 +50,9 @@ bb_evidence = BertBaseline(task_name="perspectrum_evidence",
 ### Load config JSON object
 config = json.load(open("config/config.json"))
 
+### Load claims
+with open(file_names['claim_annotation']) as fin:
+    persp_claims = json.load(fin)
 
 def load_claim_text(request):
     with open(file_names["claim_annotation"], encoding='utf-8') as data_file:
@@ -61,13 +64,29 @@ file2 = "app/static/claims/starts_should_not_.txt"
 cmv_titles = "app/static/claims/cmv_title.txt"
 
 from random import shuffle
+
+
 def load_new_claim_text(request):
+
+    all_claims = []
+    with open(file1, encoding='utf-8') as data_file:
+        all_lines = data_file.readlines()
+        shuffle(all_lines)
+        all_lines = all_lines[:15]
+        sentences = [x.strip() for x in all_lines]
+        all_claims += sentences
     with open(cmv_titles, encoding='utf-8') as data_file:
         all_lines = data_file.readlines()
         shuffle(all_lines)
-        all_lines = all_lines[0:1000]
-        sentences = [x.replace("\n", "") for x in all_lines]
-    return JsonResponse(sentences, safe=False)
+        all_lines = all_lines[:20]
+        sentences = [x.strip() for x in all_lines]
+        all_claims += sentences
+
+    shuffle(persp_claims)
+    all_claims += [x['text'] for x in persp_claims][:5]
+    shuffle(all_claims)
+
+    return JsonResponse(all_claims, safe=False)
 
 
 def _keep_two_decimal(num):

@@ -23,7 +23,7 @@ const NEW_PERSP_TEMPLATE =  "<div class=\"persp-title btn-lg\">" +
  * Function to add new perpsectives to container
  * @param persp_ctnr jquery wrapped object for the perspective container
  */
-function add_new_perspective(persp_ctnr) {
+function add_new_perspective(persp_ctnr, tutorial_mode) {
 
     let b_locked = $(persp_ctnr).prop('data-new-persp-lock');
 
@@ -37,7 +37,7 @@ function add_new_perspective(persp_ctnr) {
 
         $(new_persp).find('form').submit(function() {
             let _input_val = $(this).find("input:first").val();
-            submit_new_perspective(new_persp, _input_val);
+            submit_new_perspective(new_persp, _input_val, tutorial_mode);
         });
 
         $(persp_ctnr).prop('data-new-persp-lock', 'locked');
@@ -59,7 +59,7 @@ function get_current_claim() {
 }
 
 
-function submit_new_perspective(persp_title_el, new_persp) {
+function submit_new_perspective(persp_title_el, new_persp, tutorial_mode) {
 
     // Step 1: replace the form with input perspective text
     let el_persp_text = $(persp_title_el).find(".persp-text");
@@ -68,20 +68,24 @@ function submit_new_perspective(persp_title_el, new_persp) {
     let _ctnr = find_closest_persp_ctnr(persp_title_el);
     $(_ctnr).prop('data-new-persp-lock', 'unlocked');
 
-    let stance = $(_ctnr).hasClass() ? 'SUP' : 'UND';
+    let stance = $(_ctnr).hasClass('persps-container-for') ? 'SUP' : 'UND';
     // Step 2: Save the new perspective to db
-    {% if tutorial != "true"%}
-    let payload = {
-        "claim": get_current_claim(),
-        "perspective": new_persp,
-        "stance": stance,
-        "comment": "",
-    };
 
-    $.post('/api/submit_new_perspective/', payload, function() {
-        console.log(payload);
-    });
+    console.log(tutorial_mode);
+    if (!tutorial_mode) {
+        csrfSetup();
 
-    {% endif %}
+        let payload = {
+            "claim": get_current_claim(),
+            "perspective": new_persp,
+            "stance": stance,
+            "comment": "",
+        };
+
+        $.post('/api/submit_new_perspective/', payload, function() {
+            console.log(payload);
+        });
+    }
+
     return false;
 }
