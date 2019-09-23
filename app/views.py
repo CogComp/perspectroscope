@@ -187,7 +187,8 @@ def _get_evidence_from_link(url, claim, perspective):
     return result[0][0], url
 
 
-def solve_given_claim(claim_text, withWiki):
+def solve_given_claim(claim_text, withWiki, num_persp_ir_candidates=30, num_web_persp_candidates=20,
+                      run_equivalence=True, relevance_score_th=1.3):
     context = {}
 
     if claim_text != "":
@@ -200,7 +201,7 @@ def solve_given_claim(claim_text, withWiki):
 
             # given a claim, extract perspectives
             perspective_given_claim = [(p_text, pId, pScore / len(p_text.split(" "))) for p_text, pId, pScore in
-                                       get_perspective_from_pool(claim, 30)]
+                                       get_perspective_from_pool(claim, num_persp_ir_candidates)]
 
             perspective_relevance_score = bb_relevance.predict_batch(
                 [(claim, p_text) for (p_text, pId, _) in perspective_given_claim])
@@ -217,14 +218,14 @@ def solve_given_claim(claim_text, withWiki):
                 web_persps = _get_perspectives_from_cse(claim_text)
 
                 ## Filter results based on a threshold on relevance score
-                _REL_SCORE_TH = 1.3
+                _REL_SCORE_TH = relevance_score_th
                 web_persps = [(_s, _normalize_relevance_score(_rel_score), _normalize_stance_score(_stance_score), url)
                               for _s, _rel_score, _stance_score, url in web_persps if _rel_score > _REL_SCORE_TH]
 
                 ## Filter results that have low stance score
                 web_persps = [web_p for web_p in web_persps if abs(web_p[2]) > 0.1]
 
-                web_persps = web_persps[:20]  # Only keep top 20
+                web_persps = web_persps[:num_web_persp_candidates]  # Only keep top 20
 
                 perspectives_sorted += web_persps
 
@@ -237,34 +238,37 @@ def solve_given_claim(claim_text, withWiki):
             persp_und = []
             persp_und_flash = []
 
-            print(len(perspectives_sorted))
-
             if len(perspectives_sorted) > 0:
 
-                similarity_score = np.zeros((len(perspectives_sorted), len(perspectives_sorted)))
+                if run_equivalence:
+                    similarity_score = np.zeros((len(perspectives_sorted), len(perspectives_sorted)))
 
-                for i, (p_text1, _, _, _) in enumerate(perspectives_sorted):
-                    list1 = []
-                    for j, (p_text2, _, _, _) in enumerate(perspectives_sorted):
-                        list1.append((claim + " . " + p_text1, p_text2))
+                    for i, (p_text1, _, _, _) in enumerate(perspectives_sorted):
+                        list1 = []
+                        for j, (p_text2, _, _, _) in enumerate(perspectives_sorted):
+                            list1.append((claim + " . " + p_text1, p_text2))
 
-                    predictions1 = bb_equivalence.predict_batch(list1)
+                        predictions1 = bb_equivalence.predict_batch(list1)
 
-                    for j, (p_text2, _, _, _) in enumerate(perspectives_sorted):
-                        if i != j:
-                            perspectives_equivalences.append((p_text1, p_text2, predictions1[j], predictions1[j]))
-                            similarity_score[i, j] = predictions1[j]
-                            similarity_score[j, i] = predictions1[j]
+                        for j, (p_text2, _, _, _) in enumerate(perspectives_sorted):
+                            if i != j:
+                                perspectives_equivalences.append((p_text1, p_text2, predictions1[j], predictions1[j]))
+                                similarity_score[i, j] = predictions1[j]
+                                similarity_score[j, i] = predictions1[j]
 
-                distance_scores = -similarity_score
+                    distance_scores = -similarity_score
 
-                # rescale distance score to [0, 1]
-                distance_scores -= np.min(distance_scores)
-                if np.max(distance_scores) != 0.0:
-                    distance_scores /= np.max(distance_scores)
+                    # rescale distance score to [0, 1]
+                    distance_scores -= np.min(distance_scores)
+                    if np.max(distance_scores) != 0.0:
+                        distance_scores /= np.max(distance_scores)
 
-                clustering = DBSCAN(eps=0.3, min_samples=1, metric='precomputed')
-                cluster_labels = clustering.fit_predict(distance_scores)
+                    clustering = DBSCAN(eps=0.3, min_samples=1, metric='precomputed')
+                    cluster_labels = clustering.fit_predict(distance_scores)
+
+                else:
+                    cluster_labels = [-1 for _ in range(len(perspectives_sorted))]
+
                 max_val = max(cluster_labels)
                 for i, _ in enumerate(cluster_labels):
                     max_val += 1
@@ -297,7 +301,7 @@ def solve_given_claim(claim_text, withWiki):
                         pid += 1
 
                     if url:
-                        source = "Wikipedia"
+                        source = "Web Source"
                         _url = url
                     else:
                         source = "The PERSPECTRUM Dataset"
@@ -319,6 +323,8 @@ def solve_given_claim(claim_text, withWiki):
             context["persp_sup"] = persp_sup
             context["persp_und"] = persp_und
 
+            print(context)
+
             LRUCache.objects.create(claim=claim,
                                     with_wiki=(withWiki == "withWiki"),
                                     data=pickle.dumps(context))
@@ -327,6 +333,7 @@ def solve_given_claim(claim_text, withWiki):
             context = _ctx
 
         return context
+
 
 def perspectrum_solver(request, withWiki=""):
     """
@@ -345,7 +352,7 @@ def perspectrum_solver(request, withWiki=""):
 def perspectrum_annotator(request, withWiki=""):
 
     claim_text = request.GET.get('q', "")
-    result = solve_given_claim(claim_text, withWiki)
+    result = solve_given_claim(claim_text, withWiki, run_equivalence=False)
     if not result:
         result = {}
 
