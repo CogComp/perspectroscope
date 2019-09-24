@@ -26,8 +26,10 @@ urlpatterns = [
     path('annotator/leaderboard/', views.perspectrum_annotator_leaderboard),
     path('annotator/admin/', views.perspectrum_annotator_admin),
     path('annotator/<str:withWiki>/', views.perspectrum_annotator),
+    path('annotator/admin/view_annotation/', views.view_annotation),
     path('baseline/', views.perspectrum_solver),
     path('baseline/<str:withWiki>/', views.perspectrum_solver),
+
 
     # APIs
     path('load_claim_text/', views.load_claim_text),

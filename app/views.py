@@ -20,6 +20,7 @@ from search.google_custom_search import CustomSearchClient
 from search.news_html_to_text import parse_article
 from nltk import sent_tokenize
 
+from django.db.models import Count
 from app.models import QueryLog, FeedbackRecord, LRUCache, Perspectives
 
 file_names = {
@@ -368,13 +369,82 @@ def perspectrum_annotator(request, withWiki=""):
     return render(request, "perspectrumAnnotator/perspectrumAnnotator.html", result)
 
 
+def view_annotation(request):
+    claim_text = request.GET.get('q', "")
+
+    if claim_text != "":
+        persps = Perspectives.objects.filter(claim=claim_text)
+        annotations = FeedbackRecord.objects.filter(claim=claim_text)
+        
+    else:
+        persps = []
+        annotations = []
+
+    persp_sup = []
+    persp_und = []
+
+    persp_count = {}
+    for a in annotations:
+        persp = a.perspective
+        if persp not in persp_count:
+            persp_count[persp] = {
+                "stance": a.stance,
+                "like_count" : 0,
+                "dislike_count" : 0,
+                "rel_score" : a.relevance_score,
+                "stance_score" :a.stance_score
+            }
+
+        if a.feedback:
+            persp_count[persp]["like_count"] += 1
+        else:
+            persp_count[persp]["dislike_count"] += 1
+
+    for persp, vote_count in persp_count.items():
+
+        if vote_count[0] == "SUP":
+            persp_sup.append([
+                [persp],
+                [vote_count["rel_score"], vote_count["stance_score"], vote_count["like_count"], vote_count["dislike_count"]]
+            ])
+        elif vote_count[0] == "UND":
+            persp_und.append([
+                [persp],
+                [vote_count["rel_score"], vote_count["stance_score"], vote_count["like_count"],
+                 vote_count["dislike_count"]]
+            ])
+
+    for p in persps:
+        if p.stance == "SUP":
+            persp_sup.append([
+                [p.perspective],
+                [1, 1, 0, 0]
+            ])
+        elif p.stance == "UND":
+            persp_und.append([
+                [p.perspective],
+                [1, -1, 0, 0]
+            ])
+
+    context = {
+        "view_mode": True,
+        "claim_text": claim_text,
+        "persp_sup": persp_sup,
+        "persp_und": persp_und,
+    }
+
+    return render(request, "perspectrumAnnotator/perspectrumAnnotator.html", context)
+
+
 def perspectrum_annotator_about(request):
     context = {}
     return render(request, "perspectrumAnnotator/about.html", context)
 
+
 def perspectrum_annotator_leaderboard(request):
     context = {"leader": [["Rick C", 1337], ["Daniel K", 512], ["Sihao C", 251], ["Ben Z", 249]]}
     return render(request, "perspectrumAnnotator/leaderboard.html", context)
+
 
 def perspectrum_annotator_admin(request):
     context = {}
