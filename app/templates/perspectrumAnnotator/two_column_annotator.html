@@ -30,6 +30,8 @@
                                 <div>{{ p }}</div>
                             {% endfor %}
                         </div>
+
+                        {% if not view_only %}
                         <div class="col-1">
                             <a class="btn-feedback btn-feedback-like" data-toggle="popover" data-trigger="focus"
                                data-container="body" data-placement="bottom" data-html="true"
@@ -46,6 +48,8 @@
                             data-content="Thumbs down: would <b>delete</b> the perspective if it is irrelevant."
                                href="JavaScript:void(0)"><i class="fa fa-lg fa-thumbs-down" style="color: silver" aria-hidden="true"></i></a>
                         </div>
+                        {% else %}
+                        {% endif %}
                     </div>
                     <div class="row stance-bar" data-toggle="popover" data-trigger="focus"
                         data-content="Strength of this perspective.">

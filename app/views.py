@@ -366,6 +366,8 @@ def perspectrum_annotator(request, withWiki=""):
         result["visited"] = False
         request.session['visited'] = 'true'
 
+    result["view_only"] = False
+
     return render(request, "perspectrumAnnotator/perspectrumAnnotator.html", result)
 
 
@@ -402,12 +404,12 @@ def view_annotation(request):
 
     for persp, vote_count in persp_count.items():
 
-        if vote_count[0] == "SUP":
+        if vote_count["stance"] == "SUP":
             persp_sup.append([
                 [persp],
                 [vote_count["rel_score"], vote_count["stance_score"], vote_count["like_count"], vote_count["dislike_count"]]
             ])
-        elif vote_count[0] == "UND":
+        elif vote_count["stance"] == "UND":
             persp_und.append([
                 [persp],
                 [vote_count["rel_score"], vote_count["stance_score"], vote_count["like_count"],
