@@ -366,7 +366,7 @@ def perspectrum_annotator(request, withWiki=""):
         result["visited"] = False
         request.session['visited'] = 'true'
 
-    result["view_only"] = False
+    result["view_mode"] = False
 
     return render(request, "perspectrumAnnotator/perspectrumAnnotator.html", result)
 
@@ -377,7 +377,6 @@ def view_annotation(request):
     if claim_text != "":
         persps = Perspectives.objects.filter(claim=claim_text)
         annotations = FeedbackRecord.objects.filter(claim=claim_text)
-        
     else:
         persps = []
         annotations = []
@@ -486,7 +485,7 @@ def api_submit_annotation(request):
 
     relevance_score = float(request.POST.get('relevance_score', '0.0'))
     stance_score = float(request.POST.get('stance_score', '0.0'))
-    stance_label = request.POST.get("stance_label", 'UNK')
+    stance_label = request.POST.get("stance", 'UNK')
     comment = request.POST.get("comment", "")
     feedback = request.POST.get('feedback', '')
 
