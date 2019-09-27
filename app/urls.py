@@ -27,6 +27,7 @@ urlpatterns = [
     path('annotator/admin/', views.perspectrum_annotator_admin),
     path('annotator/<str:withWiki>/', views.perspectrum_annotator),
     path('annotator/admin/view_annotation/', views.view_annotation),
+    path('annotator/admin/view_annotated_claims/', views.render_all_annotated_claims),
     path('baseline/', views.perspectrum_solver),
     path('baseline/<str:withWiki>/', views.perspectrum_solver),
 

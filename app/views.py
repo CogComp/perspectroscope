@@ -389,7 +389,7 @@ def view_annotation(request):
         persp = a.perspective
         if persp not in persp_count:
             persp_count[persp] = {
-                "stance": a.stance,
+                "stance_score": a.stance_score,
                 "like_count" : 0,
                 "dislike_count" : 0,
                 "rel_score" : a.relevance_score,
@@ -403,12 +403,12 @@ def view_annotation(request):
 
     for persp, vote_count in persp_count.items():
 
-        if vote_count["stance"] == "SUP":
+        if vote_count["stance_score"] > 0:
             persp_sup.append([
                 [persp],
                 [vote_count["rel_score"], vote_count["stance_score"], vote_count["like_count"], vote_count["dislike_count"]]
             ])
-        elif vote_count["stance"] == "UND":
+        else:
             persp_und.append([
                 [persp],
                 [vote_count["rel_score"], vote_count["stance_score"], vote_count["like_count"],
@@ -435,6 +435,17 @@ def view_annotation(request):
     }
 
     return render(request, "perspectrumAnnotator/perspectrumAnnotator.html", context)
+
+
+def render_all_annotated_claims(request):
+    all_claims = FeedbackRecord.objects.all().values_list('claim').distinct()
+
+    print(all_claims)
+    context = {
+        "all_claims": all_claims
+    }
+
+    return render(request, 'perspectrumAnnotator/view_claims.html', context)
 
 
 def perspectrum_annotator_about(request):
