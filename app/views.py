@@ -60,34 +60,48 @@ def load_claim_text(request):
         data = json.loads(data_file.read())
         return JsonResponse([c['text'] for c in data], safe=False)
 
+
 file1 = "app/static/claims/starts_should_.txt"
 file2 = "app/static/claims/starts_should_not_.txt"
 cmv_titles = "app/static/claims/cmv_title.txt"
+test_claims = "app/static/claims/similar_perspectrum_claims_top20.txt"
 
 from random import shuffle
 
 
 def load_new_claim_text(request):
 
-    all_claims = []
-    with open(file1, encoding='utf-8') as data_file:
+    # all_claims = []
+    # with open(file1, encoding='utf-8') as data_file:
+    #     all_lines = data_file.readlines()
+    #     shuffle(all_lines)
+    #     all_lines = all_lines[:15]
+    #     sentences = [x.strip() for x in all_lines]
+    #     all_claims += sentences
+    # with open(cmv_titles, encoding='utf-8') as data_file:
+    #     all_lines = data_file.readlines()
+    #     shuffle(all_lines)
+    #     all_lines = all_lines[:20]
+    #     sentences = [x.strip() for x in all_lines]
+    #     all_claims += sentences
+    #
+    # shuffle(persp_claims)
+    # all_claims += [x['text'] for x in persp_claims][:5]
+    # shuffle(all_claims)
+    #
+    # return JsonResponse(all_claims, safe=False)
+    return load_test_claim_text(request)
+
+
+def load_test_claim_text(request):
+
+    sentences = []
+    with open(test_claims, encoding='utf-8') as data_file:
         all_lines = data_file.readlines()
         shuffle(all_lines)
-        all_lines = all_lines[:15]
-        sentences = [x.strip() for x in all_lines]
-        all_claims += sentences
-    with open(cmv_titles, encoding='utf-8') as data_file:
-        all_lines = data_file.readlines()
-        shuffle(all_lines)
-        all_lines = all_lines[:20]
-        sentences = [x.strip() for x in all_lines]
-        all_claims += sentences
+        sentences += [x.strip() for x in all_lines]
 
-    shuffle(persp_claims)
-    all_claims += [x['text'] for x in persp_claims][:5]
-    shuffle(all_claims)
-
-    return JsonResponse(all_claims, safe=False)
+    return JsonResponse(sentences, safe=False)
 
 
 def _keep_two_decimal(num):
