@@ -3,21 +3,63 @@
 {% include "perspectrumAnnotator/header.html" %}
 
 <div class="container">
+
+    A summary of user contributions, their approximate quality:
+
     <table class="table">
         <thead>
         <tr>
             <th scope="col">Rank</th>
             <th scope="col">User</th>
-            <th scope="col">Score</th>
+            <th scope="col">Quality Score</th>
+            <th scope="col">Annotation Count</th>
+            <th scope="col">Overall Score</th>
         </tr>
         </thead>
         <tbody>
         {% for user in leader %}
-        <tr>
-            <th scope="row">{{ forloop.counter }}</th>
-            <td>{{ user.0 }}</td>
-            <td>{{ user.1 }}</td>
-        </tr>
+            <tr>
+                <th scope="row">{{ forloop.counter }}</th>
+                <td>{{ user.0 }}</td>
+                <td>{{ user.1 }}</td>
+                <td>{{ user.2 }}</td>
+                <td>{{ user.3 }}</td>
+            </tr>
         {% endfor %}
+        <tr>
+            <th scope="row">-</th>
+            <td>Overall</td>
+            <td>{{ overall.0 }}</td>
+            <td>{{ overall.1 }}</td>
+            <td>{{ overall.2 }}</td>
+        </tr>
     </table>
+
+    <br>
+    <strong>
+        Frequently Asked Questions:
+    </strong>
+
+    <ul class="list-group">
+        <li class="list-group-item" style="font-size: small">
+            <strong>What is this page? </strong>
+            We calculate some measures of quality for the annotations received from different users.
+        </li>
+        <li class="list-group-item" style="font-size: small">
+            <strong>How are the quality scores calculated? </strong>
+            Agreement score shows how often your annotations are deemed as good labels by others.
+        </li>
+        <li class="list-group-item" style="font-size: small">
+            <strong>How is the overall scores calculated? </strong>
+            The overall score is calculated as function of (1) number of annotations (2) quality of annotations.
+        </li>
+        <li class="list-group-item" style="font-size: small">
+            <strong>How are these going to be used? </strong>
+            We use these scores in multiple ways: first, we use these scores to track the quality of the annotations we receive.
+            second, we might reward high-quality annotators. And finally, we can eliminate those annotations that tend to low-quality.
+        </li>
+    </ul>
+
+
 </div>
+
