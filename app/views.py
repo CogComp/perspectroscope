@@ -43,8 +43,8 @@ bb_equivalence = BertBaseline(task_name="perspectrum_equivalence",
                               no_cuda=no_cuda)
 
 bb_evidence = BertBaseline(task_name="perspectrum_evidence",
-                              saved_model="data/model/evidence/perspectrum_evidence_epoch-4.pth",
-                              no_cuda=no_cuda)
+                           saved_model="data/model/evidence/perspectrum_evidence_epoch-4.pth",
+                           no_cuda=no_cuda)
 
 # logging.disable(sys.maxsize)  # Python 3
 
@@ -54,6 +54,7 @@ config = json.load(open("config/config.json"))
 ### Load claims
 with open(file_names['claim_annotation']) as fin:
     persp_claims = json.load(fin)
+
 
 def load_claim_text(request):
     with open(file_names["claim_annotation"], encoding='utf-8') as data_file:
@@ -70,7 +71,6 @@ from random import shuffle
 
 
 def load_new_claim_text(request):
-
     # all_claims = []
     # with open(file1, encoding='utf-8') as data_file:
     #     all_lines = data_file.readlines()
@@ -94,7 +94,6 @@ def load_new_claim_text(request):
 
 
 def load_test_claim_text(request):
-
     sentences = []
     with open(test_claims, encoding='utf-8') as data_file:
         all_lines = data_file.readlines()
@@ -107,17 +106,20 @@ def load_test_claim_text(request):
 def _keep_two_decimal(num):
     return math.floor(num * 100) / 100.0
 
+
 def _normalize(float_val, old_range, new_range):
     """
     Normalize float_val from [old_range[0], old_range[1]] to [new_range[0], new_range[1]]
     """
-    normalized = (float_val - old_range[0]) / (old_range[1] - old_range[0]) * (new_range[1] - new_range[0]) + new_range[0]
+    normalized = (float_val - old_range[0]) / (old_range[1] - old_range[0]) * (new_range[1] - new_range[0]) + new_range[
+        0]
     if normalized > new_range[1]:
-            normalized = new_range[1]
+        normalized = new_range[1]
     elif normalized < new_range[0]:
         normalized = new_range[0]
 
     return normalized
+
 
 def _normalize_relevance_score(bert_logit):
     return _normalize(bert_logit, old_range=[0, 3], new_range=[0, 1])
@@ -126,8 +128,8 @@ def _normalize_relevance_score(bert_logit):
 def _normalize_stance_score(bert_logit):
     return _normalize(bert_logit, old_range=[-4, 4], new_range=[-1, 1])
 
-def _get_perspectives_from_cse(claim_text):
 
+def _get_perspectives_from_cse(claim_text):
     csc = CustomSearchClient(key=config["custom_search_api_key"], cx=config["custom_search_engine_id"])
 
     r = csc.query(claim_text)
@@ -159,6 +161,7 @@ def _get_perspectives_from_cse(claim_text):
 
     return results
 
+
 def _get_evidence_from_perspectrum(claim, perspective):
     claim_persp = claim + perspective
     lucene_results = get_evidence_from_pool(claim + perspective, 20)
@@ -172,7 +175,6 @@ def _get_evidence_from_perspectrum(claim, perspective):
 
 
 def _get_evidence_from_link(url, claim, perspective):
-
     if not url:
         return _get_evidence_from_perspectrum(claim, perspective)
 
@@ -365,7 +367,6 @@ def perspectrum_solver(request, withWiki=""):
 
 
 def perspectrum_annotator(request, withWiki=""):
-
     claim_text = request.GET.get('q', "")
     result = solve_given_claim(claim_text, withWiki, run_equivalence=False)
     if not result:
@@ -404,10 +405,10 @@ def view_annotation(request):
         if persp not in persp_count:
             persp_count[persp] = {
                 "stance_score": a.stance_score,
-                "like_count" : 0,
-                "dislike_count" : 0,
-                "rel_score" : a.relevance_score,
-                "stance_score" :a.stance_score
+                "like_count": 0,
+                "dislike_count": 0,
+                "rel_score": a.relevance_score,
+                "stance_score": a.stance_score
             }
 
         if a.feedback:
@@ -420,7 +421,8 @@ def view_annotation(request):
         if vote_count["stance_score"] > 0:
             persp_sup.append([
                 [persp],
-                [vote_count["rel_score"], vote_count["stance_score"], vote_count["like_count"], vote_count["dislike_count"]]
+                [vote_count["rel_score"], vote_count["stance_score"], vote_count["like_count"],
+                 vote_count["dislike_count"]]
             ])
         else:
             persp_und.append([
@@ -468,9 +470,55 @@ def perspectrum_annotator_about(request):
 
 
 def perspectrum_annotator_leaderboard(request):
-    context = {"leader": [["Rick C", 1337], ["Daniel K", 512], ["Sihao C", 251], ["Ben Z", 249]]}
+    all_human_labels = {}
+    id_to_user_map = {}
+    for record in FeedbackRecord.objects.all():
+        # record.username
+        id = str(record.claim + record.perspective)
+        label = record.stance + str(record.feedback)
+        if id in all_human_labels:
+            all_human_labels[id].append(label)
+            id_to_user_map[id].append(record.username)
+        else:
+            all_human_labels[id] = [label]
+            id_to_user_map[id] = [record.username]
+
+    all_agreements = []
+    per_user_agreement = {}
+    for id, labels in all_human_labels.items():
+        total_count = len(labels)
+        if total_count < 3:
+            continue
+        majority_vote = max(labels, key=labels.count)
+        majority_count = len([x for x in labels if x == majority_vote])
+        agreement = majority_count / total_count
+        for u in id_to_user_map[id]:
+            if u not in per_user_agreement:
+                per_user_agreement[u] = []
+            per_user_agreement[u].append(agreement)
+
+        all_agreements.append(agreement)
+    overall_agreement = normalize_numbers(sum(all_agreements) / len(all_agreements))
+
+    user_scores = []
+    for u, _ in per_user_agreement.items():
+        score = per_user_agreement[u]
+        annotation_count = len(score)
+        user_agreement = normalize_numbers(sum(score) / len(score))
+        overall_score = normalize_numbers(4/3 * (user_agreement - 0.25) * math.sqrt(annotation_count))
+        user_scores.append(
+            [u, user_agreement, annotation_count, overall_score]
+        )
+    user_scores = sorted(user_scores, key=lambda x: x[3])
+    context = {
+        "leader": user_scores,
+        "overall": [overall_agreement, len(all_agreements), "-"]
+    }
     return render(request, "perspectrumAnnotator/leaderboard.html", context)
 
+
+def normalize_numbers(number):
+    return math.floor(number * 100.0) / 100.0
 
 def perspectrum_annotator_admin(request):
     context = {}
@@ -565,7 +613,7 @@ def api_retrieve_evidence(request):
     claim = request.POST.get('claim', '')
     perspective = request.POST.get('perspective', '')
 
-    link  = request.POST.get("url", None)
+    link = request.POST.get("url", None)
 
     evidence_paragraph, url = _get_evidence_from_link(link, claim, perspective)
 
