@@ -372,6 +372,8 @@ def perspectrum_annotator(request, withWiki=""):
     if not result:
         result = {}
 
+    worker_id = request.GET.get('workerId', "")
+
     if claim_text.lower() == "animal testing for medical research should be allowed.":
         result["tutorial"] = "true"
 
@@ -381,6 +383,7 @@ def perspectrum_annotator(request, withWiki=""):
         result["visited"] = False
         request.session['visited'] = 'true'
 
+    result["worker_id"] = worker_id
     result["view_mode"] = False
 
     return render(request, "perspectrumAnnotator/perspectrumAnnotator.html", result)
@@ -548,8 +551,11 @@ def api_submit_annotation(request):
     if request.method != 'POST':
         return HttpResponse("api_submit_feedback api only supports POST method.", status=400)
 
+    worker_id = request.POST.get('worker_id', '')
     if request.user.is_authenticated:
         username = request.user.username
+    elif worker_id:
+        username = worker_id
     else:
         username = "Anonymous"
 
