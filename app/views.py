@@ -405,14 +405,22 @@ def view_annotation(request):
     persp_count = {}
     for a in annotations:
         persp = a.perspective
+        source = "Unknown"
+        if a.comment:
+            src_dict = json.loads(a.comment)
+            if 'source' in src_dict:
+                source = src_dict['source']
+
         if persp not in persp_count:
             persp_count[persp] = {
                 "stance_score": a.stance_score,
                 "like_count": 0,
                 "dislike_count": 0,
                 "rel_score": a.relevance_score,
-                "stance_score": a.stance_score
+                "source": source
             }
+        elif source != "Unknown":
+            persp_count[persp]['source'] = source
 
         if a.feedback:
             persp_count[persp]["like_count"] += 1
@@ -425,25 +433,29 @@ def view_annotation(request):
             persp_sup.append([
                 [persp],
                 [vote_count["rel_score"], vote_count["stance_score"], vote_count["like_count"],
-                 vote_count["dislike_count"]]
+                 vote_count["dislike_count"]],
+                [vote_count['source']]
             ])
         else:
             persp_und.append([
                 [persp],
                 [vote_count["rel_score"], vote_count["stance_score"], vote_count["like_count"],
-                 vote_count["dislike_count"]]
+                 vote_count["dislike_count"]],
+                [vote_count['source']]
             ])
 
     for p in persps:
         if p.stance == "SUP":
             persp_sup.append([
                 [p.perspective],
-                [1, 1, 0, 0]
+                [1, 1, 0, 0],
+                [p.username]
             ])
         elif p.stance == "UND":
             persp_und.append([
                 [p.perspective],
-                [1, -1, 0, 0]
+                [1, -1, 0, 0],
+                [p.username]
             ])
 
     context = {

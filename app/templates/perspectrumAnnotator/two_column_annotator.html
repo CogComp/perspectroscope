@@ -336,6 +336,12 @@
                 let persp_text = "";
                 let persp_ctnr = $(el_btn).closest(".persp-title");
                 let persp_text_div = $(persp_ctnr).find('.persp-text');
+                let persp_link_el = $(persp_ctnr).find('.persp-link').html();
+                let persp_link = ""
+                if (persp_link_el !== null) {
+                    persp_link = persp_link_el.html()
+                }
+
                 persp_text_div.find('div').each(function() {
                     persp_text += $(this).text();
                     persp_text += " "
@@ -365,7 +371,9 @@
                     "stance": stance,
                     "feedback": feedback,
                     "worker_id": worker_id,
-                    "comment": "",
+                    "comment": JSON.stringify({
+                        "source": persp_link
+                    }),
                 };
 
                 {% if tutorial != "true" %}
