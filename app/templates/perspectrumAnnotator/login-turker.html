@@ -1,0 +1,83 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"
+            integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+            crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js"
+            integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh"
+            crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js"
+            integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ"
+            crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css"
+          integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flat-ui/2.3.0/css/flat-ui.min.css"
+          integrity="sha256-7bYJaNviFZlH+bKqZlshmYKeyvkp+fXBQuerWp2AXlA=" crossorigin="anonymous"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.8.2/css/all.css"
+          integrity="sha256-39jKbsb/ty7s7+4WzbtELS4vq9udJ+MDjGTD5mtxHZ0=" crossorigin="anonymous" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="{% static "css/style.css" %}">
+    <title>Login - PerspectroScope</title>
+</head>
+<body>
+<div class="container">
+    <div class="login-page-title">
+        <h5>Welcome! Please input your username below. </h5>
+        <h5>If you are from Mechnical Turk, please enter your worker id below. </h5>
+    </div>
+    <div class="login-bkg">
+        <div class="login-form">
+            <div id="div-alerts">
+            </div>
+            <div class="form-group">
+                <input type="text" class="form-control login-field" value="" placeholder="Enter your username or worker id" id="login-name">
+                <label class="login-field-icon fui-user" for="login-name"></label>
+            </div>
+
+            {% csrf_token %}
+
+            <button id='btn_login' class="btn btn-primary btn-lg btn-block">Proceed</button>
+        </div>
+    </div>
+</div>
+<script src="{% static "js/csrf_util.js" %}"></script>
+<script type="text/javascript">
+    $('#btn_login').click(function(){
+        csrfSetup();
+        let username = $('#login-name').val();
+
+        if (username) {
+            $.ajax({
+                method: 'POST',
+                url: "/api/auth_login_mturk/",
+                data: {
+                    'username': username,
+                },
+                success: function(res) {
+                    {% if request.GET.next %}
+                        window.location.href = "{{ request.GET.next }}";
+                    {% else %}
+                        window.location.href = "/annotator/";
+                    {% endif %}
+                },
+                error: function(res) {
+                    let $alerts = $('#div-alerts');
+                    $alerts.empty();
+                    $alerts.append("<div class=\"alert alert-danger\" role=\"alert\">Incorrect Username ot password!</div>");
+                }
+            })
+        }
+        else {
+            let $alerts = $('#div-alerts');
+            $alerts.empty();
+            $alerts.append("<div class=\"alert alert-danger\" role=\"alert\">Username must not be empty!</div>");
+        }
+    });
+
+</script>
+</body>
+</html>

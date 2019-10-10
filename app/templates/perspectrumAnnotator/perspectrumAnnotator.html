@@ -4,7 +4,6 @@
 
 <div class="container">
     <div class="row">
-        {% if not request.GET.q %}
             <div style="height: 200px; width: 100%"></div>
             <div class="col-sm-5">
                 <div class="dropdown">
@@ -31,7 +30,7 @@
                     <span class="fui-search"></span>
                 </button>
             </div>
-        {% else %}
+        {% if request.GET.q %}
             <div style="height: 10px; width: 100%"></div>
             <div style="text-align: center; width: 100%">
 {#                <button type="button" class="btn btn-primary btn-xs" onclick="location.href = '/annotator/';">Home page.</button>#}

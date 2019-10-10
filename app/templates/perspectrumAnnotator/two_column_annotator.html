@@ -336,10 +336,11 @@
                 let persp_text = "";
                 let persp_ctnr = $(el_btn).closest(".persp-title");
                 let persp_text_div = $(persp_ctnr).find('.persp-text');
-                let persp_link_el = $(persp_ctnr).find('.persp-link').html();
-                let persp_link = ""
+                let persp_link_el = $(persp_ctnr).find('.persp-link');
+                let persp_link_el_html = $(persp_link_el).html();
+                let persp_link = "";
                 if (persp_link_el !== null) {
-                    persp_link = persp_link_el.html()
+                    persp_link = $(persp_link_el).text()
                 }
 
                 persp_text_div.find('div').each(function() {
@@ -362,6 +363,10 @@
                 if ($(_ctnr).hasClass('persps-container-for')) {
                     stance = "SUP";
                 }
+                let comment = {
+                    "source": persp_link
+                }
+
 
                 let payload = {
                     "claim": "{{ claim_text }}",
@@ -370,10 +375,7 @@
                     "stance_score": stance_score,
                     "stance": stance,
                     "feedback": feedback,
-                    "worker_id": worker_id,
-                    "comment": JSON.stringify({
-                        "source": persp_link
-                    }),
+                    "comment": JSON.stringify(comment),
                 };
 
                 {% if tutorial != "true" %}

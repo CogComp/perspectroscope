@@ -544,6 +544,10 @@ def render_login_page(request):
     return render(request, "perspectrumAnnotator/login.html", {})
 
 
+def render_mturk_login(request):
+    return render(request, "perspectrumAnnotator/login-turker.html", {})
+
+
 @csrf_exempt
 def api_submit_query_log(request):
     if request.method != 'POST':
@@ -665,6 +669,22 @@ def api_auth_login(request):
         return HttpResponse("Authentication Failed.", status=401)
 
 
+def api_auth_login_mturk(request):
+    if request.method != 'POST':
+        return HttpResponse("api_auth_login api only supports POST method.", status=400)
+
+    username = request.POST.get('username')
+
+    try:
+        user = User.objects.get(username=username)
+    except User.DoesNotExist:
+        user = User.objects.create_user(username)
+
+    login(request, user)
+
+    return HttpResponse(status=200)
+
+
 @csrf_protect
 def api_auth_signup(request):
     if request.method != 'POST':
@@ -676,7 +696,7 @@ def api_auth_signup(request):
     try:
         user = User.objects.get(username=username, password=password)
     except User.DoesNotExist:
-        user = User.objects.create_user(username=username, password=pasword)
+        user = User.objects.create_user(username=username, password=password)
         return HttpResponse("Sign up success", status=200)
 
     return HttpResponse("User Already Exists.", status=401)

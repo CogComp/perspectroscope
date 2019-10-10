@@ -19,6 +19,7 @@ from app import views
 
 urlpatterns = [
     path('login/', views.render_login_page, name="render_login"),
+    path('mturk_login/', views.render_mturk_login, name="render_mturk_login"),
     path('admin/', admin.site.urls),
     path('', views.perspectrum_solver),
     path('annotator/', views.perspectrum_annotator),
@@ -41,6 +42,7 @@ urlpatterns = [
     path('api/retrieve_evidence/', views.api_retrieve_evidence),
     path('api/test_es_connection/', views.api_test_es_connection),
     path('api/auth_login/', views.api_auth_login),
+    path('api/auth_login_mturk/', views.api_auth_login_mturk),
     path('api/auth_signup/', views.api_auth_signup),
     path('api/auth_logout/', views.api_auth_logout),
     path('api/submit_evidence_feedback/', views.api_submit_evidence_feedback),
