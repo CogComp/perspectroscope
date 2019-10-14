@@ -18,7 +18,6 @@ from .run_classifier import MrpcProcessor, logger, convert_examples_to_features,
     set_optimizer_params_grad, copy_optimizer_params_to_model, accuracy, p_r_f1, tp_pcount_gcount, \
     InputExample
 
-bert_model = "bert-base-uncased"
 
 # Data Directory
 FILE_PATH = {
@@ -110,7 +109,7 @@ class BertBaseline:
             # if loading on a cpu:
             model_state_dict = torch.load(saved_model, map_location='cpu')
             # model_state_dict = torch.load(saved_model)
-            self._model = BertForSequenceClassification.from_pretrained(bert_model, state_dict=model_state_dict,
+            self._model = BertForSequenceClassification.from_pretrained(self._config["bert_model"], state_dict=model_state_dict,
                                                                         num_labels=2)
         else:
             cache_dir = os.path.join(PYTORCH_PRETRAINED_BERT_CACHE, 'distributed_{}'.format(self._config["local_rank"]))

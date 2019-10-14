@@ -33,11 +33,13 @@ no_cuda = False if os.environ.get('CUDA_VISIBLE_DEVICES') else True
 
 ### loading the BERT solvers
 bb_relevance = BertBaseline(task_name="perspectrum_relevance",
-                            saved_model="data/model/relevance/perspectrum_relevance_lr2e-05_bs32_epoch-0.pth",
-                            no_cuda=no_cuda)
+                            saved_model="data/model/relevance-large/perspectrum_relevance_epoch-0.pth",
+                            no_cuda=no_cuda,
+                            bert_model='bert-large-uncased')
 bb_stance = BertBaseline(task_name="perspectrum_stance",
-                         saved_model="data/model/stance/perspectrum_stance_lr2e-05_bs16_epoch-4.pth",
-                         no_cuda=no_cuda)
+                         saved_model="data/model/stance-large/perspectrum_stance_epoch-3.pth",
+                         no_cuda=no_cuda,
+                         bert_model='bert-large-uncased')
 bb_equivalence = BertBaseline(task_name="perspectrum_equivalence",
                               saved_model="data/model/equivalence/perspectrum_equivalence_lr3e-05_bs32_epoch-2.pth",
                               no_cuda=no_cuda)
@@ -463,7 +465,7 @@ def view_annotation(request):
         "claim_text": claim_text,
         "persp_sup": persp_sup,
         "persp_und": persp_und,
-        "tutorial": False
+        "tutorial": "false"
     }
 
     return render(request, "perspectrumAnnotator/perspectrumAnnotator.html", context)
