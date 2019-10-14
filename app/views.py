@@ -463,6 +463,7 @@ def view_annotation(request):
         "claim_text": claim_text,
         "persp_sup": persp_sup,
         "persp_und": persp_und,
+        "tutorial": False
     }
 
     return render(request, "perspectrumAnnotator/perspectrumAnnotator.html", context)
@@ -524,7 +525,7 @@ def perspectrum_annotator_leaderboard(request):
         user_scores.append(
             [u, user_agreement, annotation_count, overall_score]
         )
-    user_scores = sorted(user_scores, key=lambda x: x[3])
+    user_scores = sorted(user_scores, key=lambda x: x[3], reverse=True)
     context = {
         "leader": user_scores,
         "overall": [overall_agreement, len(all_agreements), "-"]
