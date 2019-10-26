@@ -10,7 +10,7 @@ from transformers import glue_convert_examples_to_features as convert_examples_t
 
 
 class PerspectrumTransformerModel:
-    def __init__(self, model_type, model_path, cuda=False, **kwargs):
+    def __init__(self, model_type, model_path, cuda=True, **kwargs):
         """
         Load pretrained model
         """
@@ -27,7 +27,7 @@ class PerspectrumTransformerModel:
 
         self.model.to(self.device)
 
-    def predict(self, sent_pairs, label_set=(0, 1), max_sequnce_length=128, batch_size=20) -> List:
+    def predict_batch(self, sent_pairs, label_set=(0, 1), max_sequnce_length=128, batch_size=20) -> List:
         """
         Run prediction
         :param sent_pairs: a list of sentence pairs to predict
@@ -76,7 +76,8 @@ class PerspectrumTransformerModel:
                 output = self.model(**inputs)
                 tmp_eval_loss, logits = output[:2]
                 logits = logits.detach().cpu().numpy()
-                predictions.extend(logits)
+                print(logits)
+                predictions.extend(logits[:, 1])
 
         return predictions
 

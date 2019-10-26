@@ -22,6 +22,7 @@ from nltk import sent_tokenize
 
 from django.db.models import Count
 from app.models import QueryLog, FeedbackRecord, LRUCache, Perspectives
+from model.perspectrum_model import PerspectrumTransformerModel
 
 file_names = {
     'evidence': 'data/perspectrum/evidence_pool_v0.2.json',
@@ -32,21 +33,25 @@ file_names = {
 no_cuda = False if os.environ.get('CUDA_VISIBLE_DEVICES') else True
 
 ### loading the BERT solvers
-bb_relevance = BertBaseline(task_name="perspectrum_relevance",
-                            saved_model="data/model/relevance-large/perspectrum_relevance_epoch-0.pth",
-                            no_cuda=no_cuda,
-                            bert_model='bert-large-uncased')
-bb_stance = BertBaseline(task_name="perspectrum_stance",
-                         saved_model="data/model/stance-large/perspectrum_stance_epoch-3.pth",
-                         no_cuda=no_cuda,
-                         bert_model='bert-large-uncased')
+# bb_relevance = BertBaseline(task_name="perspectrum_relevance",
+#                             saved_model="data/model/relevance-large/perspectrum_relevance_epoch-0.pth",
+#                             no_cuda=no_cuda,
+#                             bert_model='bert-large-uncased')
+bb_relevance = PerspectrumTransformerModel("roberta", "data/model/relevance_roberta")
+# bb_stance = BertBaseline(task_name="perspectrum_stance",
+#                          saved_model="data/model/stance-large/perspectrum_stance_epoch-3.pth",
+#                          no_cuda=no_cuda,
+#                          bert_model='bert-large-uncased')
+bb_stance = PerspectrumTransformerModel("roberta", "data/model/stance_roberta")
+
 bb_equivalence = BertBaseline(task_name="perspectrum_equivalence",
                               saved_model="data/model/equivalence/perspectrum_equivalence_lr3e-05_bs32_epoch-2.pth",
                               no_cuda=no_cuda)
 
-bb_evidence = BertBaseline(task_name="perspectrum_evidence",
-                           saved_model="data/model/evidence/perspectrum_evidence_epoch-4.pth",
-                           no_cuda=no_cuda)
+# bb_evidence = BertBaseline(task_name="perspectrum_evidence",
+#                            saved_model="data/model/evidence/perspectrum_evidence_epoch-4.pth",
+#                            no_cuda=no_cuda)
+bb_evidence = PerspectrumTransformerModel("roberta", "data/model/evidence_roberta")
 
 # logging.disable(sys.maxsize)  # Python 3
 
