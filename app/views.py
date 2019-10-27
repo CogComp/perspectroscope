@@ -23,6 +23,7 @@ from nltk import sent_tokenize
 from django.db.models import Count
 from app.models import QueryLog, FeedbackRecord, LRUCache, Perspectives
 from model.perspectrum_model import PerspectrumTransformerModel
+from random import shuffle
 
 file_names = {
     'evidence': 'data/perspectrum/evidence_pool_v0.2.json',
@@ -70,7 +71,7 @@ file2 = "app/static/claims/starts_should_not_.txt"
 cmv_titles = "app/static/claims/cmv_title.txt"
 test_claims = "app/static/claims/similar_perspectrum_claims_top20.txt"
 
-from random import shuffle
+
 
 
 def load_new_claim_text(request):
@@ -392,8 +393,33 @@ def perspectrum_annotator(request, withWiki=""):
     return render(request, "perspectrumAnnotator/perspectrumAnnotator.html", result)
 
 
+def get_mturk_request_parameters(request):
+    if request.method == 'GET':
+        param_map = request.GET
+    elif request.method == 'POST':
+        param_map = request.POST
+    else:
+        raise AttributeError("Invalid request . . . ")
+    return {
+        "sandbox": param_map.get("sandbox", ""),
+        "workerId": param_map.get("workerId", ""),
+        "assignmentId": param_map.get("assignmentId", ""),
+        "hitId": param_map.get("hitId", ""),
+        "turkSubmitTo": param_map.get("turkSubmitTo", ""),
+    }
+
 def view_annotation(request):
     claim_text = request.GET.get('q', "")
+    random_claim = request.GET.get('random_claim', "")
+
+    request_info = get_mturk_request_parameters(request)
+    ## TODO: if these information are provided, use it to automatically log in the user
+
+    if random_claim == "true" and claim_text != "":
+        print(" ERROR >>> given a random claim but also expected to select a random one . . . ")
+
+    if random_claim == "true" and claim_text == "":
+        claim_text = "TODO: load a random claim from those than are annotated less than 3 times, with probability inversely proportional "
 
     if claim_text != "":
         persps = Perspectives.objects.filter(claim=claim_text)

@@ -15,7 +15,7 @@ class FeedbackRecord(models.Model):
     stance_score = models.FloatField()
     evidence = models.TextField(default="")
     stance = models.CharField(max_length=3, default="UNK")
-    feedback = models.BooleanField() # True = Like, False = Dislike
+    feedback = models.BooleanField()  # True = Like, False = Dislike
     comment = models.TextField(default="")
 
 
@@ -53,4 +53,3 @@ class LRUCache(models.Model):
             return pickle.loads(item.data)
         else:
             return None
-
