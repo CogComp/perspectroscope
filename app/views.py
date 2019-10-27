@@ -492,7 +492,10 @@ def view_annotation(request):
         "claim_text": claim_text,
         "persp_sup": persp_sup,
         "persp_und": persp_und,
-        "tutorial": "false"
+        "tutorial": "false",
+        "random_claim": random_claim, # if the value of this variable is "true" we know that it's an mturk experiment
+        "assignmentId": request_info["assignmentId"],
+        "sandbox": request_info["sandbox"]
     }
 
     return render(request, "perspectrumAnnotator/perspectrumAnnotator.html", context)
