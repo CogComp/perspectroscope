@@ -19,6 +19,13 @@ class FeedbackRecord(models.Model):
     comment = models.TextField(default="")
 
 
+class Claim(models.Model):
+    claim_text = models.TextField()
+    source = models.CharField(max_length=100, default="Unknown")
+    annotated_counts = models.IntegerField(default=0)
+    note = models.TextField(default="") # placeholder field
+
+
 class EvidenceFeedbackRecord(models.Model):
     username = models.CharField(max_length=100, default="Anonymous")
     claim = models.TextField()

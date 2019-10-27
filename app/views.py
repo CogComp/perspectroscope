@@ -21,7 +21,7 @@ from search.news_html_to_text import parse_article
 from nltk import sent_tokenize
 
 from django.db.models import Count
-from app.models import QueryLog, FeedbackRecord, LRUCache, Perspectives
+from app.models import QueryLog, FeedbackRecord, LRUCache, Perspectives, Claim
 from model.perspectrum_model import PerspectrumTransformerModel
 from random import shuffle
 
@@ -61,6 +61,7 @@ with open(file_names['claim_annotation']) as fin:
 
 
 def load_claim_text(request):
+
     with open(file_names["claim_annotation"], encoding='utf-8') as data_file:
         data = json.loads(data_file.read())
         return JsonResponse([c['text'] for c in data], safe=False)
@@ -372,6 +373,27 @@ def perspectrum_solver(request, withWiki=""):
 
 def perspectrum_annotator(request, withWiki=""):
     claim_text = request.GET.get('q', "")
+    random_claim = request.GET.get('random_claim', "")
+
+    request_info = get_mturk_request_parameters(request)
+    worker_id = request_info["workerId"]
+    if worker_id != "":
+        try:
+            user = User.objects.get(username=worker_id)
+        except User.DoesNotExist:
+            user = User.objects.create_user(worker_id)
+
+        login(request, user)
+
+    if random_claim == "true" and claim_text != "":
+        print(" ERROR >>> given a random claim but also expected to select a random one . . . ")
+
+    if random_claim == "true" and claim_text == "":
+        claims_query_set = Claim.objects.all().order_by('annotated_counts')[:50]
+        rand_idx = np.random.randint(len(claims_query_set))
+        rand_claim = claims_query_set[rand_idx]
+        claim_text = rand_claim.claim_text
+
     result = solve_given_claim(claim_text, withWiki, run_equivalence=False)
     if not result:
         result = {}
@@ -410,16 +432,6 @@ def get_mturk_request_parameters(request):
 
 def view_annotation(request):
     claim_text = request.GET.get('q', "")
-    random_claim = request.GET.get('random_claim', "")
-
-    request_info = get_mturk_request_parameters(request)
-    ## TODO: if these information are provided, use it to automatically log in the user
-
-    if random_claim == "true" and claim_text != "":
-        print(" ERROR >>> given a random claim but also expected to select a random one . . . ")
-
-    if random_claim == "true" and claim_text == "":
-        claim_text = "TODO: load a random claim from those than are annotated less than 3 times, with probability inversely proportional "
 
     if claim_text != "":
         persps = Perspectives.objects.filter(claim=claim_text)
