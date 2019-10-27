@@ -32,11 +32,7 @@ file_names = {
 
 no_cuda = False if os.environ.get('CUDA_VISIBLE_DEVICES') else True
 
-### loading the BERT solvers
-# bb_relevance = BertBaseline(task_name="perspectrum_relevance",
-#                             saved_model="data/model/relevance-large/perspectrum_relevance_epoch-0.pth",
-#                             no_cuda=no_cuda,
-#                             bert_model='bert-large-uncased')
+### loading the BERT s
 bb_relevance = PerspectrumTransformerModel("roberta", "data/model/relevance_roberta")
 # bb_stance = BertBaseline(task_name="perspectrum_stance",
 #                          saved_model="data/model/stance-large/perspectrum_stance_epoch-3.pth",
@@ -369,7 +365,7 @@ def perspectrum_solver(request, withWiki=""):
     :return:
     """
     claim_text = request.GET.get('q', "")
-    context = solve_given_claim(claim_text, withWiki, run_equivalence=False)
+    context = solve_given_claim(claim_text, withWiki, run_equivalence=False, relevance_score_th=0.5)
     return render(request, "perspectroscope/perspectrumDemo.html", context)
 
 
