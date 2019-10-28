@@ -82,30 +82,33 @@
 
     {% if claim_text %}
         {% include "perspectrumAnnotator/two_column_annotator.html" with csrf_token=csrf_token %}
-        <div style="text-align: center">
         {% if random_claim == "true" %}
             <br/>
-            <strong>Check yourself</strong> before submitting:
-            <ul>
-                <li>You have read all the perspectives and retained only the relevant claims?</li>
-                <li>The perspectives are in the correct column (for/against); if not, you have dragged them onto the correct column?</li>
-            </ul>
-            <br/>
-            <form method="POST" {% if sandbox == '1' %} action='https://workersandbox.mturk.com/mturk/externalSubmit' {% else %} action='https://www.mturk.com/mturk/externalSubmit' {% endif %} >
-                <input name="assignmentId" type="hidden" value="{{ assignmentId }}" disabled>
-                <button type="button" class="btn btn-outline-dark" id="mturk-submit"> Submit the HIT </button>
-                <input name="dummy_input" type="hidden" value="foo is bar"/>
-            </form>
-
+            <div class="alert alert-secondary" role="alert">
+                <strong>Check yourself</strong> before submitting:
+                <ul>
+                    <li>You have read all the perspectives and retained only the relevant claims?</li>
+                    <li>The perspectives are in the correct column (for/against); if not, you have dragged them onto the correct column?</li>
+                </ul>
+            </div>
+            <div style="text-align: center">
+                <form method="POST" {% if sandbox == '1' %} action='https://workersandbox.mturk.com/mturk/externalSubmit' {% else %} action='https://www.mturk.com/mturk/externalSubmit' {% endif %} >
+                    <input name="assignmentId" type="hidden" value="{{ assignmentId }}" disabled>
+                    <button class="btn btn-primary" id="mturk-submit"> Submit the HIT </button>
+                    <input name="dummy_input" type="hidden" value="foo is bar"/>
+                </form>
+            </div>
         {% else %}
-            <button
-                    type="button" class="btn btn-outline-dark" id="show-more-button"
-                    {% if tutorial %}
-                        data-intro="When you're done analyzing the current perspectives, you can click to see more candidate perspectives." data-step=7
-                    {% endif %}
-            >  Show More  ⬇  </button>
+            <div style="text-align: center">
+                <button
+                        type="button" class="btn btn-outline-dark" id="show-more-button"
+                        {% if tutorial %}
+                            data-intro="When you're done analyzing the current perspectives, you can click to see more candidate perspectives." data-step=7
+                        {% endif %}
+                >  Show More  ⬇  </button>
+            </div>
         {% endif %}
-        </div>
+
         <br>
     {% endif %}
 </div>
