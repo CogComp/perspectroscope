@@ -147,10 +147,10 @@ def _get_perspectives_from_cse(claim_text):
         article = parse_article(url)
         paragraphs = [p for p in article.text.splitlines() if p]
         sentences_tokenized = [sent_tokenize(p) for p in paragraphs]
-        sents += [s[0] for s in sentences_tokenized]
-        sents += [s[-1] for s in sentences_tokenized]
-        sent_url += [url for _ in paragraphs]
-        # sents += [_s for p in paragraphs for _s in sent_tokenize(p)]
+        for s in sentences_tokenized:
+            sents.extend([s[0], s[-1]])
+        for _ in paragraphs:
+            sent_url.extend([url, url])
 
     perspective_relevance_score = bb_relevance.predict_batch([
         (claim_text, sent) for sent in sents
