@@ -411,6 +411,7 @@ def perspectrum_annotator(request, withWiki=""):
 
     result["worker_id"] = worker_id
     result["view_mode"] = False
+    result["random_claim"] = (random_claim == 'true')
 
     return render(request, "perspectrumAnnotator/perspectrumAnnotator.html", result)
 
