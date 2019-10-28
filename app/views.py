@@ -146,7 +146,9 @@ def _get_perspectives_from_cse(claim_text):
     for url in urls:
         article = parse_article(url)
         paragraphs = [p for p in article.text.splitlines() if p]
-        sents += [sent_tokenize(p)[0] for p in paragraphs]
+        sentences_tokenized = [sent_tokenize(p) for p in paragraphs]
+        sents += [s[0] for s in sentences_tokenized]
+        sents += [s[-1] for s in sentences_tokenized]
         sent_url += [url for _ in paragraphs]
         # sents += [_s for p in paragraphs for _s in sent_tokenize(p)]
 
@@ -209,7 +211,7 @@ def _get_evidence_from_link(url, claim, perspective):
     return result[0][0], url
 
 
-def solve_given_claim(claim_text, withWiki, num_persp_ir_candidates=30, num_web_persp_candidates=20,
+def solve_given_claim(claim_text, withWiki, num_persp_ir_candidates=50, num_web_persp_candidates=40,
                       run_equivalence=True, relevance_score_th=1.3):
     context = {}
 
@@ -234,15 +236,14 @@ def solve_given_claim(claim_text, withWiki, num_persp_ir_candidates=30, num_web_
             perspectives_sorted = [(p_text, _normalize_relevance_score(perspective_relevance_score[i]),
                                     _normalize_stance_score(perspective_stance_score[i]), None) for i, (p_text, pId, _)
                                    in
-                                   enumerate(perspective_given_claim) if perspective_relevance_score[i] > 1]
+                                   enumerate(perspective_given_claim) if perspective_relevance_score[i] > relevance_score_th]
 
             if withWiki == "withWiki":
                 web_persps = _get_perspectives_from_cse(claim_text)
 
                 ## Filter results based on a threshold on relevance score
-                _REL_SCORE_TH = relevance_score_th
                 web_persps = [(_s, _normalize_relevance_score(_rel_score), _normalize_stance_score(_stance_score), url)
-                              for _s, _rel_score, _stance_score, url in web_persps if _rel_score > _REL_SCORE_TH]
+                              for _s, _rel_score, _stance_score, url in web_persps if _rel_score > relevance_score_th]
 
                 ## Filter results that have low stance score
                 web_persps = [web_p for web_p in web_persps if abs(web_p[2]) > 0.1]
@@ -367,7 +368,7 @@ def perspectrum_solver(request, withWiki=""):
     :return:
     """
     claim_text = request.GET.get('q', "")
-    context = solve_given_claim(claim_text, withWiki, run_equivalence=False, relevance_score_th=0.5)
+    context = solve_given_claim(claim_text, withWiki, run_equivalence=False, relevance_score_th=1.5)
     return render(request, "perspectroscope/perspectrumDemo.html", context)
 
 
@@ -393,7 +394,7 @@ def perspectrum_annotator(request, withWiki="", random_claim="false"):
         rand_claim = claims_query_set[rand_idx]
         claim_text = rand_claim.claim_text
 
-    result = solve_given_claim(claim_text, withWiki, run_equivalence=False)
+    result = solve_given_claim(claim_text, withWiki, run_equivalence=False, relevance_score_th=0.0)
     if not result:
         result = {}
 
