@@ -21,7 +21,7 @@
             </h6>
             {% for cluster in persp_sup %}
                 <div class="persp-title btn-lg" id="persptive_box_sup_{{ forloop.counter }}" draggable="true"
-                     style="background-color: #d9eaff; {% if  forloop.counter > 2 %} visibility: hidden; display: none {% endif %}" {% if forloop.counter == 1 %} data-hint="Click on it to see the source + supporting evidence!" {% endif %}>
+                     style="background-color: #d9eaff; {% if  forloop.counter > 7 %} visibility: hidden; display: none {% endif %}" {% if forloop.counter == 1 %} data-hint="Click on it to see the source + supporting evidence!" {% endif %}>
                     <div class="row"
                          {% if tutorial == "true" and forloop.counter == 1 %}
                             data-intro="This sounds like a good perspective, since it takes a stance *in support* of the input claim."
@@ -132,7 +132,7 @@
             {% for cluster in persp_und %}
                 <div class="persp-title btn-lg" id="persptive_box_und_{{ forloop.counter }}"
                      draggable="true"
-                     style="background-color: #ffdcdf; {% if  forloop.counter > 2 %} visibility: hidden; display: none {% endif %}">
+                     style="background-color: #ffdcdf; {% if  forloop.counter > 7 %} visibility: hidden; display: none {% endif %}">
                     <div class="row"
                         {% if tutorial == "true" and forloop.counter == 1 %}
                             data-intro="This sounds like a good perspective, since it takes a stance *against* the input claim."
