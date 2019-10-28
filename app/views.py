@@ -410,6 +410,7 @@ def perspectrum_annotator(request, withWiki="", random_claim="false"):
 
     result["worker_id"] = worker_id
     result["view_mode"] = False
+    result["random_claim"] = (random_claim == 'true')
 
     result["random_claim"] = random_claim  # if the value of this variable is "true" we know that it's an mturk experiment
     result["assignmentId"] = request_info["assignmentId"],
