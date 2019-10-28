@@ -371,10 +371,9 @@ def perspectrum_solver(request, withWiki=""):
     return render(request, "perspectroscope/perspectrumDemo.html", context)
 
 
-def perspectrum_annotator(request, withWiki=""):
+def perspectrum_annotator(request, withWiki="", random_claim="false"):
     claim_text = request.GET.get('q', "")
-    random_claim = request.GET.get('random_claim', "")
-
+    random_claim = True if random_claim == "true" else False
     request_info = get_mturk_request_parameters(request)
     worker_id = request_info["workerId"]
     if worker_id != "":
@@ -385,10 +384,10 @@ def perspectrum_annotator(request, withWiki=""):
 
         login(request, user)
 
-    if random_claim == "true" and claim_text != "":
+    if random_claim and claim_text != "":
         print(" ERROR >>> given a random claim but also expected to select a random one . . . ")
 
-    if random_claim == "true" and claim_text == "":
+    if random_claim and claim_text == "":
         claims_query_set = Claim.objects.all().order_by('annotated_counts')[:50]
         rand_idx = np.random.randint(len(claims_query_set))
         rand_claim = claims_query_set[rand_idx]
@@ -411,6 +410,10 @@ def perspectrum_annotator(request, withWiki=""):
 
     result["worker_id"] = worker_id
     result["view_mode"] = False
+
+    result["random_claim"] = random_claim  # if the value of this variable is "true" we know that it's an mturk experiment
+    result["assignmentId"] = request_info["assignmentId"],
+    result["sandbox"] = request_info["sandbox"]
 
     return render(request, "perspectrumAnnotator/perspectrumAnnotator.html", result)
 
@@ -505,9 +508,6 @@ def view_annotation(request):
         "persp_sup": persp_sup,
         "persp_und": persp_und,
         "tutorial": "false",
-        "random_claim": random_claim, # if the value of this variable is "true" we know that it's an mturk experiment
-        "assignmentId": request_info["assignmentId"],
-        "sandbox": request_info["sandbox"]
     }
 
     return render(request, "perspectrumAnnotator/perspectrumAnnotator.html", context)
