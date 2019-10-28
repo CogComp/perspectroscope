@@ -3,7 +3,7 @@
 # this would guide the cli to look  for your MTurk credentials stored in ~/.aws/credentials file.
 
 
-URL=https://perspectroscope.com/annotator/
+URL=https://perspectroscope.com/annotator/withWiki/random_claim=true/
 
 if [ -z "$1" ]; then
   echo "The number of the HITs were not specified (expected an integer)"
@@ -23,8 +23,8 @@ EXPERIMENT_DIR="logs/pilot-$2"
 mkdir $EXPERIMENT_DIR
 cp -r definition/* $EXPERIMENT_DIR
 
-python3 experiment_helpers.py --base ${URL} --size $1 --sandbox >"$EXPERIMENT_DIR/data.jsonl"
-python3 experiment_helpers.py --base ${URL} --size 10 --sandbox >"$EXPERIMENT_DIR/data-sandbox.jsonl"
+python3 experiment_helpers.py --base ${URL} --size $1 >"$EXPERIMENT_DIR/data.jsonl"
+python3 experiment_helpers.py --base ${URL} --size 20 --sandbox >"$EXPERIMENT_DIR/data-sandbox.jsonl"
 
 amti create-batch $EXPERIMENT_DIR ${EXPERIMENT_DIR}/data-sandbox.jsonl .
 
