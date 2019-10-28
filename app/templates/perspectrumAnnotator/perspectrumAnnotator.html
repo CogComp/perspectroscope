@@ -82,7 +82,7 @@
 
     {% if claim_text %}
         {% include "perspectrumAnnotator/two_column_annotator.html" with csrf_token=csrf_token %}
-        {% if random_claim == "true" %}
+        {% if random_claim %}
             <br/>
             <div class="alert alert-secondary" role="alert">
                 <strong>Check yourself</strong> before submitting:
