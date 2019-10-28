@@ -392,7 +392,7 @@ def perspectrum_annotator(request, withWiki="", random_claim="false"):
         print(" ERROR >>> given a random claim but also expected to select a random one . . . ")
 
     if random_claim and claim_text == "":
-        claims_query_set = Claim.objects.all().order_by('?').order_by('-annotated_counts')[:50]
+        claims_query_set = Claim.objects.all().filter(annotated_counts__lt=3).order_by('?').order_by('-annotated_counts')[:50]
         rand_idx = np.random.randint(len(claims_query_set))
         rand_claim = claims_query_set[rand_idx]
         claim_text = rand_claim.claim_text
