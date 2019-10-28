@@ -93,9 +93,9 @@
             </div>
             <div style="text-align: center">
                 <form method="POST" {% if sandbox == '1' %} action='https://workersandbox.mturk.com/mturk/externalSubmit' {% else %} action='https://www.mturk.com/mturk/externalSubmit' {% endif %} >
-                    <input name="assignmentId" type="hidden" value="{{ assignmentId }}" disabled>
+                    <input name="assignmentId" type="hidden" value="{{ assignmentId }}">
                     <button class="btn btn-primary" id="mturk-submit"> Submit the HIT </button>
-                    <input name="dummy_input" type="hidden" value="foo is bar"/>
+                    <input name="dummy_input" type="hidden" value="foo is bar">
                 </form>
             </div>
         {% else %}
