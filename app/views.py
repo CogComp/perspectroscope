@@ -13,6 +13,7 @@ from django.contrib.auth import authenticate
 from django.shortcuts import render
 from django.http import JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
+from django.contrib.auth.decorators import login_required
 from sklearn.cluster import DBSCAN
 from model.run_bert_on_perspectrum import BertBaseline
 from search.query_elasticsearch import get_perspective_from_pool, get_evidence_from_pool, test_connection
@@ -618,6 +619,8 @@ def api_submit_annotation(request):
         return HttpResponse("api_submit_feedback api only supports POST method.", status=400)
 
     worker_id = request.POST.get('worker_id', '')
+    print(request.user.username)
+    print(request.user.is_anonymous)
     if not request.user.is_anonymous:
         username = request.user.username
     elif worker_id:

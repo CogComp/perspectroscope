@@ -370,8 +370,9 @@
                 }
                 let comment = {
                     "source": persp_link
-                }
+                };
 
+                let worker_id = "{{ worker_id }}";
 
                 let payload = {
                     "claim": "{{ claim_text }}",
@@ -382,6 +383,10 @@
                     "feedback": feedback,
                     "comment": JSON.stringify(comment),
                 };
+
+                if (worker_id !== "") {
+                    payload['worker_id'] = worker_id;
+                }
 
                 {% if tutorial != "true" %}
                 $.post('/api/submit_annotation/', payload, function() {
