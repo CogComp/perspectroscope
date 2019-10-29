@@ -245,13 +245,14 @@ def solve_given_claim(claim_text, withWiki, num_persp_ir_candidates=50, num_web_
             if withWiki == "withWiki":
                 web_persps = _get_perspectives_from_cse(claim_text)
 
+                print(json.dumps(web_persps))
                 ## Filter results based on a threshold on relevance score
                 web_persps = [(_s, _normalize_relevance_score(_rel_score), _normalize_stance_score(_stance_score), url)
                               for _s, _rel_score, _stance_score, url in web_persps if _rel_score > relevance_score_th]
 
                 ## Filter results that have low stance score
-                web_persps = [web_p for web_p in web_persps if abs(web_p[2]) > 0.1]
-
+                # web_persps = [web_p for web_p in web_persps if abs(web_p[2]) > 0.1]
+g
                 web_persps = web_persps[:num_web_persp_candidates]  # Only keep top 20
 
                 perspectives_sorted += web_persps
@@ -350,7 +351,7 @@ def solve_given_claim(claim_text, withWiki, num_persp_ir_candidates=50, num_web_
             context["persp_sup"] = persp_sup
             context["persp_und"] = persp_und
 
-            # print(context)
+            print(json.dumps(context))
 
             LRUCache.objects.create(claim=claim,
                                     with_wiki=(withWiki == "withWiki"),
