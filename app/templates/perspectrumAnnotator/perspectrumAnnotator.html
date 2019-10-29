@@ -92,9 +92,10 @@
                 </ul>
             </div>
             <div style="text-align: center">
+{#                <button class="btn btn-primary" id="mturk-submit"> Submit the HIT </button>#}
                 <form method="POST" {% if sandbox == '1' %} action='https://workersandbox.mturk.com/mturk/externalSubmit' {% else %} action='https://www.mturk.com/mturk/externalSubmit' {% endif %} >
                     <input name="assignmentId" type="hidden" value="{{ assignmentId }}">
-                    <button class="btn btn-primary" id="mturk-submit"> Submit the HIT </button>
+                    <button class="btn btn-primary" id="mturk-submit" disabled> Submit the HIT </button>
                     <input name="dummy_input" type="hidden" value="foo is bar">
                 </form>
             </div>
@@ -174,6 +175,40 @@
             console.log("ES server connection [OK]");
         });
 
+        let num_feedback = $('.btn-feedback>i.active').length;
+        $('.btn-feedback').click(function() {
+            num_feedback -= 1;
+            if (num_feedback <= 0) {
+                $('#mturk-submit').attr("disabled", false);
+            }
+        });
+
+        $('#mturk-submit').click(function(){
+            {#let num_feedback = $('.btn-feedback>i.active').length;#}
+            {#let num_persps = $('.persp-title:visible').length;#}
+            {##}
+            {#console.log(num_feedback, num_persps);#}
+            {#if (num_feedback === num_persps) {#}
+            {#    let payload = {#}
+            {#        "assignmentId" : "{{ assignmentId }}",#}
+            {#    };#}
+            {#    let _url = {% if sandbox == '1' %} 'https://workersandbox.mturk.com/mturk/externalSubmit';#}
+            {#    {% else %} 'https://www.mturk.com/mturk/externalSubmit';#}
+            {#    {% endif %}#}
+            {#    $.post(_url, payload, function(data, textStatus) {#}
+            {#        if (data.redirect) {#}
+            {#        // data.redirect contains the string URL to redirect to#}
+            {#            window.location.href = data.redirect;#}
+            {#        }#}
+            {#    })#}
+            {# }#}
+            {#else {#}
+            {#    alert('Please submit feedback on every perspectives!');#}
+            {# }#}
+            if (num_feedback > 0) {
+                alert('Please submit feedback on every perspectives before submitting!');
+            }
+        });
         $('#btn-switch-display-score').change(function() {
             $('.score-collapse').collapse('toggle');
         });

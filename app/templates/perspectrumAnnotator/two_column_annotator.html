@@ -89,6 +89,7 @@
                             </tr>
                             {% endif %}
 
+                            {% if not random_claim %}
                             <tr>
                                 <th scope="row">Evidence</th>
                                 <td class="tbl-entry-evidence">
@@ -106,6 +107,7 @@
                                     <button class="btn btn-warning btn-evidence-feedback btn-evidence-feedback-dislike">Needs Work <i class="fa fa-lg fa-thumbs-down"></i></button>
                                 </td>
                             </tr>
+                            {% endif %}
                             </tbody>
                         </table>
                     </div>
@@ -220,6 +222,7 @@
                             </tr>
                             {% endif %}
 
+                            {% if not random_claim %}
                             <tr>
                                 <th scope="row">Evidence</th>
                                 <td class="tbl-entry-evidence">
@@ -237,6 +240,7 @@
                                     <button class="btn btn-warning">Needs Work <i class="fa fa-lg fa-thumbs-down"></i></button>
                                 </td>
                             </tr>
+                            {% endif %}
                             </tbody>
                         </table>
                     </div>

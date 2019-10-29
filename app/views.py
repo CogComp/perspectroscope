@@ -349,7 +349,7 @@ def solve_given_claim(claim_text, withWiki, num_persp_ir_candidates=50, num_web_
             context["persp_sup"] = persp_sup
             context["persp_und"] = persp_und
 
-            print(context)
+            # print(context)
 
             LRUCache.objects.create(claim=claim,
                                     with_wiki=(withWiki == "withWiki"),
@@ -612,7 +612,7 @@ def api_submit_query_log(request):
     return HttpResponse(status=200)
 
 
-@csrf_protect
+@csrf_exempt
 def api_submit_annotation(request):
     if request.method != 'POST':
         return HttpResponse("api_submit_feedback api only supports POST method.", status=400)
