@@ -252,7 +252,7 @@ def solve_given_claim(claim_text, withWiki, num_persp_ir_candidates=50, num_web_
 
                 ## Filter results that have low stance score
                 # web_persps = [web_p for web_p in web_persps if abs(web_p[2]) > 0.1]
-g
+
                 web_persps = web_persps[:num_web_persp_candidates]  # Only keep top 20
 
                 perspectives_sorted += web_persps
@@ -399,7 +399,7 @@ def perspectrum_annotator(request, withWiki="", random_claim="false"):
         rand_claim = claims_query_set[rand_idx]
         claim_text = rand_claim.claim_text
 
-    result = solve_given_claim(claim_text, withWiki, run_equivalence=False, relevance_score_th=0.0)
+    result = solve_given_claim(claim_text, withWiki, run_equivalence=False, relevance_score_th=-3)
     if not result:
         result = {}
 

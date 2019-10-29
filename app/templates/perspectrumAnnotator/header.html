@@ -169,7 +169,9 @@
             </ul>
             {% if user.is_authenticated %}
                 Welcome, {{ user.get_username }}. &nbsp;
+                {% if not random_claim %}
                 <a id='btn_signout' href="/api/auth_logout/" class="btn btn-xs btn-primary" style="border-color: #1abc9c">Sign out</a>
+                {% endif %}
             {% else %}
                 <div class="btn-group">
                     <a id='btn_login' href="/login/?next={{ request.path }}" class="btn btn-xs btn-primary" style="border-color: #1abc9c">Log in</a>

@@ -1,6 +1,6 @@
 {
     "AutoApprovalDelayInSeconds": 43200,
-    "AssignmentDurationInSeconds": 1800,
+    "AssignmentDurationInSeconds": 1200,
     "Reward": "0.5",
     "Title": "Judge the quality of arguments made by an AI debate system. ",
     "Keywords": "Debate, Research, AI, Natural Language Processing",

@@ -37,7 +37,7 @@
                         <div class="col-1">
                             <a class="btn-feedback btn-feedback-like" data-toggle="popover" data-trigger="focus"
                                data-container="body" data-placement="bottom" data-html="true"
-                               data-content="Thumbs up: would reaffirm that the perspective is indeed relevant."
+                               data-content="Thumbs up: confirm that the perspective is relevant and <b>supports</b> the claim."
                                href="JavaScript:void(0)"
                                 {% if tutorial == "true" and forloop.counter == 1 %}
                                     data-intro="Click on the thumbs up to reaffirm the appropriateness of this perspective. "
@@ -47,7 +47,7 @@
                         <div class="col-1" data-toggle="modal" data-target=".bd-example-modal-sm">
                             <a class="btn-feedback btn-feedback-dislike" data-toggle="popover" data-trigger="focus"
                                data-container="body" data-placement="bottom" data-html="true"
-                            data-content="Thumbs down: would <b>delete</b> the perspective if it is irrelevant."
+                            data-content="Thumbs down: the perspective is irrelavant and should be <b>deleted</b>."
                                href="JavaScript:void(0)"><i class="fa fa-lg fa-thumbs-down" style="color: silver" aria-hidden="true"></i></a>
                         </div>
                         {% else %}
@@ -161,7 +161,7 @@
                             <a class="btn-feedback btn-feedback-like" href="JavaScript:void(0)"
                                data-toggle="popover" data-trigger="focus" data-container="body"
                                data-placement="bottom" data-html="true"
-                            data-content="Thumbs up: would reaffirm that the perspective is indeed relevant."
+                            data-content="Thumbs up: confirm that the perspective is relevant and <b>opposes</b> the claim."
                                 {% if forloop.counter == 1 and tutorial == "true" %}
                                     data-intro="Click on the thumbs up to reaffirm the appropriateness of this perspective. "
                                 {% endif %}
@@ -172,7 +172,7 @@
                             <a class="btn-feedback btn-feedback-dislike" href="JavaScript:void(0)"
                                data-toggle="popover" data-trigger="focus" data-container="body"
                                data-placement="bottom" data-html="true"
-                            data-content="Thumbs down: you can <b>delete</b> the perspective if it is irrelevant."
+                            data-content="Thumbs down: the perspective is irrelavant and should be <b>deleted</b>."
                                 {% if forloop.counter == 2 and tutorial == "true"%}
                                     data-intro="You can click on the thumbs down to indicate that this is *not* an appropriate perspective."
                                 {% endif %}
