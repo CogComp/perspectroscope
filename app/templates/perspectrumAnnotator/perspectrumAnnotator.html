@@ -92,10 +92,14 @@
                 </ul>
             </div>
             <div style="text-align: center">
-{#                <button class="btn btn-primary" id="mturk-submit"> Submit the HIT </button>#}
-                <form method="POST" {% if sandbox == '1' %} action='https://workersandbox.mturk.com/mturk/externalSubmit' {% else %} action='https://www.mturk.com/mturk/externalSubmit' {% endif %} >
+                <form method="POST" {% if sandbox == '1' %} action='https://workersandbox.mturk.com/mturk/externalSubmit'
+                {% else %} action='https://www.mturk.com/mturk/externalSubmit' {% endif %}>
                     <input name="assignmentId" type="hidden" value="{{ assignmentId }}">
-                    <button class="btn btn-primary" id="mturk-submit" disabled> Submit the HIT </button>
+                    <div data-toggle="popover" data-trigger="hover"
+                   data-container="body" data-placement="right" data-html="true"
+                   data-content="Please give feedback to every perspective before submitting the claim!">
+                        <button class="btn btn-primary" id="mturk-submit" style="pointer-events: none;" disabled> Submit the HIT </button>
+                    </div>
                     <input name="dummy_input" type="hidden" value="foo is bar">
                 </form>
             </div>
