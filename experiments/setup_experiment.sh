@@ -24,7 +24,7 @@ mkdir $EXPERIMENT_DIR
 cp -r definition/* $EXPERIMENT_DIR
 
 python3 experiment_helpers.py --base ${URL} --size $1 >"$EXPERIMENT_DIR/data.jsonl"
-python3 experiment_helpers.py --base ${URL} --size 20 --sandbox >"$EXPERIMENT_DIR/data-sandbox.jsonl"
+python3 experiment_helpers.py --base ${URL} --size $1 --sandbox >"$EXPERIMENT_DIR/data-sandbox.jsonl"
 
 amti create-batch $EXPERIMENT_DIR ${EXPERIMENT_DIR}/data-sandbox.jsonl .
 

@@ -1,6 +1,6 @@
 {
     "AutoApprovalDelayInSeconds": 300,
-    "AssignmentDurationInSeconds": 600,
+    "AssignmentDurationInSeconds": 3600,
     "Reward": "0.25",
     "Title": "Example ExternalQuestion HIT",
     "Keywords": "ExternalQuestion, example, test, sandbox",

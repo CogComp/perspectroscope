@@ -179,11 +179,17 @@
             console.log("ES server connection [OK]");
         });
 
-        let num_feedback = $('.btn-feedback>i.active').length;
         $('.btn-feedback').click(function() {
-            num_feedback -= 1;
-            if (num_feedback <= 0) {
+            let num_feedback = $('.btn-feedback>i.active').length;
+            let num_persps = $('.persp-title:visible').length;
+            if ($(this).hasClass('btn-feedback-dislike')) {
+                num_persps -= 1 // As the perspective will get deleted
+            }
+            console.log(num_feedback, num_persps);
+
+            if (num_feedback >= num_persps) {
                 $('#mturk-submit').attr("disabled", false);
+                $('#mturk-submit').css('pointer-events', 'auto');
             }
         });
 
@@ -209,10 +215,8 @@
             {#else {#}
             {#    alert('Please submit feedback on every perspectives!');#}
             {# }#}
-            if (num_feedback > 0) {
-                alert('Please submit feedback on every perspectives before submitting!');
-            }
         });
+
         $('#btn-switch-display-score').change(function() {
             $('.score-collapse').collapse('toggle');
         });
