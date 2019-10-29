@@ -215,6 +215,9 @@
             {#else {#}
             {#    alert('Please submit feedback on every perspectives!');#}
             {# }#}
+            $.post('/api/increment_claim_annotation_count/', {
+                'claim': "{{ claim_text }}"
+            }, function(){});
         });
 
         $('#btn-switch-display-score').change(function() {

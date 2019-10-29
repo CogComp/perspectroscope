@@ -618,7 +618,7 @@ def api_submit_annotation(request):
         return HttpResponse("api_submit_feedback api only supports POST method.", status=400)
 
     worker_id = request.POST.get('worker_id', '')
-    if request.user.is_authenticated:
+    if not request.user.is_anonymous:
         username = request.user.username
     elif worker_id:
         username = worker_id
@@ -763,7 +763,7 @@ def api_submit_evidence_feedback(request):
     if request.method != 'POST':
         return HttpResponse("api_submit_evidence_feedback api only supports POST method.", status=400)
 
-    if request.user.is_authenticated:
+    if not request.user.is_anonymous:
         username = request.user.username
     else:
         username = "Anonymous"
@@ -818,5 +818,20 @@ def api_submit_new_perspective(request):
         stance=stance_label,
         comment=comment
     )
+
+    return HttpResponse(status=200)
+
+
+@csrf_exempt
+def api_increment_claim_annotation_count(request):
+    if request.method != 'POST':
+        return HttpResponse("api_increment_claim_annotation_count api only supports POST method.", status=400)
+
+    claim = request.POST.get('claim', None)
+
+    if claim:
+        c = Claim.objects.get(claim_text=claim)
+        c.annotated_counts += 1
+        c.save()
 
     return HttpResponse(status=200)

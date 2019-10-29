@@ -49,4 +49,5 @@ urlpatterns = [
     path('api/submit_evidence_feedback/', views.api_submit_evidence_feedback),
     path('api/submit_new_perspective/', views.api_submit_new_perspective),
     path(r'^djga/', include('google_analytics.urls')),
+    path('api/increment_claim_annotation_count/', views.api_increment_claim_annotation_count),
 ]
