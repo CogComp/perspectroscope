@@ -35,12 +35,12 @@ file_names = {
 no_cuda = False if os.environ.get('CUDA_VISIBLE_DEVICES') else True
 
 ### loading the classifiers
-classifier_relevance = PerspectrumTransformerModel("roberta", "data/model/relevance_roberta", False)
-classifier_stance = PerspectrumTransformerModel("roberta", "data/model/stance_roberta", False)
+classifier_relevance = PerspectrumTransformerModel("roberta", "data/model/relevance_roberta", cuda=False)
+classifier_stance = PerspectrumTransformerModel("roberta", "data/model/stance_roberta", cuda=False)
 classifier_equivalence = BertBaseline(task_name="perspectrum_equivalence",
                                       saved_model="data/model/equivalence/perspectrum_equivalence_lr3e-05_bs32_epoch-2.pth",
                                       no_cuda=no_cuda)
-classifier_evidence = PerspectrumTransformerModel("roberta", "data/model/evidence_roberta", False)
+classifier_evidence = PerspectrumTransformerModel("roberta", "data/model/evidence_roberta", cuda=False)
 
 ### Load config JSON object
 config = json.load(open("config/config.json"))
