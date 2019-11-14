@@ -5,4 +5,10 @@
     "Title": "Judge the quality of arguments made by an AI debate system. ",
     "Keywords": "Debate, Research, AI, Natural Language Processing",
     "Description": "For a random debate-worthy claim, our AI system has proposed a few arguments for/against it. Help us by telling us whether each of the arguments are valid or not!"
+    "QualificationRequirements": [
+    { "QualificationTypeId": "000000000000000000L0", "Comparator": "GreaterThanOrEqualTo", "IntegerValues": [ 96 ], "RequiredToPreview": false, "ActionsGuarded": "Accept" },
+    { "QualificationTypeId": "00000000000000000040", "Comparator": "GreaterThanOrEqualTo", "IntegerValues": [ 5000 ], "RequiredToPreview": false, "ActionsGuarded": "Accept" },
+    { "QualificationTypeId": "00000000000000000071", "Comparator": "EqualTo", "LocaleValues": [ { "Country": "US" } ], "RequiredToPreview": false, "ActionsGuarded": "Accept" },
+  ]
 }
+

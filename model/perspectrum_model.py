@@ -10,7 +10,7 @@ from transformers import glue_convert_examples_to_features as convert_examples_t
 
 
 class PerspectrumTransformerModel:
-    def __init__(self, model_type, model_path, cuda=True, **kwargs):
+    def __init__(self, model_type, model_path, model_name="roberta-large", cuda=True, **kwargs):
         """
         Load pretrained model
         """
@@ -18,11 +18,11 @@ class PerspectrumTransformerModel:
 
         if model_type == "roberta":
             self.model_type = "roberta"
-            self.tokenizer = RobertaTokenizer.from_pretrained(model_path)
+            self.tokenizer = RobertaTokenizer.from_pretrained(model_name)
             self.model = RobertaForSequenceClassification.from_pretrained(model_path)
         else:
             self.model_type = "bert"
-            self.tokenizer = BertTokenizer.from_pretrained(model_path)
+            self.tokenizer = BertTokenizer.from_pretrained(model_name)
             self.model = BertForSequenceClassification.from_pretrained(model_path)
 
         self.model.to(self.device)
