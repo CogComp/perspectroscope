@@ -34,24 +34,13 @@ file_names = {
 
 no_cuda = False if os.environ.get('CUDA_VISIBLE_DEVICES') else True
 
-### loading the BERT s
-bb_relevance = PerspectrumTransformerModel("roberta", "data/model/relevance_roberta")
-# bb_stance = BertBaseline(task_name="perspectrum_stance",
-#                          saved_model="data/model/stance-large/perspectrum_stance_epoch-3.pth",
-#                          no_cuda=no_cuda,
-#                          bert_model='bert-large-uncased')
-bb_stance = PerspectrumTransformerModel("roberta", "data/model/stance_roberta")
-
-bb_equivalence = BertBaseline(task_name="perspectrum_equivalence",
-                              saved_model="data/model/equivalence/perspectrum_equivalence_lr3e-05_bs32_epoch-2.pth",
-                              no_cuda=no_cuda)
-
-# bb_evidence = BertBaseline(task_name="perspectrum_evidence",
-#                            saved_model="data/model/evidence/perspectrum_evidence_epoch-4.pth",
-#                            no_cuda=no_cuda)
-bb_evidence = PerspectrumTransformerModel("roberta", "data/model/evidence_roberta")
-
-# logging.disable(sys.maxsize)  # Python 3
+### loading the classifiers
+classifier_relevance = PerspectrumTransformerModel("roberta", "data/model/relevance_roberta", False)
+classifier_stance = PerspectrumTransformerModel("roberta", "data/model/stance_roberta", False)
+classifier_equivalence = BertBaseline(task_name="perspectrum_equivalence",
+                                      saved_model="data/model/equivalence/perspectrum_equivalence_lr3e-05_bs32_epoch-2.pth",
+                                      no_cuda=no_cuda)
+classifier_evidence = PerspectrumTransformerModel("roberta", "data/model/evidence_roberta", False)
 
 ### Load config JSON object
 config = json.load(open("config/config.json"))
@@ -62,7 +51,6 @@ with open(file_names['claim_annotation']) as fin:
 
 
 def load_claim_text(request):
-
     with open(file_names["claim_annotation"], encoding='utf-8') as data_file:
         data = json.loads(data_file.read())
         return JsonResponse([c['text'] for c in data], safe=False)
@@ -72,8 +60,6 @@ file1 = "app/static/claims/starts_should_.txt"
 file2 = "app/static/claims/starts_should_not_.txt"
 cmv_titles = "app/static/claims/cmv_title.txt"
 test_claims = "app/static/claims/similar_perspectrum_claims_top20.txt"
-
-
 
 
 def load_new_claim_text(request):
@@ -156,13 +142,13 @@ def _get_perspectives_from_cse(claim_text):
                 sents.append(s[-1])
                 sent_url.append(url)
 
-    perspective_relevance_score = bb_relevance.predict_batch([
+    perspective_relevance_score = classifier_relevance.predict_batch([
         (claim_text, sent) for sent in sents
     ])
 
     perspective_relevance_score = [float(x) for x in perspective_relevance_score]
 
-    perspective_stance_score = bb_stance.predict_batch([
+    perspective_stance_score = classifier_stance.predict_batch([
         (claim_text, sent) for sent in sents
     ])
 
@@ -177,7 +163,7 @@ def _get_evidence_from_perspectrum(claim, perspective):
     claim_persp = claim + perspective
     lucene_results = get_evidence_from_pool(claim + perspective, 20)
 
-    evidence_score = bb_evidence.predict_batch([(claim_persp, evi) for evi, eid, _ in lucene_results])
+    evidence_score = classifier_evidence.predict_batch([(claim_persp, evi) for evi, eid, _ in lucene_results])
 
     results = [(lucene_results[i][0], score, lucene_results[i][1]) for i, score in enumerate(evidence_score)]
     results = sorted(results, key=lambda r: r[1], reverse=True)
@@ -195,7 +181,6 @@ def _get_evidence_from_link(url, claim, perspective):
     all_sent_batch = []
 
     for p in paragraphs:
-
         sents = sent_tokenize(p)[1:]
         num_sent = len(sents)
         for i, sent in enumerate(sents):
@@ -208,7 +193,7 @@ def _get_evidence_from_link(url, claim, perspective):
 
             all_sent_batch.append(three_sent_batch)
 
-    evidence_score = bb_evidence.predict_batch([(claim_persp, b) for b in all_sent_batch])
+    evidence_score = classifier_evidence.predict_batch([(claim_persp, b) for b in all_sent_batch])
     result = list(zip(all_sent_batch, evidence_score))
     result = sorted(result, key=lambda x: x[1], reverse=True)
 
@@ -220,7 +205,6 @@ def solve_given_claim(claim_text, withWiki, num_persp_ir_candidates=50, num_web_
     context = {}
 
     if claim_text != "":
-
         claim = claim_text
 
         _ctx = LRUCache.get(claim, with_wiki=(withWiki == "withWiki"))
@@ -231,16 +215,17 @@ def solve_given_claim(claim_text, withWiki, num_persp_ir_candidates=50, num_web_
             perspective_given_claim = [(p_text, pId, pScore / len(p_text.split(" "))) for p_text, pId, pScore in
                                        get_perspective_from_pool(claim, num_persp_ir_candidates)]
 
-            perspective_relevance_score = bb_relevance.predict_batch(
+            perspective_relevance_score = classifier_relevance.predict_batch(
                 [(claim, p_text) for (p_text, pId, _) in perspective_given_claim])
 
-            perspective_stance_score = bb_stance.predict_batch(
+            perspective_stance_score = classifier_stance.predict_batch(
                 [(claim, p_text) for (p_text, pId, _) in perspective_given_claim])
 
             perspectives_sorted = [(p_text, _normalize_relevance_score(perspective_relevance_score[i]),
                                     _normalize_stance_score(perspective_stance_score[i]), None) for i, (p_text, pId, _)
                                    in
-                                   enumerate(perspective_given_claim) if perspective_relevance_score[i] > relevance_score_th]
+                                   enumerate(perspective_given_claim) if
+                                   perspective_relevance_score[i] > relevance_score_th]
 
             if withWiki == "withWiki":
                 web_persps = _get_perspectives_from_cse(claim_text)
@@ -253,7 +238,7 @@ def solve_given_claim(claim_text, withWiki, num_persp_ir_candidates=50, num_web_
                 ## Filter results that have low stance score
                 # web_persps = [web_p for web_p in web_persps if abs(web_p[2]) > 0.1]
 
-                web_persps = web_persps[:num_web_persp_candidates]  # Only keep top 20
+                web_persps = web_persps[:num_web_persp_candidates]  # Only keep top ones
 
                 perspectives_sorted += web_persps
 
@@ -276,7 +261,7 @@ def solve_given_claim(claim_text, withWiki, num_persp_ir_candidates=50, num_web_
                         for j, (p_text2, _, _, _) in enumerate(perspectives_sorted):
                             list1.append((claim + " . " + p_text1, p_text2))
 
-                        predictions1 = bb_equivalence.predict_batch(list1)
+                        predictions1 = classifier_equivalence.predict_batch(list1)
 
                         for j, (p_text2, _, _, _) in enumerate(perspectives_sorted):
                             if i != j:
@@ -394,7 +379,8 @@ def perspectrum_annotator(request, withWiki="", random_claim="false"):
         print(" ERROR >>> given a random claim but also expected to select a random one . . . ")
 
     if random_claim and claim_text == "":
-        claims_query_set = Claim.objects.all().filter(annotated_counts__lt=3).order_by('?').order_by('-annotated_counts')[:50]
+        claims_query_set = Claim.objects.all().filter(annotated_counts__lt=3).order_by('?').order_by(
+            '-annotated_counts')[:50]
         rand_idx = np.random.randint(len(claims_query_set))
         rand_claim = claims_query_set[rand_idx]
         claim_text = rand_claim.claim_text
@@ -418,7 +404,8 @@ def perspectrum_annotator(request, withWiki="", random_claim="false"):
     result["view_mode"] = False
     result["random_claim"] = (random_claim == 'true')
 
-    result["random_claim"] = random_claim  # if the value of this variable is "true" we know that it's an mturk experiment
+    result[
+        "random_claim"] = random_claim  # if the value of this variable is "true" we know that it's an mturk experiment
     result["assignmentId"] = request_info["assignmentId"]
     result["sandbox"] = request_info["sandbox"]
 
@@ -439,6 +426,7 @@ def get_mturk_request_parameters(request):
         "hitId": param_map.get("hitId", ""),
         "turkSubmitTo": param_map.get("turkSubmitTo", ""),
     }
+
 
 def view_annotation(request):
     claim_text = request.GET.get('q', "")
@@ -572,7 +560,7 @@ def perspectrum_annotator_leaderboard(request):
         score = per_user_agreement[u]
         annotation_count = len(score)
         user_agreement = normalize_numbers(sum(score) / len(score))
-        overall_score = normalize_numbers(4/3 * (user_agreement - 0.25) * math.sqrt(annotation_count))
+        overall_score = normalize_numbers(4 / 3 * (user_agreement - 0.25) * math.sqrt(annotation_count))
         user_scores.append(
             [u, user_agreement, annotation_count, overall_score]
         )
@@ -586,6 +574,7 @@ def perspectrum_annotator_leaderboard(request):
 
 def normalize_numbers(number):
     return math.floor(number * 100.0) / 100.0
+
 
 def perspectrum_annotator_admin(request):
     context = {}
