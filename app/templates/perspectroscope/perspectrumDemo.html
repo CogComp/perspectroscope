@@ -62,7 +62,7 @@
         <a class="nav-link" style="font-weight: normal" href="http://cogcomp.org/perspectrum/">Perspectrum</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link active" style="font-weight: bold" href="Javascript:void(0)">Perspectroscope</a>
+        <a class="nav-link active" style="font-weight: bold" href="Javascript:void(0)">PerspectroScope</a>
       </li>
     </ul>
   </div>
@@ -75,9 +75,9 @@
                 <p class="lead">A Window to the World of Diverse Perspectives.</p>
             </div>
         </div>
-        <button id="popover_citation" type="button" class="btn btn-info" data-toggle="popover"><i class="fa fa-lg fa-book"></i>&nbsp;&nbsp;Cite this demo!</button>
-        <a class="btn btn-success" target="_blank" href="https://github.com/CogComp/perspectroscope"><i class="fab fa-lg fa-github"></i>&nbsp;&nbsp;Github</a>
-        <a class="btn btn-danger" target="_blank" href="https://youtu.be/MXBTR1Sp3Bs"><i class="fab fa-lg fa-youtube"></i>&nbsp;&nbsp;Video Demo</a>
+        <button id="popover_citation" type="button" class="btn btn-info btn-xs" data-toggle="popover"><i class="fa fa-lg fa-book"></i>&nbsp;&nbsp;Cite this demo!</button>
+        <a class="btn btn-success btn-xs" target="_blank" href="https://github.com/CogComp/perspectroscope"><i class="fab fa-lg fa-github"></i>&nbsp;&nbsp;Github</a>
+        <a class="btn btn-danger btn-xs" target="_blank" href="https://youtu.be/MXBTR1Sp3Bs"><i class="fab fa-lg fa-youtube"></i>&nbsp;&nbsp;Video Demo</a>
         <div id="citation-content" style="display: none;">
             @inproceedings{chen2019perspectroscope,
             <br>
@@ -126,8 +126,8 @@
                         <li><a id="btn-load-example-4" href="JavaScript:void(0)">Example #4</a></li>
                     </ul>
                 </div>
-                <button id="wiki" type="button" class="btn btn-default" data-toggle="button" aria-pressed="false"
-                        autocomplete="off">Ask Wikipedia - Off</button>
+{#                <button id="wiki" type="button" class="btn btn-default" data-toggle="button" aria-pressed="false"#}
+{#                        autocomplete="off">Ask Wikipedia - Off</button>#}
 
                 <button id="btn-switch-display-score" type="button" class="btn btn-default"
                         data-toggle="button" aria-pressed="false" autocomplete="off" style="display: none">
@@ -143,7 +143,7 @@
 
     {% if claim_text %}
         <hr>
-        {% include "two_column.html" %}
+        {% include "perspectroscope/two_column.html" %}
     {% endif %}
 
     {% if claim_text %}
@@ -219,18 +219,6 @@
             </div>
         </div>
     {% endif %}
-
-    <!--{% if claim_text %}-->
-        <!--{% if wiki_persp_sup or wiki_persp_und %}-->
-            <!--<hr>-->
-            <!--<p>Potential Perspectives from Wikipedia</p>-->
-            <!--<div class="row" style="width: 100%; align-content: center; ">-->
-                <!--{% with persp_sup=wiki_persp_sup persp_und=wiki_persp_und %}-->
-                <!--{% include "two_column.html" %}-->
-                <!--{% endwith %}-->
-            <!--</div>-->
-        <!--{% endif %}-->
-    <!--{% endif %}-->
 </div>
 
 <script type="text/javascript">
@@ -391,10 +379,11 @@
 
     $('#search-claim').click(function () {
         var claimText = $("#claim-box").val();
-        withWiki = "noWiki";
-        if ($('#wiki').hasClass('active')) {
-            withWiki = "withWiki";
-        }
+        //withWiki = "noWiki";
+        //if ($('#wiki').hasClass('active')) {
+        //    withWiki = "withWiki";
+        //}
+        withWiki = "withWiki"; // always with Wiki
 
         // Log the query in te data base
         $.post('/api/submit_query_log/', {
@@ -407,6 +396,7 @@
         window.location.href = url;
     });
 
+    /*
     $('#wiki').click(function () {
         $(this).toggleClass("btn-default");
         $(this).toggleClass("btn-primary");
@@ -416,6 +406,7 @@
         else
             $(this).html('Ask Wikipedia - On')
     });
+     */
 
 
     $('#btn-switch-display-score').click(function() {
@@ -467,7 +458,7 @@
 
     $('document').ready(function () {
 
-        var wikipedia_searched = false;
+        //var wikipedia_searched = false;
 
 
         $.post('/api/test_es_connection/', {}, function() {
@@ -503,12 +494,12 @@
             $('.score-collapse').collapse('toggle');
         });
 
-        if (window.location.href.includes('withWiki')) {
+        /*if (window.location.href.includes('withWiki')) {
             $('#wiki').addClass('active');
             $('#wiki').removeClass('btn-default');
             $('#wiki').addClass('btn-primary');
             $('#wiki').html('Ask Wikipedia - On');
-        }
+        }*/
 
         let $el_feedback = $('#btn-switch-feedback');
         let $el_display = $('#btn-switch-display-score');

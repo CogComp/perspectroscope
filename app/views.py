@@ -37,10 +37,11 @@ no_cuda = False if os.environ.get('CUDA_VISIBLE_DEVICES') else True
 ### loading the classifiers
 classifier_relevance = PerspectrumTransformerModel("roberta", "data/model/relevance_roberta", cuda=False)
 classifier_stance = PerspectrumTransformerModel("roberta", "data/model/stance_roberta", cuda=False)
-classifier_equivalence = BertBaseline(task_name="perspectrum_equivalence",
-                                      saved_model="data/model/equivalence/perspectrum_equivalence_lr3e-05_bs32_epoch-2.pth",
-                                      no_cuda=no_cuda)
-classifier_evidence = PerspectrumTransformerModel("roberta", "data/model/evidence_roberta", cuda=False)
+classifier_equivalence = None
+# BertBaseline(task_name="perspectrum_equivalence",
+#                                       saved_model="data/model/equivalence/perspectrum_equivalence_lr3e-05_bs32_epoch-2.pth",
+#                                       no_cuda=no_cuda)
+classifier_evidence = None  # PerspectrumTransformerModel("roberta", "data/model/evidence_roberta", cuda=False)
 
 ### Load config JSON object
 config = json.load(open("config/config.json"))
@@ -121,44 +122,6 @@ def _normalize_stance_score(bert_logit):
     return _normalize(bert_logit, old_range=[-4, 4], new_range=[-1, 1])
 
 
-def _get_perspectives_from_cse(claim_text):
-    csc = CustomSearchClient(key=config["custom_search_api_key"], cx=config["custom_search_engine_id"])
-
-    r = csc.query(claim_text)
-    urls = [_r["link"] for _r in r]
-
-    sents = []
-    sent_url = []
-
-    for url in urls:
-        article = parse_article(url)
-        paragraphs = [p for p in article.text.splitlines() if p]
-        sentences_tokenized = [sent_tokenize(p) for p in paragraphs]
-        for s in sentences_tokenized:
-            if s[0] not in sents:
-                sents.append(s[0])
-                sent_url.append(url)
-            if s[-1] not in sents:
-                sents.append(s[-1])
-                sent_url.append(url)
-
-    perspective_relevance_score = classifier_relevance.predict_batch([
-        (claim_text, sent) for sent in sents
-    ])
-
-    perspective_relevance_score = [float(x) for x in perspective_relevance_score]
-
-    perspective_stance_score = classifier_stance.predict_batch([
-        (claim_text, sent) for sent in sents
-    ])
-
-    perspective_stance_score = [float(x) for x in perspective_stance_score]
-
-    results = list(zip(sents, perspective_relevance_score, perspective_stance_score, sent_url))
-
-    return results
-
-
 def _get_evidence_from_perspectrum(claim, perspective):
     claim_persp = claim + perspective
     lucene_results = get_evidence_from_pool(claim + perspective, 20)
@@ -200,8 +163,8 @@ def _get_evidence_from_link(url, claim, perspective):
     return result[0][0], url
 
 
-def solve_given_claim(claim_text, withWiki, num_persp_ir_candidates=50, num_web_persp_candidates=40,
-                      run_equivalence=True, relevance_score_th=1.3):
+def solve_given_claim(claim_text, withWiki, num_pool_persp_candidates, num_web_persp_candidates, run_equivalence,
+                      relevance_score_th, stance_score_th, max_results_per_column, max_overall_results):
     context = {}
 
     if claim_text != "":
@@ -210,40 +173,100 @@ def solve_given_claim(claim_text, withWiki, num_persp_ir_candidates=50, num_web_
         _ctx = LRUCache.get(claim, with_wiki=(withWiki == "withWiki"))
 
         if _ctx is None:
-
             # given a claim, extract perspectives
-            perspective_given_claim = [(p_text, pId, pScore / len(p_text.split(" "))) for p_text, pId, pScore in
-                                       get_perspective_from_pool(claim, num_persp_ir_candidates)]
+            pool_perspectives = [p_text for p_text, p_id, p_score in
+                                 get_perspective_from_pool(claim, num_pool_persp_candidates)]
 
-            perspective_relevance_score = classifier_relevance.predict_batch(
-                [(claim, p_text) for (p_text, pId, _) in perspective_given_claim])
+            print(f" * # of pool perspectives: {len(pool_perspectives)}")
 
-            perspective_stance_score = classifier_stance.predict_batch(
-                [(claim, p_text) for (p_text, pId, _) in perspective_given_claim])
+            pool_perspectives_with_relevance_score = classifier_relevance.predict_batch(
+                [(claim, p_text) for p_text in pool_perspectives])
 
-            perspectives_sorted = [(p_text, _normalize_relevance_score(perspective_relevance_score[i]),
-                                    _normalize_stance_score(perspective_stance_score[i]), None) for i, (p_text, pId, _)
-                                   in
-                                   enumerate(perspective_given_claim) if
-                                   perspective_relevance_score[i] > relevance_score_th]
+            # drop the ones that have small relevance scores, to save time for later steps
+            pool_perspectives_filtered = []
+            pool_perspectives_with_relevance_score_filtered = []
+            for i, _ in enumerate(pool_perspectives):
+                if pool_perspectives_with_relevance_score[i] > relevance_score_th:
+                    pool_perspectives_filtered.append(pool_perspectives[i])
+                    pool_perspectives_with_relevance_score_filtered.append(pool_perspectives_with_relevance_score[i])
+
+            print(f" * # of pool perspectives with good relevance: {len(pool_perspectives_filtered)}")
+
+            pool_perspectives_with_stance_score = classifier_stance.predict_batch(
+                [(claim, p_text) for p_text in pool_perspectives_filtered])
+
+            selected_perspectives = []
+            for i, p_text in enumerate(pool_perspectives_filtered):
+                if abs(pool_perspectives_with_stance_score[i]) > stance_score_th:
+                    selected_perspectives.append([
+                        (p_text,
+                         _normalize_relevance_score(pool_perspectives_with_relevance_score_filtered[i]),
+                         _normalize_stance_score(pool_perspectives_with_stance_score[i]),
+                         None) # later it will be assigned to be the perspective url
+                    ])
+
+            print(f" * # of pool perspectives with good stance: {len(selected_perspectives)}")
 
             if withWiki == "withWiki":
-                web_persps = _get_perspectives_from_cse(claim_text)
+                csc = CustomSearchClient(key=config["custom_search_api_key"], cx=config["custom_search_engine_id"])
+                results = csc.query(claim_text)
 
-                print(json.dumps(web_persps))
+                web_perspectives = []
+                web_perspective_urls = []
+
+                for result in results:
+                    url = result["link"]
+                    article = parse_article(url)
+                    paragraphs = [p for p in article.text.splitlines() if p]
+                    sentences_tokenized = [sent_tokenize(p) for p in paragraphs]
+                    for s in sentences_tokenized:
+                        # make sure there are no repeated items here
+                        if s[0] not in web_perspectives:
+                            web_perspectives.append(s[0])
+                            web_perspective_urls.append(url)
+                        if s[-1] not in web_perspectives:
+                            web_perspectives.append(s[-1])
+                            web_perspective_urls.append(url)
+
+                print(f" * # of web perspectives: {len(web_perspective_urls)}")
+
+                web_perspective_relevance_score = classifier_relevance.predict_batch([
+                    (claim_text, sent) for sent in web_perspectives
+                ])
+
                 ## Filter results based on a threshold on relevance score
-                web_persps = [(_s, _normalize_relevance_score(_rel_score), _normalize_stance_score(_stance_score), url)
-                              for _s, _rel_score, _stance_score, url in web_persps if _rel_score > relevance_score_th]
+                web_perspectives_filtered = []
+                web_perspective_urls_filtered = []
+                web_perspective_relevance_score_filtered = []
+                for i, score in enumerate(web_perspective_relevance_score):
+                    if float(score) > relevance_score_th:
+                        web_perspectives_filtered.append(web_perspectives[i])
+                        web_perspective_urls_filtered.append(web_perspective_urls[i])
+                        web_perspective_relevance_score_filtered.append(float(score))
+
+                print(f" * # of web perspectives after rel filter: {len(web_perspective_relevance_score_filtered)}")
+
+                perspective_stance_score = classifier_stance.predict_batch([
+                    (claim_text, sent) for sent in web_perspectives_filtered
+                ])
 
                 ## Filter results that have low stance score
-                # web_persps = [web_p for web_p in web_persps if abs(web_p[2]) > 0.1]
+                web_perspectives_filtered = []
+                for i, score in enumerate(perspective_stance_score):
+                    if abs(float(score)) > stance_score_th:
+                        web_perspectives_filtered.append([
+                            web_perspectives[i],
+                            _normalize_relevance_score(web_perspective_relevance_score_filtered[i]),
+                            _normalize_stance_score(float(score)),
+                            web_perspective_urls[i]
+                        ])
 
-                web_persps = web_persps[:num_web_persp_candidates]  # Only keep top ones
+                print(f" * # of web perspectives after stance filter: {len(web_perspectives_filtered)}")
 
-                perspectives_sorted += web_persps
+                selected_perspectives += web_perspectives_filtered
 
-            perspectives_sorted = list(set(perspectives_sorted))
-            perspectives_sorted = sorted(perspectives_sorted, key=lambda x: x[1] + 0.2 * math.fabs(x[2]), reverse=True)
+            # sort the perspectives
+            selected_perspectives = sorted(selected_perspectives, key=lambda x: x[1] + 0.3 * math.fabs(x[2]), reverse=True)
 
             perspectives_equivalences = []
             persp_sup = []
@@ -251,19 +274,18 @@ def solve_given_claim(claim_text, withWiki, num_persp_ir_candidates=50, num_web_
             persp_und = []
             persp_und_flash = []
 
-            if len(perspectives_sorted) > 0:
-
+            if len(selected_perspectives) > 0:
                 if run_equivalence:
-                    similarity_score = np.zeros((len(perspectives_sorted), len(perspectives_sorted)))
+                    similarity_score = np.zeros((len(selected_perspectives), len(selected_perspectives)))
 
-                    for i, (p_text1, _, _, _) in enumerate(perspectives_sorted):
+                    for i, (p_text1, _, _) in enumerate(selected_perspectives):
                         list1 = []
-                        for j, (p_text2, _, _, _) in enumerate(perspectives_sorted):
+                        for j, (p_text2, _, _) in enumerate(selected_perspectives):
                             list1.append((claim + " . " + p_text1, p_text2))
 
                         predictions1 = classifier_equivalence.predict_batch(list1)
 
-                        for j, (p_text2, _, _, _) in enumerate(perspectives_sorted):
+                        for j, (p_text2, _, _) in enumerate(selected_perspectives):
                             if i != j:
                                 perspectives_equivalences.append((p_text1, p_text2, predictions1[j], predictions1[j]))
                                 similarity_score[i, j] = predictions1[j]
@@ -278,9 +300,8 @@ def solve_given_claim(claim_text, withWiki, num_persp_ir_candidates=50, num_web_
 
                     clustering = DBSCAN(eps=0.3, min_samples=1, metric='precomputed')
                     cluster_labels = clustering.fit_predict(distance_scores)
-
                 else:
-                    cluster_labels = [-1 for _ in range(len(perspectives_sorted))]
+                    cluster_labels = [-1 for _ in range(len(selected_perspectives))]
 
                 max_val = max(cluster_labels)
                 for i, _ in enumerate(cluster_labels):
@@ -289,7 +310,7 @@ def solve_given_claim(claim_text, withWiki, num_persp_ir_candidates=50, num_web_
                         cluster_labels[i] = max_val
 
                 perspective_clusters = {}
-                for i, (p_text, relevance_score, stance_score, url) in enumerate(perspectives_sorted):
+                for i, (p_text, relevance_score, stance_score, url) in enumerate(selected_perspectives):
                     id = cluster_labels[i]
                     if id not in perspective_clusters:
                         perspective_clusters[id] = []
@@ -329,14 +350,12 @@ def solve_given_claim(claim_text, withWiki, num_persp_ir_candidates=50, num_web_
             claim_persp_bundled = [(claim, persp_sup_flash, persp_und_flash)]
 
             context["claim_text"] = claim_text
-            context["perspectives_sorted"] = perspectives_sorted
+            context["perspectives_sorted"] = selected_perspectives
             context["perspectives_equivalences"] = perspectives_equivalences
             context["claim_persp_bundled"] = claim_persp_bundled
             context["used_evidences_and_texts"] = []  # used_evidences_and_texts,
             context["persp_sup"] = persp_sup
             context["persp_und"] = persp_und
-
-            print(json.dumps(context))
 
             LRUCache.objects.create(claim=claim,
                                     with_wiki=(withWiki == "withWiki"),
@@ -358,7 +377,9 @@ def perspectrum_solver(request, withWiki=""):
     :return:
     """
     claim_text = request.GET.get('q', "")
-    context = solve_given_claim(claim_text, withWiki, run_equivalence=False, relevance_score_th=1.5)
+    context = solve_given_claim(claim_text, withWiki, num_pool_persp_candidates=30, num_web_persp_candidates=30,
+                                run_equivalence=False, relevance_score_th=0.5, stance_score_th=0.1,
+                                max_results_per_column=7, max_overall_results=25)
     return render(request, "perspectroscope/perspectrumDemo.html", context)
 
 
@@ -385,7 +406,8 @@ def perspectrum_annotator(request, withWiki="", random_claim="false"):
         rand_claim = claims_query_set[rand_idx]
         claim_text = rand_claim.claim_text
 
-    result = solve_given_claim(claim_text, withWiki, run_equivalence=False, relevance_score_th=-3)
+    result = solve_given_claim(claim_text, withWiki, num_pool_persp_candidates=40, num_web_persp_candidates=40,
+                               run_equivalence=False, relevance_score_th=-3)
     if not result:
         result = {}
 
