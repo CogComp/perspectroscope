@@ -386,7 +386,7 @@ def perspectrum_solver(request, withWiki=""):
     :return:
     """
     claim_text = request.GET.get('q', "")
-    context = solve_given_claim(claim_text, withWiki, num_pool_persp_candidates=40, num_web_persp_candidates=100,
+    context = solve_given_claim(claim_text, withWiki, num_pool_persp_candidates=40, num_web_persp_candidates=200,
                                 run_equivalence=False, relevance_score_th=1, stance_score_th=0.2,
                                 max_results_per_column=7, max_overall_results=20)
     return render(request, "perspectroscope/perspectrumDemo.html", context)
