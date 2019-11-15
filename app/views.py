@@ -223,7 +223,7 @@ def solve_given_claim(claim_text, withWiki, num_pool_persp_candidates, num_web_p
                     sentences_tokenized = [sent_tokenize(p) for p in paragraphs]
                     for s in sentences_tokenized:
                         # make sure there are no repeated items here
-                        if s[0] not in web_perspectives and len(s[0]) > 30 and {'[', ']'}.intersection(set(s[0])):
+                        if s[0] not in web_perspectives and len(s[0]) > 30 and len({'[', ']'}.intersection(set(s[0]))) < 2:
                             web_perspectives.append(s[0])
                             web_perspective_urls.append(url)
                         # if s[-1] not in web_perspectives:
