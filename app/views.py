@@ -35,8 +35,8 @@ file_names = {
 no_cuda = False if os.environ.get('CUDA_VISIBLE_DEVICES') else True
 
 ### loading the classifiers
-classifier_relevance = PerspectrumTransformerModel("roberta", "data/model/relevance_roberta", cuda=False)
-classifier_stance = PerspectrumTransformerModel("roberta", "data/model/stance_roberta", cuda=False)
+classifier_relevance = PerspectrumTransformerModel("roberta", "data/model/relevance_roberta", cuda=not no_cuda)
+classifier_stance = PerspectrumTransformerModel("roberta", "data/model/stance_roberta", cuda=not no_cuda)
 classifier_equivalence = None
 # BertBaseline(task_name="perspectrum_equivalence",
 #                                       saved_model="data/model/equivalence/perspectrum_equivalence_lr3e-05_bs32_epoch-2.pth",
@@ -223,12 +223,12 @@ def solve_given_claim(claim_text, withWiki, num_pool_persp_candidates, num_web_p
                     sentences_tokenized = [sent_tokenize(p) for p in paragraphs]
                     for s in sentences_tokenized:
                         # make sure there are no repeated items here
-                        if s[0] not in web_perspectives:
+                        if s[0] not in web_perspectives and len(s[0]) > 30 and {'[', ']'}.intersection(set(s[0])):
                             web_perspectives.append(s[0])
                             web_perspective_urls.append(url)
-                        if s[-1] not in web_perspectives:
-                            web_perspectives.append(s[-1])
-                            web_perspective_urls.append(url)
+                        # if s[-1] not in web_perspectives:
+                        #     web_perspectives.append(s[-1])
+                        #     web_perspective_urls.append(url)
 
                     if len(web_perspective_urls) > num_web_persp_candidates:
                         break
@@ -386,7 +386,7 @@ def perspectrum_solver(request, withWiki=""):
     :return:
     """
     claim_text = request.GET.get('q', "")
-    context = solve_given_claim(claim_text, withWiki, num_pool_persp_candidates=40, num_web_persp_candidates=80,
+    context = solve_given_claim(claim_text, withWiki, num_pool_persp_candidates=40, num_web_persp_candidates=100,
                                 run_equivalence=False, relevance_score_th=1, stance_score_th=0.2,
                                 max_results_per_column=7, max_overall_results=20)
     return render(request, "perspectroscope/perspectrumDemo.html", context)
