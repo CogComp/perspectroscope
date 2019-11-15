@@ -199,13 +199,15 @@ def solve_given_claim(claim_text, withWiki, num_pool_persp_candidates, num_web_p
             for i, p_text in enumerate(pool_perspectives_filtered):
                 if abs(pool_perspectives_with_stance_score[i]) > stance_score_th:
                     selected_perspectives.append([
-                        (p_text,
+                        p_text,
                          _normalize_relevance_score(pool_perspectives_with_relevance_score_filtered[i]),
                          _normalize_stance_score(pool_perspectives_with_stance_score[i]),
-                         None) # later it will be assigned to be the perspective url
+                         None # later it will be assigned to be the perspective url
                     ])
 
             print(f" * # of pool perspectives with good stance: {len(selected_perspectives)}")
+
+            print(selected_perspectives)
 
             if withWiki == "withWiki":
                 csc = CustomSearchClient(key=config["custom_search_api_key"], cx=config["custom_search_engine_id"])
@@ -227,6 +229,9 @@ def solve_given_claim(claim_text, withWiki, num_pool_persp_candidates, num_web_p
                         if s[-1] not in web_perspectives:
                             web_perspectives.append(s[-1])
                             web_perspective_urls.append(url)
+
+                    if len(web_perspective_urls) > num_web_persp_candidates:
+                        break
 
                 print(f" * # of web perspectives: {len(web_perspective_urls)}")
 
@@ -265,8 +270,12 @@ def solve_given_claim(claim_text, withWiki, num_pool_persp_candidates, num_web_p
 
                 selected_perspectives += web_perspectives_filtered
 
+                print(web_perspectives_filtered)
+
             # sort the perspectives
-            selected_perspectives = sorted(selected_perspectives, key=lambda x: x[1] + 0.3 * math.fabs(x[2]), reverse=True)
+            selected_perspectives = sorted(selected_perspectives, key=lambda x: x[1] + 0.3 * abs(x[2]), reverse=True)
+
+            selected_perspectives = selected_perspectives[:max_overall_results]
 
             perspectives_equivalences = []
             persp_sup = []
@@ -377,9 +386,9 @@ def perspectrum_solver(request, withWiki=""):
     :return:
     """
     claim_text = request.GET.get('q', "")
-    context = solve_given_claim(claim_text, withWiki, num_pool_persp_candidates=30, num_web_persp_candidates=30,
-                                run_equivalence=False, relevance_score_th=0.5, stance_score_th=0.1,
-                                max_results_per_column=7, max_overall_results=25)
+    context = solve_given_claim(claim_text, withWiki, num_pool_persp_candidates=40, num_web_persp_candidates=80,
+                                run_equivalence=False, relevance_score_th=1, stance_score_th=0.2,
+                                max_results_per_column=7, max_overall_results=20)
     return render(request, "perspectroscope/perspectrumDemo.html", context)
 
 
