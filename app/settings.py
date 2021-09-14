@@ -132,3 +132,5 @@ CSRF_USE_SESSIONS = True
 
 # login redirect url
 LOGIN_URL = "render_login"
+
+APPEND_SLASH=True

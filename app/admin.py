@@ -1,3 +1,4 @@
+dj
 from django.contrib import admin
 
 from .models import QueryLog, FeedbackRecord, Claim, EvidenceFeedbackRecord, Perspectives, LRUCache

@@ -75,7 +75,7 @@
                 <p class="lead">A Window to the World of Diverse Perspectives.</p>
             </div>
             <div class="col-sm" style="text-align: right">
-                <a href="http://cogcomp.org"><img alt=" " src="{% static "img/ccg_logo.png" %}" height="200px" width="auto">
+                <a href="http://cogcomp.org"><img alt=" " src="https://cogcomp.seas.upenn.edu/images/logo.png" height="200px" width="auto">
             </div>
         </div>
         <button id="popover_citation" type="button" class="btn btn-info btn-xs" data-toggle="popover"><i class="fa fa-lg fa-book"></i>&nbsp;&nbsp;Cite this demo!</button>
@@ -376,25 +376,29 @@
     var network = new vis.Network(container, data, options);
 </script>
 <script type="application/javascript">
-    $(function () {
 
-    });
+    let server_url = window.location.href
+    if (server_url.includes("withWiki")) {
+        server_url = server_url.split("/").slice(0,-3).join('/');
+    }
+
+    if (!server_url.endsWith("/"))
+        server_url += "/"
+
+    console.log(server_url);
 
     $('#search-claim').click(function () {
         var claimText = $("#claim-box").val();
-        //withWiki = "noWiki";
-        //if ($('#wiki').hasClass('active')) {
-        //    withWiki = "withWiki";
-        //}
+
         withWiki = "withWiki"; // always with Wiki
 
         // Log the query in te data base
-        $.post('/api/submit_query_log/', {
+        $.post(server_url + 'api/submit_query_log/', {
             "claim": claimText
         }, function() {
             console.log("Query Log Success!");
         });
-        let url = '/baseline/' + withWiki + "/?q=" + encodeURIComponent(claimText);
+        let url = server_url + 'baseline/' + withWiki + "/?q=" + encodeURIComponent(claimText);
 
         window.location.href = url;
     });
@@ -464,7 +468,7 @@
         //var wikipedia_searched = false;
 
 
-        $.post('/api/test_es_connection/', {}, function() {
+        $.post(server_url + 'api/test_es_connection/', {}, function() {
             console.log("ES server connection [OK]");
         });
 
