@@ -11,4 +11,4 @@ nltk
 newspaper3k
 google-api-python-client
 django-google-analytics-app
-transformers==2.1.1
+transformers==4.30.0
